@@ -1,6 +1,8 @@
 import { Banner } from '@/components/home/banner';
 import { Talent } from '@/components/home/Talent';
 import { HowItWorks } from '@/components/home/HowItWorks';
+import { Testimonials } from '@/components/home/Testimonials';
+import { CTA } from '@/components/home/CTA';
 
 export default function Home() {
   return (
@@ -8,6 +10,8 @@ export default function Home() {
       <Banner />
       <Talent />
       <HowItWorks />
+      <Testimonials />
+      <CTA />
     </main>
   );
 }

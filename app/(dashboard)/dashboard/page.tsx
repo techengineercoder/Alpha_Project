@@ -6,7 +6,7 @@ export default function DashboardRedirect() {
   const role = 'artist'; // hardcoded for scaffolding
   
   if (role === 'artist') {
-    redirect('/artist/profile');
+    redirect('/artist/dashboard');
   } else if (role === 'agent') {
     redirect('/agent/roster');
   } else if (role === 'talent-buyer') {

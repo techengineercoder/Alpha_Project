@@ -1,4 +1,7 @@
+"use client";
+
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const talents = [
     {
@@ -27,15 +30,33 @@ export function Talent() {
     return (
         <section className="w-full bg-[#0b0b0f] py-20 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
-                <h1 className="text-4xl md:text-[45px] text-white font-bold mb-4">Talent on the rise</h1>
-                <p className="text-[#A1A1AA] text-sm md:text-xl font-normal  mb-8">
+                <motion.h1 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6 }}
+                    className="text-4xl md:text-[45px] text-white font-bold mb-4"
+                >
+                    Talent on the rise
+                </motion.h1>
+                <motion.p 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    className="text-[#A1A1AA] text-sm md:text-xl font-normal mb-8"
+                >
                     Discover trending artists available for booking
-                </p>
+                </motion.p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {talents.map((talent, index) => (
-                        <div
+                        <motion.div
                             key={index}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
                             className="group flex flex-col border border-[#121218] rounded-2xl overflow-hidden bg-[#121218] transition-transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#7C5CFF]/10 cursor-pointer"
                         >
                             {/* Image Container */}
@@ -60,7 +81,7 @@ export function Talent() {
                                     {talent.description}
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </div>
