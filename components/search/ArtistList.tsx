@@ -6,6 +6,8 @@ import { Heart, Search, Share, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { BookingModal } from './BookingModal';
 import Link from 'next/link';
+import { useAddFavoritesMutation } from '@/redux/feature/artistApi/bookingSlice';
+import { toast } from 'sonner';
 
 export function ArtistList({
   artists = [],
@@ -23,6 +25,9 @@ export function ArtistList({
   onPageChange?: (newOffset: number) => void;
 }) {
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
+
+  const [addFavorites, { isLoading: addFavoritesLoading }] = useAddFavoritesMutation();
+
 
   const totalPages = Math.ceil(totalCount / limit) || 1;
   const currentPage = Math.floor(offset / limit) + 1;
@@ -109,6 +114,17 @@ export function ArtistList({
             availableDates = artist.available_ranges.map((r: any) => `${r.start} to ${r.end}`).slice(0, 3);
           }
 
+          const handleSave = async (e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+              await addFavorites({ artist_id: String(artist.id) }).unwrap();
+              toast.success(artist.is_favorited ? "Artist removed from favorites" : "Artist saved to favorites!");
+            } catch (error: any) {
+              toast.error(error.data?.message || "Failed to save artist");
+            }
+          };
+
           return (
             <motion.div
               key={artist.id}
@@ -131,8 +147,16 @@ export function ArtistList({
               {/* Content */}
               <div className="flex-1 p-6 flex flex-col relative">
                 {/* Heart Icon */}
-                <button className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
-                  <Heart className="w-4 h-4 text-[#A1A1AA] hover:text-[#7C5CFF]" />
+                <button 
+                  onClick={handleSave}
+                  disabled={addFavoritesLoading}
+                  className={`absolute top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                    addFavoritesLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
+                  } ${artist.is_favorited ? 'bg-white/10' : 'bg-white/5'}`}
+                >
+                  <Heart className={`w-4 h-4 transition-colors ${
+                    artist.is_favorited ? 'fill-[#7C5CFF] text-[#7C5CFF]' : 'text-[#A1A1AA] hover:text-[#7C5CFF]'
+                  }`} />
                 </button>
 
                 <div className="flex items-baseline gap-3 mb-4 pr-12">
