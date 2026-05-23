@@ -5,15 +5,17 @@ import { SearchFilters, SearchFiltersState } from '@/components/search/SearchFil
 import { ArtistList } from '@/components/search/ArtistList';
 import { Search, Share } from 'lucide-react';
 import { useGetArtistsQuery } from '@/redux/feature/artistApi/artistSlice';
+import { useGetVenuesQuery } from '@/redux/feature/artistApi/venuesSlice';
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
+import { VenueList } from '@/components/search/VenueList';
 
 function SearchContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [params, setParams] = useState<SearchFiltersState & { limit: number; offset: number }>({
+  const [params, setParams] = useState<SearchFiltersState & { limit: number; offset: number; type: string }>({
     q: searchParams.get('q') || '',
     genres: searchParams.get('genres') || '',
     radius_miles: searchParams.get('radius_miles') || '',
@@ -25,6 +27,7 @@ function SearchContent() {
     locationText: searchParams.get('locationText') || '',
     limit: Number(searchParams.get('limit')) || 20,
     offset: Number(searchParams.get('offset')) || 0,
+    type: searchParams.get('type') || 'artists',
   });
 
   const queryParams = Object.fromEntries(
@@ -49,9 +52,16 @@ function SearchContent() {
   }
 
 
+  const { data: artistsData, isLoading: isLoadingArtists } = useGetArtistsQuery(queryParams as Record<string, string>, {
+    skip: params.type === 'venue'
+  });
 
-  const { data, isLoading } = useGetArtistsQuery(queryParams as Record<string, string>);
+  const { data: venuesData, isLoading: isLoadingVenues } = useGetVenuesQuery(queryParams as Record<string, string>, {
+    skip: params.type !== 'venue'
+  });
 
+  const isLoading = params.type === 'venue' ? isLoadingVenues : isLoadingArtists;
+  const data = params.type === 'venue' ? venuesData : artistsData;
   const handleApplyFilters = () => {
     setParams(prev => ({ ...prev, offset: 0 }));
     const newQuery = new URLSearchParams(queryParams as Record<string, string>);
@@ -71,6 +81,7 @@ function SearchContent() {
       locationText: '',
       limit: 20,
       offset: 0,
+      type: 'artists',
     });
     router.push('/search', { scroll: false });
   };
@@ -79,7 +90,7 @@ function SearchContent() {
     setParams(prev => ({ ...prev, offset: newOffset }));
   };
 
-  const artists = data?.results || [];
+  const items = data?.results || [];
   const totalCount = data?.count || 0;
 
   const startCount = totalCount > 0 ? params.offset + 1 : 0;
@@ -93,7 +104,7 @@ function SearchContent() {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           {/* Left Title (Above Filters) */}
           <div className="w-full lg:w-[320px] shrink-0">
-            <h1 className="text-3xl font-bold text-white mb-2">Search Artists</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">Search {params.type === 'venue' ? 'Venues' : 'Artists'}</h1>
             <p className="text-[#A1A1AA] text-sm">
               {isLoading ? 'Loading...' : `Showing ${startCount}-${endCount} of ${totalCount} Results`}
             </p>
@@ -110,7 +121,7 @@ function SearchContent() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleApplyFilters();
                 }}
-                placeholder="Search Artist..."
+                placeholder={`Search ${params.type === 'venue' ? 'Venue' : 'Artist'}...`}
                 className="w-full bg-[#121218] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder:text-[#A1A1AA]/50 focus:outline-none focus:border-[#9D7CFF]/50 transition-colors"
               />
             </div>
@@ -137,14 +148,25 @@ function SearchContent() {
 
           {/* Right Content - Results */}
           <div className="flex-1 min-w-0">
-            <ArtistList
-              artists={artists}
-              isLoading={isLoading}
-              totalCount={totalCount}
-              limit={params.limit}
-              offset={params.offset}
-              onPageChange={handlePageChange}
-            />
+            {params.type === 'venue' ? (
+              <VenueList
+                venues={items}
+                isLoading={isLoading}
+                totalCount={totalCount}
+                limit={params.limit}
+                offset={params.offset}
+                onPageChange={handlePageChange}
+              />
+            ) : (
+              <ArtistList
+                artists={items}
+                isLoading={isLoading}
+                totalCount={totalCount}
+                limit={params.limit}
+                offset={params.offset}
+                onPageChange={handlePageChange}
+              />
+            )}
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { SlidersHorizontal, Search, MapPin, ChevronDown, Check } from 'lucide-react';
+import { SlidersHorizontal, Search, MapPin, ChevronDown, Check, LocateFixed } from 'lucide-react';
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { type DateRange } from "react-day-picker";
 import { GoogleLocationInput } from "@/components/ui/google-location-input";
@@ -17,6 +17,7 @@ export type SearchFiltersState = {
   available_end: string;
   favorites_only: boolean;
   locationText: string;
+  type?: string;
 };
 
 export function SearchFilters({
@@ -30,7 +31,7 @@ export function SearchFilters({
   onApply: () => void;
   onReset: () => void;
 }) {
-  const [lookingFor, setLookingFor] = useState<'artists' | 'venue'>('artists');
+  const lookingFor = filters.type || 'artists';
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
 
@@ -44,6 +45,46 @@ export function SearchFilters({
       onChange({ latitude: '', longitude: '' });
     }
   }, [filters.locationText, filters.latitude, filters.longitude, onChange]);
+
+  // Request location when component mounts (user enters website)
+  React.useEffect(() => {
+    if (!filters.locationText && !filters.latitude && !filters.longitude) {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            onChange({
+              locationText: "Current Location",
+              latitude: position.coords.latitude.toString(),
+              longitude: position.coords.longitude.toString(),
+            });
+          },
+          (error) => {
+            console.error("Automatic location access denied/failed:", error);
+          }
+        );
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleGetCurrentLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          onChange({
+            locationText: "Current Location",
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString(),
+            // Ensure radius has a default if empty, so the user sees results based on radius
+            radius_miles: filters.radius_miles || '50'
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    }
+  };
 
   return (
     <div className="w-full flex flex-col gap-6 bg-[#121218] border border-white/5 rounded-lg p-6">
@@ -65,14 +106,14 @@ export function SearchFilters({
         <label className="text-sm font-medium text-[#A1A1AA]">I&apos;m looking for</label>
         <div className="flex  p-1 gap-2  ">
           <button
-            onClick={() => setLookingFor('artists')}
+            onClick={() => onChange({ type: 'artists' })}
             className={`flex-1 py-2.5 text-sm font-medium rounded bg-[#121218] border border-white/10 cursor-pointer transition-all ${lookingFor === 'artists' ? 'border-white/10 bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] text-white shadow-lg shadow-[#9D7CFF]/20' : 'text-[#A1A1AA] hover:text-white'
               }`}
           >
             Find Artists
           </button>
           <button
-            onClick={() => setLookingFor('venue')}
+            onClick={() => onChange({ type: 'venue' })}
             className={`flex-1 py-2.5 text-sm font-medium rounded transition-all ${lookingFor === 'venue' ? 'border-white/10 bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] text-white shadow-lg shadow-[#9D7CFF]/20' : 'text-[#A1A1AA] hover:text-white'
               }`}
           >
@@ -109,8 +150,15 @@ export function SearchFilters({
               });
             }}
             placeholder="e.g. New York, NY"
-            className="w-full bg-[#121218] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder:text-[#A1A1AA]/50 focus:outline-none focus:border-[#9D7CFF]/50 transition-colors"
+            className="w-full bg-[#121218] border border-white/5 rounded-xl py-3 pl-11 pr-10 text-sm text-white placeholder:text-[#A1A1AA]/50 focus:outline-none focus:border-[#9D7CFF]/50 transition-colors"
           />
+          <button
+            onClick={handleGetCurrentLocation}
+            title="Use Current Location"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#A1A1AA] hover:text-[#7C5CFF] transition-colors"
+          >
+            <LocateFixed className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
@@ -121,7 +169,29 @@ export function SearchFilters({
           {['50', '100', '200', '400'].map((val) => (
             <button
               key={val}
-              onClick={() => onChange({ radius_miles: val })}
+              onClick={() => {
+                if (!filters.latitude && !filters.longitude) {
+                  if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        onChange({
+                          radius_miles: val,
+                          locationText: "Current Location",
+                          latitude: position.coords.latitude.toString(),
+                          longitude: position.coords.longitude.toString(),
+                        });
+                      },
+                      (error) => {
+                        onChange({ radius_miles: val });
+                      }
+                    );
+                  } else {
+                    onChange({ radius_miles: val });
+                  }
+                } else {
+                  onChange({ radius_miles: val });
+                }
+              }}
               className={`flex-1 py-2 text-xs font-medium rounded-lg border transition-all ${filters.radius_miles === val
                 ? 'bg-white/10 border-white/20 text-white'
                 : 'bg-[#121218] border-white/5 text-[#A1A1AA] hover:border-white/20 hover:text-white'
@@ -150,11 +220,10 @@ export function SearchFilters({
           {isGenreDropdownOpen && (
             <div className="absolute top-full left-0 mt-2 w-full max-h-[280px] overflow-y-auto custom-scrollbar bg-[#121218] border border-white/10 rounded-xl shadow-2xl z-50 flex flex-col p-1.5 gap-1">
               <div
-                className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${
-                  !filters.genres 
-                    ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner' 
+                className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${!filters.genres
+                    ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
                     : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
-                }`}
+                  }`}
                 onClick={() => {
                   onChange({ genres: '' });
                   setIsGenreDropdownOpen(false);
@@ -163,17 +232,16 @@ export function SearchFilters({
                 All Genres
                 {!filters.genres && <Check className="w-4 h-4 text-[#7C5CFF]" />}
               </div>
-              
+
               {genres.map((g: any) => {
                 const isSelected = filters.genres === g.slug;
                 return (
                   <div
                     key={g.id}
-                    className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${
-                      isSelected 
-                        ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner' 
+                    className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${isSelected
+                        ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
                         : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
-                    }`}
+                      }`}
                     onClick={() => {
                       onChange({ genres: g.slug });
                       setIsGenreDropdownOpen(false);
