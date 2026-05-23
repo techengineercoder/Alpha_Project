@@ -40,10 +40,10 @@ export function SearchFilters({
   const selectedGenreObj = genres.find((g: any) => g.slug === filters.genres);
 
   React.useEffect(() => {
-    if (!filters.locationText?.trim()) {
+    if (!filters.locationText?.trim() && (filters.latitude || filters.longitude)) {
       onChange({ latitude: '', longitude: '' });
     }
-  }, [filters.locationText, onChange]);
+  }, [filters.locationText, filters.latitude, filters.longitude, onChange]);
 
   return (
     <div className="w-full flex flex-col gap-6 bg-[#121218] border border-white/5 rounded-lg p-6">

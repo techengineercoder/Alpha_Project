@@ -12,7 +12,7 @@ const talents = [
     {
         title: 'Artists',
         description: 'Manage multiple artist profiles, claim artists and upload avails.',
-        image: 'https://images.unsplash.com/photo-1571266028243-cb40fce7573a?w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1611414779790-abb3e1ec462e?w=800&q=80',
     },
     {
         title: 'Venues',
@@ -28,9 +28,9 @@ const talents = [
 
 export function Talent() {
     return (
-        <section className="w-full bg-[#0b0b0f] py-20 px-4 md:px-8">
+        <section id="browse-artists" className="w-full bg-[#0b0b0f] py-20 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
-                <motion.h1 
+                <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
@@ -39,7 +39,7 @@ export function Talent() {
                 >
                     Talent on the rise
                 </motion.h1>
-                <motion.p 
+                <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}

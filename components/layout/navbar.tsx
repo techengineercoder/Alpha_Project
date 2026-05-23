@@ -43,6 +43,16 @@ export function MarketingNavbar() {
     setIsProfileOpen(false);
   };
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    if (window.location.pathname === '/') {
+      e.preventDefault();
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 md:px-8 lg:px-12 py-6">
       <nav
@@ -57,9 +67,9 @@ export function MarketingNavbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-10 lg:gap-14 absolute left-1/2 -translate-x-1/2">
-          <Link href="#" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Browse Artists</Link>
-          <Link href="#" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Browse Venue</Link>
-          <Link href="#" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">How it works</Link>
+          <Link href="/#browse-artists" onClick={(e) => scrollToSection(e, 'browse-artists')} className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Browse Artists</Link>
+          <Link href="/search" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Browse Venue</Link>
+          <Link href="/#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="text-sm font-medium text-gray-400 hover:text-white transition-colors">How it works</Link>
         </div>
 
         {/* Actions */}
@@ -153,9 +163,9 @@ export function MarketingNavbar() {
             className="md:hidden absolute top-[calc(100%-10px)] left-4 right-4 p-8 rounded-[32px] bg-[#111116] border border-white/10 shadow-2xl flex flex-col gap-6 z-50"
           >
             <div className="space-y-4">
-              <Link href="#" className="block text-lg font-bold text-gray-400 hover:text-white py-2">Browse Artists</Link>
-              <Link href="#" className="block text-lg font-bold text-gray-400 hover:text-white py-2">Browse Venue</Link>
-              <Link href="#" className="block text-lg font-bold text-gray-400 hover:text-white py-2">How it works</Link>
+              <Link href="/#browse-artists" onClick={(e) => { setIsMobileMenuOpen(false); scrollToSection(e, 'browse-artists'); }} className="block text-lg font-bold text-gray-400 hover:text-white py-2">Browse Artists</Link>
+              <Link href="/search" onClick={() => setIsMobileMenuOpen(false)} className="block text-lg font-bold text-gray-400 hover:text-white py-2">Browse Venue</Link>
+              <Link href="/#how-it-works" onClick={(e) => { setIsMobileMenuOpen(false); scrollToSection(e, 'how-it-works'); }} className="block text-lg font-bold text-gray-400 hover:text-white py-2">How it works</Link>
             </div>
             {user ? (
               <Link href="/dashboard" className="px-6 py-4 rounded-2xl bg-[#7C5CFF] text-white text-center font-bold">Dashboard</Link>

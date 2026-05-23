@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
         hostname: 'seatgeekimages.com',
         pathname: '/**',
       },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        pathname: '/**',
+      },
     ],
   },
 };

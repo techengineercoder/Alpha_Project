@@ -128,7 +128,7 @@ function SearchContent() {
             <div className="sticky top-24">
               <SearchFilters
                 filters={params}
-                onChange={(updates) => setParams(prev => ({ ...prev, ...updates }))}
+                onChange={React.useCallback((updates) => setParams(prev => ({ ...prev, ...updates })), [])}
                 onApply={handleApplyFilters}
                 onReset={handleResetFilters}
               />

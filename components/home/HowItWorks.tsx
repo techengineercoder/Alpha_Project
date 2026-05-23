@@ -24,7 +24,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="w-full bg-[#0e0e13] py-24 px-4 md:px-8">
+    <section id="how-it-works" className="w-full bg-[#0e0e13] py-24 px-4 md:px-8">
       <div className="max-w-5xl mx-auto flex flex-col items-center">
         {/* Header */}
         <motion.h2 

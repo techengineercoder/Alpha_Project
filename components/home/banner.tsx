@@ -33,12 +33,13 @@ export function Banner() {
     const query = new URLSearchParams();
     if (latitude) query.set('latitude', latitude);
     if (longitude) query.set('longitude', longitude);
+    if (locationText) query.set('locationText', locationText);
 
     if (genre) query.set('genres', genre);
 
     if (dateRange?.from) {
       const fromFormatted = format(dateRange.from, 'yyyy-MM-dd');
-      
+
       if (dateRange.to) {
         const toFormatted = format(dateRange.to, 'yyyy-MM-dd');
         if (fromFormatted === toFormatted) {
@@ -220,11 +221,10 @@ export function Banner() {
                       return (
                         <div
                           key={g.id}
-                          className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${
-                            isSelected 
-                              ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner' 
+                          className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${isSelected
+                              ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
                               : 'text-white/70 hover:bg-white/10 hover:text-white border border-transparent'
-                          }`}
+                            }`}
                           onClick={() => {
                             setGenre(g.slug);
                             setIsGenreDropdownOpen(false);
@@ -243,7 +243,7 @@ export function Banner() {
             {/* ── Search Button ── */}
             <button
               onClick={handleSearch}
-              className="w-full md:w-auto h-full min-h-[54px] md:min-h-[58px] border-white  border bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] hover:bg-[#6A4BE5] text-white px-8 rounded-2xl md:rounded-[20px] font-medium flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#7C5CFF]/25"
+              className="w-full md:w-auto h-full cursor-pointer min-h-[54px] md:min-h-[58px] border-white  border bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] hover:bg-[#6A4BE5] text-white px-8 rounded-2xl md:rounded-[20px] font-medium flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#7C5CFF]/25"
             >
               <Search className="w-5 h-5" />
               <span>Search</span>

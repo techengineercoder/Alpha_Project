@@ -121,8 +121,8 @@ export function ArtistList({
               {/* Image */}
               <div className="relative w-full md:w-[280px] h-[200px] md:h-auto shrink-0">
                 <Image
-                  src={artist.image}
-                  alt={artist.name}
+                  src={image}
+                  alt={name}
                   fill
                   className="object-cover"
                 />
