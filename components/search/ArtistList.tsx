@@ -121,7 +121,11 @@ export function ArtistList({
               await addFavorites({ artist_id: String(artist.id) }).unwrap();
               toast.success(artist.is_favorited ? "Artist removed from favorites" : "Artist saved to favorites!");
             } catch (error: any) {
-              toast.error(error.data?.message || "Failed to save artist");
+              if (error.status === 401 || error.data?.error?.status === 401) {
+                toast.error("Please log in to save favorites");
+              } else {
+                toast.error(error.data?.error?.message || error.data?.message || "Failed to save artist");
+              }
             }
           };
 
