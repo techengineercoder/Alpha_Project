@@ -10,6 +10,7 @@ import { useGetVenuesQuery } from '@/redux/feature/artistApi/venuesSlice';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import { VenueList } from '@/components/search/VenueList';
+import { toast } from 'sonner';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -30,8 +31,17 @@ function SearchContent() {
     type: searchParams.get('type') || 'artists',
   });
 
+  const [debouncedParams, setDebouncedParams] = useState(params);
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedParams(params);
+    }, 500); // 500ms debounce delay
+    return () => clearTimeout(handler);
+  }, [params]);
+
   const queryParams = Object.fromEntries(
-    Object.entries(params)
+    Object.entries(debouncedParams)
       .map(([k, v]) => [k, String(v)])
       .filter(([_, v]) => v !== '' && v !== 'false')
   );
@@ -52,15 +62,16 @@ function SearchContent() {
   }
 
 
-  const { data: artistsData, isLoading: isLoadingArtists } = useGetArtistsQuery(queryParams as Record<string, string>, {
+  const { data: artistsData, isLoading: isLoadingArtists, isFetching: isFetchingArtists } = useGetArtistsQuery(queryParams as Record<string, string>, {
     skip: params.type === 'venue'
   });
 
-  const { data: venuesData, isLoading: isLoadingVenues } = useGetVenuesQuery(queryParams as Record<string, string>, {
+  const { data: venuesData, isLoading: isLoadingVenues, isFetching: isFetchingVenues } = useGetVenuesQuery(queryParams as Record<string, string>, {
     skip: params.type !== 'venue'
   });
 
-  const isLoading = params.type === 'venue' ? isLoadingVenues : isLoadingArtists;
+  const isDebouncing = params !== debouncedParams;
+  const isLoading = isDebouncing || (params.type === 'venue' ? (isLoadingVenues || isFetchingVenues) : (isLoadingArtists || isFetchingArtists));
   const data = params.type === 'venue' ? venuesData : artistsData;
   const handleApplyFilters = () => {
     setParams(prev => ({ ...prev, offset: 0 }));
@@ -96,6 +107,26 @@ function SearchContent() {
   const startCount = totalCount > 0 ? params.offset + 1 : 0;
   const endCount = Math.min(params.offset + params.limit, totalCount);
 
+  const handleShare = async () => {
+    try {
+      const shareUrl = window.location.href;
+      if (navigator.share) {
+        await navigator.share({
+          title: 'GetAvails Search',
+          text: `Check out these ${params.type === 'venue' ? 'venues' : 'artists'} on GetAvails!`,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard!");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        toast.error("Failed to share link");
+      }
+    }
+  };
+
   return (
     <main className="w-full min-h-screen bg-[#0B0B0F] py-[100px]  sm:py-[150px]  px-4 md:px-8">
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
@@ -125,7 +156,10 @@ function SearchContent() {
                 className="w-full bg-[#121218] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder:text-[#A1A1AA]/50 focus:outline-none focus:border-[#9D7CFF]/50 transition-colors"
               />
             </div>
-            <button className="flex items-center gap-2 text-sm text-[#A1A1AA] hover:text-white transition-colors shrink-0 px-4">
+            <button
+              onClick={handleShare}
+              className="flex cursor-pointer items-center gap-2 text-sm text-[#A1A1AA] hover:text-white transition-colors shrink-0 px-4"
+            >
               <Share className="w-4 h-4" />
               <span>Share</span>
             </button>
@@ -135,8 +169,9 @@ function SearchContent() {
         {/* Content Row */}
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar - Filters */}
+          {/* <div className="sticky top-24"></div> */}
           <div className="w-full lg:w-[320px] shrink-0">
-            <div className="sticky top-24">
+            <div>
               <SearchFilters
                 filters={params}
                 onChange={React.useCallback((updates) => setParams(prev => ({ ...prev, ...updates })), [])}

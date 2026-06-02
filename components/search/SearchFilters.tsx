@@ -204,70 +204,74 @@ export function SearchFilters({
       </div>
 
       {/* Genres */}
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-[#A1A1AA]">Genres</label>
-        <div className="relative w-full">
-          <div
-            className="w-full flex items-center justify-between bg-[#121218] border border-white/5 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-[#9D7CFF]/50 cursor-pointer transition-colors group"
-            onClick={() => setIsGenreDropdownOpen(!isGenreDropdownOpen)}
-          >
-            <span className={filters.genres ? 'text-white' : 'text-[#A1A1AA]/50'}>
-              {isLoadingGenres ? 'Loading...' : (selectedGenreObj?.name || 'All Genres')}
-            </span>
-            <ChevronDown className={`w-4 h-4 text-[#A1A1AA] group-hover:text-white transition-transform ${isGenreDropdownOpen ? 'rotate-180' : ''}`} />
-          </div>
-
-          {isGenreDropdownOpen && (
-            <div className="absolute top-full left-0 mt-2 w-full max-h-[280px] overflow-y-auto custom-scrollbar bg-[#121218] border border-white/10 rounded-xl shadow-2xl z-50 flex flex-col p-1.5 gap-1">
-              <div
-                className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${!filters.genres
-                    ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
-                    : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
-                  }`}
-                onClick={() => {
-                  onChange({ genres: '' });
-                  setIsGenreDropdownOpen(false);
-                }}
-              >
-                All Genres
-                {!filters.genres && <Check className="w-4 h-4 text-[#7C5CFF]" />}
-              </div>
-
-              {genres.map((g: any) => {
-                const isSelected = filters.genres === g.slug;
-                return (
-                  <div
-                    key={g.id}
-                    className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${isSelected
-                        ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
-                        : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
-                      }`}
-                    onClick={() => {
-                      onChange({ genres: g.slug });
-                      setIsGenreDropdownOpen(false);
-                    }}
-                  >
-                    {g.name}
-                    {isSelected && <Check className="w-4 h-4 text-[#7C5CFF]" />}
-                  </div>
-                );
-              })}
+      {lookingFor === 'artists' && (
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-[#A1A1AA]">Genres</label>
+          <div className="relative w-full">
+            <div
+              className="w-full flex items-center justify-between bg-[#121218] border border-white/5 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-[#9D7CFF]/50 cursor-pointer transition-colors group"
+              onClick={() => setIsGenreDropdownOpen(!isGenreDropdownOpen)}
+            >
+              <span className={filters.genres ? 'text-white' : 'text-[#A1A1AA]/50'}>
+                {isLoadingGenres ? 'Loading...' : (selectedGenreObj?.name || 'All Genres')}
+              </span>
+              <ChevronDown className={`w-4 h-4 text-[#A1A1AA] group-hover:text-white transition-transform ${isGenreDropdownOpen ? 'rotate-180' : ''}`} />
             </div>
-          )}
+
+            {isGenreDropdownOpen && (
+              <div className="absolute top-full left-0 mt-2 w-full max-h-[280px] overflow-y-auto custom-scrollbar bg-[#121218] border border-white/10 rounded-xl shadow-2xl z-50 flex flex-col p-1.5 gap-1">
+                <div
+                  className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${!filters.genres
+                      ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
+                      : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
+                    }`}
+                  onClick={() => {
+                    onChange({ genres: '' });
+                    setIsGenreDropdownOpen(false);
+                  }}
+                >
+                  All Genres
+                  {!filters.genres && <Check className="w-4 h-4 text-[#7C5CFF]" />}
+                </div>
+
+                {genres.map((g: any) => {
+                  const isSelected = filters.genres === g.slug;
+                  return (
+                    <div
+                      key={g.id}
+                      className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${isSelected
+                          ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
+                          : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
+                        }`}
+                      onClick={() => {
+                        onChange({ genres: g.slug });
+                        setIsGenreDropdownOpen(false);
+                      }}
+                    >
+                      {g.name}
+                      {isSelected && <Check className="w-4 h-4 text-[#7C5CFF]" />}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Favorites Checkbox */}
-      <label className="flex items-center gap-3 cursor-pointer group mt-2">
-        <div
-          className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${filters.favorites_only ? 'bg-[#9D7CFF] border-[#9D7CFF]' : 'bg-[#121218] border-white/10 group-hover:border-white/30'
-            }`}
-          onClick={() => onChange({ favorites_only: !filters.favorites_only })}
-        >
-          {filters.favorites_only && <Check className="w-3.5 h-3.5 text-white" />}
-        </div>
-        <span className="text-sm font-medium text-[#A1A1AA] group-hover:text-white transition-colors">Show only favorites</span>
-      </label>
+      {lookingFor === 'artists' && (
+        <label className="flex items-center gap-3 cursor-pointer group mt-2">
+          <div
+            className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${filters.favorites_only ? 'bg-[#9D7CFF] border-[#9D7CFF]' : 'bg-[#121218] border-white/10 group-hover:border-white/30'
+              }`}
+            onClick={() => onChange({ favorites_only: !filters.favorites_only })}
+          >
+            {filters.favorites_only && <Check className="w-3.5 h-3.5 text-white" />}
+          </div>
+          <span className="text-sm font-medium text-[#A1A1AA] group-hover:text-white transition-colors">Show only favorites</span>
+        </label>
+      )}
 
       {/* Divider */}
       <div className="h-px w-full bg-white/5 my-2"></div>

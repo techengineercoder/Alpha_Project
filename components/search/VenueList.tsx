@@ -89,7 +89,7 @@ export function VenueList({
           const location = venue.city ? `${venue.city}, ${venue.state}` : (venue.location || venue.address || 'Location unknown');
           const capacity = venue.capacity ? `${venue.capacity} capacity` : 'Capacity unknown';
           const image = venue.image || venue.cover_image || venue.user?.image || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80';
-          
+
           return (
             <motion.div
               key={venue.id}
@@ -97,6 +97,7 @@ export function VenueList({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              style={{ willChange: "transform, opacity" }}
               className="w-full bg-[#121218] border border-white/5 rounded-lg overflow-hidden flex flex-col md:flex-row group transition-colors hover:border-white/10"
             >
               {/* Image */}
@@ -105,6 +106,7 @@ export function VenueList({
                   src={image}
                   alt={name}
                   fill
+                  sizes="(max-width: 768px) 100vw, 300px"
                   className="object-cover"
                 />
               </div>
@@ -131,8 +133,8 @@ export function VenueList({
                 </div>
 
                 <div className="mt-auto flex items-center justify-end gap-3 pt-2">
-                  <Link 
-                    href={`/venue/${venue.id}`} 
+                  <Link
+                    href={`/venue/${venue.id}`}
                     className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] text-white text-sm font-medium hover:bg-[#6A4BE5] transition-colors shadow-lg shadow-[#7C5CFF]/20"
                   >
                     View Venue
@@ -146,11 +148,11 @@ export function VenueList({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-8 mb-12">
+        <div className="flex items-center justify-center cursor-pointer gap-2 mt-8 mb-12">
           <button
             disabled={currentPage === 1}
             onClick={() => handlePageClick(currentPage - 1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            className="w-10 h-10 cursor-pointer rounded-xl flex items-center justify-center border border-white/10 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <ChevronLeft className="w-5 h-5" />
           </button>
 
@@ -161,7 +163,7 @@ export function VenueList({
               <span className="text-[#A1A1AA] px-1">...</span>
               <button
                 onClick={() => handlePageClick(totalPages)}
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-medium text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors">
+                className="w-10 h-10 cursor-pointer rounded-xl flex items-center justify-center text-sm font-medium text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors">
                 {totalPages}
               </button>
             </>
@@ -170,7 +172,7 @@ export function VenueList({
           <button
             disabled={currentPage === totalPages}
             onClick={() => handlePageClick(currentPage + 1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            className="w-10 h-10 cursor-pointer rounded-xl flex items-center justify-center border border-white/10 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>

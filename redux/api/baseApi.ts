@@ -6,10 +6,23 @@ export const baseApi = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_URL, // Use the local development URL here
     credentials: "include",
 
-    prepareHeaders: (headers) => {
+    prepareHeaders: (headers, { endpoint }) => {
       const token = localStorage.getItem("accessToken");
 
-      if (token) {
+      // Endpoints that do not require an authorization token
+      const noAuthEndpoints = [
+        "login",
+        "register",
+        "resendOTP",
+        "forgotPassword",
+        "verifyEmail",
+        "resetPassword",
+        "googleLogin",
+        "facebookLogin",
+        "refreshAccessToken"
+      ];
+
+      if (token && !noAuthEndpoints.includes(endpoint as string)) {
         headers.set("Authorization", `Bearer ${token}`);
       }
       return headers;

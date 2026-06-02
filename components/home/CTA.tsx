@@ -52,7 +52,7 @@ export function CTA() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Link
-            href="#"
+            href="/search"
             className="px-8 py-3.5 rounded-2xl bg-white/5 border border-white/20 text-white font-medium hover:bg-white/10 hover:border-white/30 transition-all duration-300 hover:shadow-lg hover:shadow-white/5 active:scale-95 inline-block"
           >
             Start Browsing

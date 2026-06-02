@@ -30,7 +30,7 @@ export function MarketingNavbar() {
         setIsProfileOpen(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('mousedown', handleClickOutside);
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -70,6 +70,7 @@ export function MarketingNavbar() {
           <Link href="/#browse-artists" onClick={(e) => scrollToSection(e, 'browse-artists')} className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Browse Artists</Link>
           <Link href="/search" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Browse Venue</Link>
           <Link href="/#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="text-sm font-medium text-gray-400 hover:text-white transition-colors">How it works</Link>
+          <Link href="/blog" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Blog</Link>
         </div>
 
         {/* Actions */}
@@ -166,6 +167,7 @@ export function MarketingNavbar() {
               <Link href="/#browse-artists" onClick={(e) => { setIsMobileMenuOpen(false); scrollToSection(e, 'browse-artists'); }} className="block text-lg font-bold text-gray-400 hover:text-white py-2">Browse Artists</Link>
               <Link href="/search" onClick={() => setIsMobileMenuOpen(false)} className="block text-lg font-bold text-gray-400 hover:text-white py-2">Browse Venue</Link>
               <Link href="/#how-it-works" onClick={(e) => { setIsMobileMenuOpen(false); scrollToSection(e, 'how-it-works'); }} className="block text-lg font-bold text-gray-400 hover:text-white py-2">How it works</Link>
+              <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="block text-lg font-bold text-gray-400 hover:text-white py-2">Blog</Link>
             </div>
             {user ? (
               <Link href="/dashboard" className="px-6 py-4 rounded-2xl bg-[#7C5CFF] text-white text-center font-bold">Dashboard</Link>
@@ -206,7 +208,7 @@ export function DashboardNavbar() {
         setIsSearchOpen(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('mousedown', handleClickOutside);
     return () => {
       window.removeEventListener('scroll', handleScroll);

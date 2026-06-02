@@ -80,7 +80,7 @@ export function Banner() {
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8"
         >
           <span className="w-2 h-2 rounded-full bg-[#7C5CFF]"></span>
-          <span className="text-sm font-medium text-white/90">Over 10,000+ verified artists available</span>
+          <span className="text-sm font-medium text-white/90">Countless verified artists available</span>
         </motion.div>
 
         {/* Main Headings */}

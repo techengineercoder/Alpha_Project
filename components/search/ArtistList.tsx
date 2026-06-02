@@ -136,6 +136,7 @@ export function ArtistList({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              style={{ willChange: "transform, opacity" }}
               className="w-full bg-[#121218] border border-white/5 rounded-lg overflow-hidden flex flex-col md:flex-row group transition-colors hover:border-white/10"
             >
               {/* Image */}
@@ -144,6 +145,7 @@ export function ArtistList({
                   src={image}
                   alt={name}
                   fill
+                  sizes="(max-width: 768px) 100vw, 300px"
                   className="object-cover"
                 />
               </div>
@@ -151,21 +153,19 @@ export function ArtistList({
               {/* Content */}
               <div className="flex-1 p-6 flex flex-col relative">
                 {/* Heart Icon */}
-                <button 
+                <button
                   onClick={handleSave}
                   disabled={addFavoritesLoading}
-                  className={`absolute top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                    addFavoritesLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
-                  } ${artist.is_favorited ? 'bg-white/10' : 'bg-white/5'}`}
+                  className={`absolute top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${addFavoritesLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
+                    } ${artist.is_favorited ? 'bg-white/10' : 'bg-white/5'}`}
                 >
-                  <Heart className={`w-4 h-4 transition-colors ${
-                    artist.is_favorited ? 'fill-[#7C5CFF] text-[#7C5CFF]' : 'text-[#A1A1AA] hover:text-[#7C5CFF]'
-                  }`} />
+                  <Heart className={`w-4 h-4 transition-colors ${artist.is_favorited ? 'fill-[#7C5CFF] text-[#7C5CFF]' : 'text-[#A1A1AA] hover:text-[#7C5CFF]'
+                    }`} />
                 </button>
 
                 <div className="flex items-baseline gap-3 mb-4 pr-12">
                   <h2 className="text-xl md:text-2xl font-bold text-white">{name}</h2>
-                  {role && <span className="text-sm md:text-base text-[#A1A1AA] capitalize">{role}</span>}
+                  {/* {role && <span className="text-sm md:text-base text-[#A1A1AA] capitalize">{role}</span>} */}
                 </div>
 
                 <div className="mb-6">
@@ -205,7 +205,7 @@ export function ArtistList({
           <button
             disabled={currentPage === 1}
             onClick={() => handlePageClick(currentPage - 1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            className="w-10 h-10 cursor-pointer rounded-xl flex items-center justify-center border border-white/10 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <ChevronLeft className="w-5 h-5" />
           </button>
 
@@ -216,7 +216,7 @@ export function ArtistList({
               <span className="text-[#A1A1AA] px-1">...</span>
               <button
                 onClick={() => handlePageClick(totalPages)}
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-medium text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors">
+                className="w-10 h-10 cursor-pointer rounded-xl flex items-center justify-center text-sm font-medium text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors">
                 {totalPages}
               </button>
             </>
@@ -225,7 +225,7 @@ export function ArtistList({
           <button
             disabled={currentPage === totalPages}
             onClick={() => handlePageClick(currentPage + 1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            className="w-10 h-10 cursor-pointer rounded-xl flex items-center justify-center border border-white/10 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
