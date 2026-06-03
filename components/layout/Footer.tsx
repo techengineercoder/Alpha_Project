@@ -97,7 +97,7 @@ export function Footer() {
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-[#A1A1AA] text-sm text-center md:text-left">
-            © 2025 www.GetAvails.com. All rights reserved.
+            © {new Date().getFullYear()} www.GetAvails.com. All rights reserved.
           </p>
 
           <div className="flex items-center gap-6">
