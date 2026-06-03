@@ -19,14 +19,14 @@ export default function ArtistLayout({ children }: { children: React.ReactNode }
   return (
     <div className="space-y-12 relative z-10">
       {/* Sub-Navigation Tabs - Figma Precise Design */}
-      <div className="flex items-center gap-2 p-1.5 bg-white/[0.02] border border-white/5 rounded-[20px] w-fit backdrop-blur-md overflow-x-auto no-scrollbar mx-auto md:mx-0">
+      <div className="flex items-center gap-2 p-1.5 bg-white/[0.02] border border-white/5 rounded-[20px] w-full md:w-fit max-w-full backdrop-blur-md overflow-x-auto no-scrollbar mx-auto md:mx-0">
         {tabs.map((tab) => {
           const isActive = pathname === tab.href;
           return (
             <Link
               key={tab.name}
               href={tab.href}
-              className={`relative h-[48px] px-7 flex items-center justify-center text-base font-medium transition-all rounded-[16px] whitespace-nowrap
+              className={`relative h-[40px] md:h-[48px] px-4 md:px-7 flex items-center justify-center text-sm md:text-base font-medium transition-all rounded-[16px] whitespace-nowrap
                 ${isActive ? "text-white" : "text-gray-500 hover:text-gray-300"}
               `}
             >

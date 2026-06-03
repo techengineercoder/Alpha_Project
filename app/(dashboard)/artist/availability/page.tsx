@@ -60,10 +60,10 @@ export default function AvailabilityPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-[32px] font-bold text-white mb-2">Availability</h1>
-          <p className="text-gray-400 font-medium">Manage your calendar and availability</p>
+          <h1 className="text-2xl md:text-[32px] font-bold text-white mb-2">Availability</h1>
+          <p className="text-sm md:text-base text-gray-400 font-medium">Manage your calendar and availability</p>
         </div>
-        <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#7C5CFF] text-white font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/20">
+        <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#7C5CFF] text-white font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/20 w-full md:w-auto">
           <Plus size={20} />
           <span>Add Block Date</span>
         </button>
@@ -71,48 +71,48 @@ export default function AvailabilityPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Calendar Section */}
-        <div className="xl:col-span-2 bg-[#111116] border border-white/5 rounded-[32px] p-8">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="text-2xl font-bold text-white">May 2026</h2>
-            <div className="flex items-center gap-4">
+        <div className="xl:col-span-2 bg-[#111116] border border-white/5 rounded-[24px] md:rounded-[32px] p-5 md:p-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 md:mb-10 gap-4">
+            <h2 className="text-xl md:text-2xl font-bold text-white">May 2026</h2>
+            <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
               <div className="flex items-center bg-white/5 rounded-xl border border-white/5 p-1">
-                <button className="p-2 text-gray-400 hover:text-white transition-colors">
+                <button className="p-1.5 md:p-2 text-gray-400 hover:text-white transition-colors">
                   <ChevronLeft size={20} />
                 </button>
-                <button className="p-2 text-gray-400 hover:text-white transition-colors">
+                <button className="p-1.5 md:p-2 text-gray-400 hover:text-white transition-colors">
                   <ChevronRight size={20} />
                 </button>
               </div>
-              <button className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/5 text-sm font-bold text-white hover:bg-white/10 transition-all">
+              <button className="px-4 md:px-5 py-2 md:py-2.5 rounded-xl bg-white/5 border border-white/5 text-xs md:text-sm font-bold text-white hover:bg-white/10 transition-all">
                 Today
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-4">
+          <div className="grid grid-cols-7 gap-2 md:gap-4">
             {days.map((day) => (
-              <div key={day} className="text-center text-xs font-bold text-gray-600 uppercase tracking-widest pb-4">
+              <div key={day} className="text-center text-[10px] md:text-xs font-bold text-gray-600 uppercase tracking-widest pb-2 md:pb-4">
                 {day}
               </div>
             ))}
             
             {/* Empty slots for month start (assuming May 2026 starts on Friday based on image) */}
-            <div className="h-[80px] md:h-[100px]"></div>
-            <div className="h-[80px] md:h-[100px]"></div>
-            <div className="h-[80px] md:h-[100px]"></div>
-            <div className="h-[80px] md:h-[100px]"></div>
-            <div className="h-[80px] md:h-[100px]"></div>
+            <div className="h-[50px] sm:h-[60px] md:h-[100px]"></div>
+            <div className="h-[50px] sm:h-[60px] md:h-[100px]"></div>
+            <div className="h-[50px] sm:h-[60px] md:h-[100px]"></div>
+            <div className="h-[50px] sm:h-[60px] md:h-[100px]"></div>
+            <div className="h-[50px] sm:h-[60px] md:h-[100px]"></div>
 
             {calendarData.map((data) => (
               <div 
                 key={data.day}
-                className={`relative h-[80px] md:h-[100px] rounded-2xl border transition-all flex items-center justify-center cursor-pointer group
+                className={`relative h-[50px] sm:h-[60px] md:h-[100px] rounded-xl md:rounded-2xl border transition-all flex items-center justify-center cursor-pointer group
                   ${data.status === 'available' ? 'bg-[#10B981]/5 border-white/5 hover:border-[#10B981]/30' : 
                     data.status === 'booked' ? 'bg-[#EF4444]/10 border-[#EF4444]/20' : 
                     'bg-[#F59E0B]/10 border-[#F59E0B]/20'}
                 `}
               >
-                <span className={`text-lg font-bold
+                <span className={`text-sm md:text-lg font-bold
                   ${data.status === 'available' ? 'text-gray-500 group-hover:text-[#10B981]' : 
                     data.status === 'booked' ? 'text-[#EF4444]' : 
                     'text-[#F59E0B]'}

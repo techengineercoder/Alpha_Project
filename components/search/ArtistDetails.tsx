@@ -46,6 +46,8 @@ export function ArtistDetails() {
   const experience = artist?.experience_years ? `${artist.experience_years} years` : 'Not specified';
   const languages = artist?.languages?.length ? artist.languages.join(', ') : 'Not specified';
   const upcomingEvents = artist?.booked_dates || [];
+  
+  const isLongBio = about.length > 250 || about.split('\n').length > 4;
 
   // Calendar logic
   const monthStart = startOfMonth(currentMonth);
@@ -83,8 +85,8 @@ export function ArtistDetails() {
   if (isLoading || !artist) {
     return (
       <div className="min-h-screen bg-[#0b0b0f] text-white font-sans animate-pulse">
-        <div className="relative w-full h-[300px] md:h-[450px] bg-white/5" />
-        <div className="max-w-[1200px] mx-auto px-6 -mt-32 relative z-10 pb-24">
+        <div className="relative w-full h-[40vh] min-h-[350px] md:h-[500px] bg-white/5" />
+        <div className="max-w-[1200px] mx-auto px-4 md:px-6 -mt-16 md:-mt-32 relative z-10 pb-24">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
             <div className="flex-1 w-full">
               <div className="h-6 w-32 bg-white/10 rounded-full mb-6" />
@@ -113,37 +115,37 @@ export function ArtistDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0b0f] text-white font-sans selection:bg-[#7C5CFF]/30">
+    <div className="min-h-screen bg-[#0b0b0f] text-white font-sans selection:bg-[#7C5CFF]/30 overflow-x-hidden w-full">
       {/* Top Image Section */}
-      <div className="relative w-full h-[300px] md:h-[450px] overflow-hidden">
+      <div className="relative w-full h-[400px] md:h-[550px] lg:h-[650px] overflow-hidden">
         <Image
           src={image}
           alt={name}
           fill
-          className="object-cover opacity-60"
+          className="object-cover object-[center_30%]"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0f] via-transparent to-[#0b0b0f]/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0f] via-[#0b0b0f]/40 to-[#0b0b0f]/10" />
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-6 -mt-32 relative z-10 pb-24">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 -mt-16 md:-mt-32 relative z-10 pb-24">
 
         {/* Header Profile Content */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="flex-1"
           >
-            <div className="flex gap-2 mb-6">
+            {/* <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
               {tags.map((tag: string) => (
-                <span key={tag} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-[#A1A1AA] backdrop-blur-md">
+                <span key={tag} className="px-3 md:px-4 py-1 md:py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs font-medium text-[#A1A1AA] backdrop-blur-md">
                   {tag}
                 </span>
               ))}
-            </div>
-            <h1 className="text-5xl md:text-[56px] font-bold mb-4 tracking-tight leading-[1.1]">{name}</h1>
+            </div> */}
+            <h1 className="text-4xl md:text-[56px] font-bold mb-3 md:mb-4 tracking-tight leading-[1.1] break-words">{name}</h1>
             <div className="flex items-center gap-3 text-[#A1A1AA]">
               <MapPin className="w-5 h-5 text-[#A1A1AA]" />
               <span className="text-[18px] font-normal text-[#A1A1AA]">{location}</span>
@@ -154,19 +156,19 @@ export function ArtistDetails() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex gap-3"
+            className="flex flex-col sm:flex-row gap-3 w-full md:w-auto"
           >
             <button
               onClick={handleSave}
               disabled={addFavoritesLoading}
-              className={`px-10 py-4 flex cursor-pointer border border-white/5 items-center gap-2 rounded-[20px] bg-[rgba(255,255,255,0.07)] backdrop-blur-[8px] text-white text-base font-medium hover:scale-[1.02] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group`}
+              className={`w-full sm:w-auto px-10 py-4 flex justify-center cursor-pointer border border-white/5 items-center gap-2 rounded-[20px] bg-[rgba(255,255,255,0.07)] backdrop-blur-[8px] text-white text-base font-medium hover:scale-[1.02] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group`}
             >
               <Heart className={`w-5 h-5 transition-colors ${artist?.is_favorited ? 'fill-red-500 text-red-500' : 'group-hover:text-red-500'}`} />
               {artist?.is_favorited ? 'Saved' : 'Save'}
             </button>
             <button
               onClick={() => setIsBookingModalOpen(true)}
-              className={`px-10 py-4 rounded-[20px] cursor-pointer ${gradientClass} text-white text-base font-medium hover:scale-[1.02] transition-all shadow-xl shadow-[#7C5CFF]/30 active:scale-95`}
+              className={`w-full sm:w-auto px-10 py-4 rounded-[20px] cursor-pointer ${gradientClass} text-white text-base font-medium hover:scale-[1.02] transition-all shadow-xl shadow-[#7C5CFF]/30 active:scale-95`}
             >
               Book Now
             </button>
@@ -186,73 +188,50 @@ export function ArtistDetails() {
             >
               <h2 className="text-[36px] text-white font-bold mb-8 tracking-tight">About</h2>
               <div className="relative">
-                <motion.div
-                  animate={{ height: isAboutExpanded ? "auto" : "200px" }}
-                  className="overflow-hidden relative transition-all duration-500 ease-in-out"
-                >
+                {isLongBio ? (
+                  <>
+                    <motion.div
+                      animate={{ height: isAboutExpanded ? "auto" : "200px" }}
+                      className="overflow-hidden relative transition-all duration-500 ease-in-out"
+                    >
+                      <div className="text-[#A1A1AA] leading-[1.8] text-[18px] font-normal space-y-4">
+                        {about.split('\n\n').map((para: string, i: number) => (
+                          <p key={i}>{para}</p>
+                        ))}
+                      </div>
+
+                      {!isAboutExpanded && (
+                        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0b0b0f] to-transparent pointer-events-none" />
+                      )}
+                    </motion.div>
+
+                    <button
+                      onClick={() => setIsAboutExpanded(!isAboutExpanded)}
+                      className="mt-6 text-white font-bold text-base border-b-2 border-white/10 hover:border-white transition-all pb-0.5 tracking-wide"
+                    >
+                      {isAboutExpanded ? "Read less" : "Read more"}
+                    </button>
+                  </>
+                ) : (
                   <div className="text-[#A1A1AA] leading-[1.8] text-[18px] font-normal space-y-4">
                     {about.split('\n\n').map((para: string, i: number) => (
                       <p key={i}>{para}</p>
                     ))}
                   </div>
-
-                  {!isAboutExpanded && (
-                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0b0b0f] to-transparent pointer-events-none" />
-                  )}
-                </motion.div>
-
-                <button
-                  onClick={() => setIsAboutExpanded(!isAboutExpanded)}
-                  className="mt-6 text-white font-bold text-base border-b-2 border-white/10 hover:border-white transition-all pb-0.5 tracking-wide"
-                >
-                  {isAboutExpanded ? "Read less" : "Read more"}
-                </button>
+                )}
               </div>
             </motion.section>
 
-            {/* Experience & Languages */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="py-8 px-6 rounded-[16px] bg-[#121218] border border-white/5 hover:border-white/10 transition-all group cursor-default"
-              >
-                <p className="text-[#A1A1AA] text-base font-normal opacity-60">
-                  Experience
-                </p>
-                <p className="text-[20px] font-normal group-hover:text-[#7C5CFF] transition-colors">
-                  {experience}
-                </p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="py-8 px-6 rounded-[16px] bg-[#121218] border border-white/5 hover:border-white/10 transition-all group cursor-default"
-              >
-                <p className="text-[#A1A1AA] text-base font-normal opacity-60">
-                  Languages</p>
-                <p className="text-[20px] font-normal group-hover:text-[#7C5CFF] transition-colors">{languages}</p>
-              </motion.div>
-            </div>
+            {/* Experience & Languages removed */}
           </div>
 
-          {/* Right Sidebar */}
-          <div className="flex flex-col gap-6 relative">
-            <div className="sticky top-28 flex flex-col gap-6">
+          <div className="flex flex-col gap-6 relative w-full max-w-full">
+            <div className="lg:sticky lg:top-28 flex flex-col gap-6 w-full">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                style={{
-                  paddingTop: '25px',
-                  paddingRight: '25px',
-                  paddingBottom: '25px',
-                  paddingLeft: '25px',
-                  backgroundColor: '#121218'
-                }}
-                className="border border-white/[0.08] rounded-[16px] shadow-2xl overflow-hidden"
+                className="border border-white/[0.08] rounded-[16px] shadow-2xl overflow-hidden p-4 sm:p-5 md:p-[25px] bg-[#121218] w-full"
               >
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#7C5CFF]/5 blur-[100px] rounded-full pointer-events-none" />
 
@@ -260,25 +239,27 @@ export function ArtistDetails() {
                   <h3 className="text-[20px] font-bold tracking-tight">Availability</h3>
                 </div>
 
-                <div className="flex items-center justify-between mb-6 relative z-10">
+                <div className="flex items-center justify-between mb-4 sm:mb-6 relative z-10 w-full">
                   <button
                     onClick={handlePrevMonth}
-                    className="w-10 h-10  flex items-center justify-center cursor-pointer"
+                    className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center cursor-pointer hover:bg-white/5 rounded-full transition-colors"
                   >
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
-                  <span className="text-base font-medium  tracking-[0.2em] text-white/90">{format(currentMonth, 'MMMM yyyy')}</span>
+                  <span className="text-[13px] sm:text-sm md:text-base font-medium tracking-wider md:tracking-[0.2em] text-white/90 text-center px-2 truncate">
+                    {format(currentMonth, 'MMMM yyyy')}
+                  </span>
                   <button
                     onClick={handleNextMonth}
-                    className="w-10 h-10  flex items-center justify-center cursor-pointer"
+                    className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center cursor-pointer hover:bg-white/5 rounded-full transition-colors"
                   >
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-7 text-center gap-y-3 mb-8 relative z-10">
+                <div className="grid grid-cols-7 text-center gap-x-1 gap-y-2 sm:gap-y-3 mb-6 sm:mb-8 relative z-10 w-full">
                   {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-                    <span key={day} className="text-[12px] text-[#A1A1AA] font-normal ">{day}</span>
+                    <span key={day} className="text-[10px] sm:text-[12px] text-[#A1A1AA] font-medium truncate">{day}</span>
                   ))}
                   {Array.from({ length: startDay }).map((_, i) => (
                     <div key={`empty-${i}`} />
@@ -289,15 +270,15 @@ export function ArtistDetails() {
                     const isSelected = selectedDate && isSameDay(selectedDate, day);
 
                     return (
-                      <div key={i} className="flex items-center justify-center">
+                      <div key={i} className="flex items-center justify-center w-full">
                         <motion.div
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => isAvailable && setSelectedDate(day)}
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-[14px] font-normal  transition-all cursor-pointer relative
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[12px] sm:text-[14px] font-normal transition-all cursor-pointer relative
                                                       ${isAvailable ? 'bg-[#7C5CFF33] text-[#7C5CFF] border border-[#7C5CFF]/30' : ''}
                                                       ${isBooked ? 'bg-[#FB2C3633] text-[#FF6467] border border-[#EF4444]/30' : ''}
-                                                      ${isSelected ? gradientClass + ' text-white border-transparent shadow-xl shadow-[#7C5CFF]/40 ring-4 ring-[#7C5CFF]/20' : ''}
+                                                      ${isSelected ? gradientClass + ' text-white border-transparent shadow-md sm:shadow-xl shadow-[#7C5CFF]/40 ring-2 sm:ring-4 ring-[#7C5CFF]/20' : ''}
                                                       ${!isAvailable && !isBooked ? 'text-[#A1A1AA] hover:text-white ' : ''}
                                                   `}
                         >
@@ -308,14 +289,14 @@ export function ArtistDetails() {
                   })}
                 </div>
 
-                <div className="flex flex-col gap-5 pb- relative z-10">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-4 h-4 bg-[#7C5CFF]/30 rounded-[4px] border border-[#7C5CFF]`} />
-                    <span className="text-[14px] font-normal tracking-widest text-[#A1A1AA]">Available</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-5 pb-2 relative z-10 w-full">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className={`w-3 h-3 sm:w-4 sm:h-4 bg-[#7C5CFF]/30 rounded-[4px] border border-[#7C5CFF]`} />
+                    <span className="text-[12px] sm:text-[14px] font-normal tracking-wide sm:tracking-widest text-[#A1A1AA]">Available</span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="w-4 h-4 bg-[#EF4444]/30 rounded-[4px] border border-[#EF4444]" />
-                    <span className="text-[14px] font-normal tracking-widest text-[#A1A1AA]">Booked</span>
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 bg-[#EF4444]/30 rounded-[4px] border border-[#EF4444]" />
+                    <span className="text-[12px] sm:text-[14px] font-normal tracking-wide sm:tracking-widest text-[#A1A1AA]">Booked</span>
                   </div>
                 </div>
               </motion.div>
@@ -328,7 +309,7 @@ export function ArtistDetails() {
                 >
                   Book Now
                 </button>
-                <button className="w-full py-4 cursor-pointer rounded-[20px] bg-[#1c1c24] border border-white/10 text-white font-medium text-base  tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3">
+                <button className="w-full py-4 cursor-pointer rounded-[20px] bg-[#1c1c24] border border-white/10 text-white font-medium text-base tracking-wide md:tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3">
                   <MessageCircle className="w-5 h-5" />
                   Send Message
                 </button>
@@ -339,22 +320,22 @@ export function ArtistDetails() {
 
         {/* Availability Dates Section */}
         <div className="mt-40">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-10">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6 md:gap-10">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-[36px] font-bold tracking-tighter"
+              className="text-[28px] md:text-[36px] font-bold tracking-tighter"
             >
               Availability Dates
             </motion.h2>
 
-            <div className="flex items-center gap-8 bg-[#121218] border border-white/10 rounded-2xl px-8 py-4 shadow-2xl backdrop-blur-xl">
+            <div className="flex items-center justify-between w-full md:w-auto gap-4 md:gap-8 bg-[#121218] border border-white/10 rounded-2xl px-4 md:px-8 py-4 shadow-2xl backdrop-blur-xl">
               <ChevronLeft
                 onClick={handlePrevMonth}
                 className="w-6 h-6 text-[#A1A1AA] cursor-pointer hover:text-white transition-all hover:scale-110 active:scale-90"
               />
-              <span className="text-base font-medium   text-center    text-white">{format(currentMonth, 'MMMM yyyy')}</span>
+              <span className="text-sm md:text-base font-medium text-center text-white min-w-[120px]">{format(currentMonth, 'MMMM yyyy')}</span>
               <ChevronRight
                 onClick={handleNextMonth}
                 className="w-6 h-6 text-[#A1A1AA] cursor-pointer hover:text-white transition-all hover:scale-110 active:scale-90"
@@ -362,18 +343,18 @@ export function ArtistDetails() {
             </div>
           </div>
 
-          <div className="mb-20">
-            <p className="text-[14px] font-medium text-[#A1A1AA]  mb-4    text-center md:text-left">I&apos;m looking for</p>
-            <div className="flex flex-wrap   bg-[#121218] border border-white/10  shadow-inner w-fit mx-auto md:mx-0">
+          <div className="mb-12 md:mb-20">
+            <p className="text-[14px] font-medium text-[#A1A1AA] mb-4 text-center md:text-left">I&apos;m looking for</p>
+            <div className="flex flex-col sm:flex-row bg-[#121218] border border-white/10 shadow-inner w-full md:w-fit mx-auto md:mx-0 rounded-[12px] overflow-hidden">
               <button
                 onClick={() => setActiveTab('availability')}
-                className={`px-10 py-4  text-[18px] font-normal  tracking-widest transition-all ${activeTab === 'availability' ? gradientClass + ' text-white ' : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'}`}
+                className={`flex-1 sm:flex-none px-6 md:px-10 py-4 text-[16px] md:text-[18px] font-normal tracking-wide md:tracking-widest transition-all ${activeTab === 'availability' ? gradientClass + ' text-white ' : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'}`}
               >
                 Upcoming Availability
               </button>
               <button
                 onClick={() => setActiveTab('booked')}
-                className={`px-10 py-4  text-[18px] font-normal  tracking-widest transition-all ${activeTab === 'booked' ? gradientClass + ' text-white ' : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'}`}
+                className={`flex-1 sm:flex-none px-6 md:px-10 py-4 text-[16px] md:text-[18px] font-normal tracking-wide md:tracking-widest transition-all border-t sm:border-t-0 sm:border-l border-white/5 ${activeTab === 'booked' ? gradientClass + ' text-white ' : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'}`}
               >
                 Upcoming Booked Dates
               </button>
