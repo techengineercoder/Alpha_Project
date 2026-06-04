@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { handleError } from "@/lib/handleError";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/feature/authSlice";
-import { saveTokens } from "@/service/authService";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 const roles = [
@@ -46,8 +45,8 @@ export default function Register() {
         // role: selectedRole,
       }).unwrap();
 
-      // Save to cookies
-      await saveTokens(response.access);
+      // Save to cookies securely on the client side
+      document.cookie = `token=${response.access}; path=/; max-age=31536000; SameSite=Lax`;
 
       // Save to Redux (and localStorage via slice)
       dispatch(setUser({
@@ -217,22 +216,34 @@ export default function Register() {
                 >
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </button>
-
-                {/* Social Login Button */}
-                <div className="flex justify-center w-full">
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={handleGoogleError}
-                    useOneTap
-                    shape="pill"
-                    theme="filled_black"
-                    size="large"
-                    text="continue_with"
-                    width="300"
-                  />
-                </div>
               </div>
             </form>
+
+            {/* Divider */}
+            <div className="relative my-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-white/5"></div>
+              </div>
+              <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-medium">
+                <span className="bg-[#111116] px-4 text-gray-500">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            {/* Social Login Button */}
+            <div className="flex justify-center w-full">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap
+                shape="pill"
+                theme="filled_black"
+                size="large"
+                text="continue_with"
+                width="300"
+              />
+            </div>
 
             <div className="mt-8 text-center">
               <p className="text-gray-500 text-sm font-medium">

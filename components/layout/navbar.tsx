@@ -7,7 +7,7 @@ import { logout } from '@/redux/feature/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
-
+import baseApi from '@/redux/api/baseApi';
 /**
  * Marketing Navbar - For Landing Page
  */
@@ -40,6 +40,7 @@ export function MarketingNavbar() {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(baseApi.util.resetApiState());
     setIsProfileOpen(false);
   };
 
@@ -218,6 +219,7 @@ export function DashboardNavbar() {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(baseApi.util.resetApiState());
     setIsProfileOpen(false);
   };
 

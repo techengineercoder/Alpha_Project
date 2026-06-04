@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { handleError } from "@/lib/handleError";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/feature/authSlice";
-import { saveTokens } from "@/service/authService";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 
@@ -40,8 +39,9 @@ export default function Login() {
         id_token: credentialResponse.credential,
       }).unwrap();
 
-      // Save to cookies
-      await saveTokens(response.access);
+      // Save to cookies securely on the client side
+      document.cookie = `token=${response.access}; path=/; max-age=31536000; SameSite=Lax`;
+
 
       // Save to Redux (and localStorage via slice)
       dispatch(setUser({
