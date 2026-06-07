@@ -1,14 +1,15 @@
 "use client";
 
+import { useGetDashboardQuery } from "@/redux/feature/artistApi/bookingSlice";
 import { motion } from "framer-motion";
-import { 
-  LayoutDashboard, 
-  DollarSign, 
-  CheckCircle, 
-  Clock, 
-  Music, 
-  MapPin, 
-  Activity, 
+import {
+  LayoutDashboard,
+  DollarSign,
+  CheckCircle,
+  Clock,
+  Music,
+  MapPin,
+  Activity,
   ChevronRight,
   Inbox,
   Ticket,
@@ -58,6 +59,10 @@ const recentActivity = [
 ];
 
 export default function ArtistDashboard() {
+
+  const { data, isLoading } = useGetDashboardQuery(undefined);
+
+
   return (
     <div className="space-y-10">
       {/* Welcome Header */}
@@ -77,7 +82,7 @@ export default function ArtistDashboard() {
             className="bg-[#111116] border border-white/5 rounded-[24px] p-6 group hover:border-white/10 transition-all shadow-2xl relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-               <stat.icon size={64} />
+              <stat.icon size={64} />
             </div>
             <div className="text-[36px] font-bold text-white mb-1">{stat.value}</div>
             <div className="text-sm text-gray-500 font-medium">{stat.label}</div>
@@ -93,7 +98,7 @@ export default function ArtistDashboard() {
             <div className="p-5 md:p-8 border-b border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-[#7C5CFF]/10 flex items-center justify-center text-[#7C5CFF] border border-[#7C5CFF]/20">
-                   <DollarSign size={20} className="md:w-6 md:h-6" />
+                  <DollarSign size={20} className="md:w-6 md:h-6" />
                 </div>
                 <div>
                   <h2 className="text-lg md:text-xl font-bold text-white">Incoming Offers</h2>
@@ -104,11 +109,11 @@ export default function ArtistDashboard() {
                 View All Offers
               </button>
             </div>
-            
+
             <div className="p-4 space-y-3">
               {incomingOffers.map((offer) => (
-                <div 
-                  key={offer.id} 
+                <div
+                  key={offer.id}
                   className="p-6 rounded-[24px] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
                 >
                   <div className="space-y-2">
@@ -124,7 +129,7 @@ export default function ArtistDashboard() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full md:w-auto justify-between md:justify-end mt-2 md:mt-0">
                     <div className="text-[22px] font-bold text-white">{offer.price}</div>
                     <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -147,12 +152,12 @@ export default function ArtistDashboard() {
           {/* Upcoming Bookings */}
           <div className="bg-[#111116] border border-white/5 rounded-[32px] p-8 space-y-6">
             <div className="flex items-center gap-3">
-               <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 flex items-center justify-center text-[#10B981] border border-[#10B981]/20">
-                  <Ticket size={20} />
-               </div>
-               <h2 className="text-lg font-bold text-white">Upcoming Bookings</h2>
+              <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 flex items-center justify-center text-[#10B981] border border-[#10B981]/20">
+                <Ticket size={20} />
+              </div>
+              <h2 className="text-lg font-bold text-white">Upcoming Bookings</h2>
             </div>
-            
+
             <div className="space-y-4">
               {upcomingBookings.map((booking) => (
                 <div key={booking.title} className="p-5 rounded-[20px] bg-white/[0.03] border border-white/5 space-y-3">
@@ -173,12 +178,12 @@ export default function ArtistDashboard() {
           {/* Recent Activity */}
           <div className="bg-[#111116] border border-white/5 rounded-[32px] p-8 space-y-6">
             <div className="flex items-center gap-3">
-               <div className="w-10 h-10 rounded-xl bg-[#3B82F6]/10 flex items-center justify-center text-[#3B82F6] border border-[#3B82F6]/20">
-                  <Activity size={20} />
-               </div>
-               <h2 className="text-lg font-bold text-white">Recent Activity</h2>
+              <div className="w-10 h-10 rounded-xl bg-[#3B82F6]/10 flex items-center justify-center text-[#3B82F6] border border-[#3B82F6]/20">
+                <Activity size={20} />
+              </div>
+              <h2 className="text-lg font-bold text-white">Recent Activity</h2>
             </div>
-            
+
             <div className="space-y-6">
               {recentActivity.map((activity, index) => (
                 <div key={index} className="flex gap-4 group">

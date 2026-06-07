@@ -107,12 +107,27 @@ export function ArtistList({
           const role = artist.genres?.join(', ') || artist.user?.role || artist.provider_name || '';
           const image = artist.image || artist.cover_image || artist.user?.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80';
 
+          const formatDate = (dateStr: string) => {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            const dd = String(date.getDate()).padStart(2, '0');
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            return `${dd}-${mm}-${yyyy}`;
+          };
+
           let availableDates = ['Available'];
           if (artist.booked_dates && artist.booked_dates.length > 0) {
-            availableDates = artist.booked_dates.map((d: any) => d.start_date || d.date).slice(0, 4);
+            availableDates = artist.booked_dates
+              .map((d: any) => formatDate(d.start_date || d.date))
+              .slice(0, 4);
           } else if (artist.available_ranges && artist.available_ranges.length > 0) {
-            availableDates = artist.available_ranges.map((r: any) => `${r.start} to ${r.end}`).slice(0, 3);
+            availableDates = artist.available_ranges
+              .map((r: any) => `${formatDate(r.start)} to ${formatDate(r.end)}`)
+              .slice(0, 3);
           }
+
 
           const handleSave = async (e: React.MouseEvent) => {
             e.preventDefault();

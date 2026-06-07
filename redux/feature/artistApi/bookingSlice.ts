@@ -31,6 +31,15 @@ export const bookingtApi = baseApi.injectEndpoints({
             }),
             providesTags: ["Booking"],
         }),
+
+        // /bookings/dashboard/
+        getDashboard: builder.query({
+            query: () => ({
+                url: "/bookings/dashboard/",
+                method: "GET",
+            }),
+            providesTags: ["Booking"],
+        }),
     }),
 });
 
@@ -38,4 +47,5 @@ export const {
     useCreateBookingMutation,
     useAddFavoritesMutation,
     useGetFavoritesQuery,
+    useGetDashboardQuery
 } = bookingtApi;
