@@ -8,8 +8,8 @@ const tabs = [
   { name: "Dashboard", href: "/artist/dashboard" },
   { name: "Booking", href: "/artist/bookings" },
   { name: "Incoming Offers", href: "/artist/offers" },
-  { name: "Availability", href: "/artist/availability" },
-  { name: "Messages", href: "/artist/messages" },
+  // { name: "Availability", href: "/artist/availability" },
+  // { name: "Messages", href: "/artist/messages" },
   { name: "Profile Settings", href: "/artist/settings" },
 ];
 

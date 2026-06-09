@@ -1,19 +1,21 @@
 "use client";
 
+import { useGetUsersQuery } from "@/redux/feature/userSlice";
 import { motion } from "framer-motion";
 import {
   Lock,
   Bell,
   Camera,
   Settings as SettingsIcon,
-  MapPin,
-  Mail,
-  Music,
   Save,
   ShieldCheck
 } from "lucide-react";
 
 export default function ProfileSettingsPage() {
+
+  const { data, isLoading } = useGetUsersQuery(undefined);
+  console.log(data, '=============');
+
   return (
     <div className="space-y-6  pb-20">
       {/* Page Header - Matching image exactly */}
@@ -109,7 +111,7 @@ export default function ProfileSettingsPage() {
         </motion.div>
 
         {/* Section 2: Change Password Card */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -160,7 +162,7 @@ export default function ProfileSettingsPage() {
         </motion.div>
 
         {/* Section 3: Notifications Card */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}

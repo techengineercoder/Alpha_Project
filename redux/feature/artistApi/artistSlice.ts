@@ -22,10 +22,21 @@ export const artistApi = baseApi.injectEndpoints({
             }),
             providesTags: ["Artist"],
         }),
+
+        // /catalog/recent-searches/
+        getRecentSearches: builder.query({
+            query: (params: Record<string, string>) => ({
+                url: "/catalog/recent-searches/",
+                method: "GET",
+                params,
+            }),
+            providesTags: ["Artist"],
+        }),
     }),
 });
 
 export const {
     useGetArtistsQuery,
     useGetArtistByIdQuery,
+    useGetRecentSearchesQuery,
 } = artistApi;

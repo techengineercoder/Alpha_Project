@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Providers from "@/provider/provider";
+import Message from "@/components/home/message";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -73,6 +74,7 @@ export default function RootLayout({
             visibleToasts={1}
             theme="dark"
           />
+          <Message />
         </Providers>
       </body>
     </html>

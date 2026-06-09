@@ -6,7 +6,7 @@ import { Heart, Search, Share, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { BookingModal } from './BookingModal';
 import Link from 'next/link';
-import { useAddFavoritesMutation } from '@/redux/feature/artistApi/bookingSlice';
+import { useAddFavoritesMutation, useRemoveFavoritesMutation } from '@/redux/feature/artistApi/bookingSlice';
 import { toast } from 'sonner';
 
 export function ArtistList({
@@ -27,6 +27,7 @@ export function ArtistList({
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
 
   const [addFavorites, { isLoading: addFavoritesLoading }] = useAddFavoritesMutation();
+  const [removeFavorites, { isLoading: removeFavoritesLoading }] = useRemoveFavoritesMutation();
 
 
   const totalPages = Math.ceil(totalCount / limit) || 1;
@@ -144,6 +145,16 @@ export function ArtistList({
             }
           };
 
+          const handleRemoveFavorites = async () => {
+            try {
+              await removeFavorites(String(artist.id)).unwrap();
+              // await refetch();
+              toast.success("Artist removed from favorites!");
+            } catch (error: any) {
+              toast.error(error.data?.message || "Failed to remove artist from favorites");
+            }
+          };
+
           return (
             <motion.div
               key={artist.id}
@@ -169,13 +180,19 @@ export function ArtistList({
               <div className="flex-1 p-6 flex flex-col relative">
                 {/* Heart Icon */}
                 <button
-                  onClick={handleSave}
-                  disabled={addFavoritesLoading}
-                  className={`absolute top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${addFavoritesLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
+                  // onClick={handleSave}
+                  onClick={artist?.is_favorited ? handleRemoveFavorites : handleSave}
+                  disabled={artist?.is_favorited ? removeFavoritesLoading : addFavoritesLoading}
+                  className={`absolute cursor-pointer top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${addFavoritesLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
                     } ${artist.is_favorited ? 'bg-white/10' : 'bg-white/5'}`}
                 >
-                  <Heart className={`w-4 h-4 transition-colors ${artist.is_favorited ? 'fill-[#7C5CFF] text-[#7C5CFF]' : 'text-[#A1A1AA] hover:text-[#7C5CFF]'
-                    }`} />
+                  <Heart
+                    fill={artist?.is_favorited ? "currentColor" : "none"}
+                    className={`w-5 h-5 transition-colors ${artist?.is_favorited
+                        ? "text-red-500"
+                        : "text-white group-hover:text-red-500"
+                      }`}
+                  />
                 </button>
 
                 <div className="flex items-baseline gap-3 mb-4 pr-12">

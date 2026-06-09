@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import baseApi from '@/redux/api/baseApi';
+import { useGetArtistsQuery, useGetRecentSearchesQuery } from '@/redux/feature/artistApi/artistSlice';
+import { Logo } from '../icon/logo';
 /**
  * Marketing Navbar - For Landing Page
  */
@@ -63,7 +65,8 @@ export function MarketingNavbar() {
       >
         {/* Logo */}
         <Link href="/" className="text-white font-bold text-xl md:text-[22px] tracking-tight">
-          GetAvails
+          {/* GetAvails */}
+          <Logo />
         </Link>
 
         {/* Desktop Links */}
@@ -193,6 +196,12 @@ export function DashboardNavbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
+  const [queryParams, setQueryParams] = useState({
+    q: "",
+  })
+
+  const { data: artistsData, isLoading: isLoadingArtists, isFetching: isFetchingArtists } = useGetRecentSearchesQuery(queryParams as any);
+
 
   const { data: userProfile } = useGetUsersQuery(undefined);
   const user = userProfile?.user;
@@ -232,7 +241,8 @@ export function DashboardNavbar() {
       >
         {/* Logo */}
         <Link href="/" className="text-white font-bold text-xl md:text-[22px] tracking-tight">
-          ArtistBook
+          {/* ArtistBook */}
+          <Logo />
         </Link>
 
         {/* Actions */}
@@ -264,12 +274,24 @@ export function DashboardNavbar() {
                   <input
                     autoFocus
                     type="text"
+                    value={queryParams.q}
+                    onChange={(e) => setQueryParams({ ...queryParams, q: e.target.value })}
                     placeholder="Search artists, events..."
                     className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-10 text-sm text-white focus:outline-none focus:border-[#7C5CFF]/50 transition-all"
                   />
                   <button onClick={() => setIsSearchOpen(false)} className="absolute right-3 p-0.5 rounded-full hover:bg-white/10 text-gray-500 hover:text-white transition-all">
                     <X size={14} />
                   </button>
+                  {/* {artistsData && (
+                    <div>
+                      {artistsData?.results?.map((artist: any) => (
+                        <div key={artist?.id}>
+                          <img src={artist?.avatar} alt={artist?.name} />
+                          <p>{artist?.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )} */}
                 </motion.div>
               )}
             </AnimatePresence>

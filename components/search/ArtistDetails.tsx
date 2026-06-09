@@ -8,7 +8,7 @@ import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterv
 import { BookingModal } from './BookingModal';
 import { useParams } from 'next/navigation';
 import { useGetArtistByIdQuery } from '@/redux/feature/artistApi/artistSlice';
-import { useAddFavoritesMutation } from '@/redux/feature/artistApi/bookingSlice';
+import { useAddFavoritesMutation, useRemoveFavoritesMutation } from '@/redux/feature/artistApi/bookingSlice';
 import { toast } from 'sonner';
 
 const gradientClass = "bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF]";
@@ -21,32 +21,44 @@ export function ArtistDetails() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
 
-  const { data: response, isLoading } = useGetArtistByIdQuery(id as string);
+  const { data: response, isLoading, refetch } = useGetArtistByIdQuery(id as string);
 
   const [addFavorites, { isLoading: addFavoritesLoading }] = useAddFavoritesMutation();
 
+  const [removeFavorites, { isLoading: removeFavoritesLoading }] = useRemoveFavoritesMutation();
+
   // Handle case where API response wraps data inside 'artist' or returns it directly
   const artist = response?.artist || response;
+  console.log("is_favorited:", artist?.is_favorited);
+
 
   const handleSave = async () => {
     try {
       // const numericArtistId = parseInt(String(id).replace(/\D/g, ''), 10);
       await addFavorites({ artist_id: String(id) }).unwrap();
+      await refetch();
       toast.success(artist?.is_favorited ? "Artist removed from favorites" : "Artist saved to favorites!");
     } catch (error: any) {
       toast.error(error.data?.message || "Failed to save artist");
     }
   };
 
+  const handleRemoveFavorites = async () => {
+    try {
+      await removeFavorites(String(id)).unwrap();
+      await refetch();
+      toast.success("Artist removed from favorites!");
+    } catch (error: any) {
+      toast.error(error.data?.message || "Failed to remove artist from favorites");
+    }
+  };
+
   const name = artist?.name || artist?.user?.name || 'Unknown Artist';
   const image = artist?.image || artist?.cover_image || artist?.user?.image || 'https://images.unsplash.com/photo-1600119692885-8b04faa7f329?w=1200&q=80';
   const location = artist?.location || 'Location unknown';
-  const tags = artist?.genres && artist.genres.length > 0 ? artist.genres : (artist?.provider_name ? [artist.provider_name] : []);
   const about = artist?.bio || 'No biography available for this artist.';
-  const experience = artist?.experience_years ? `${artist.experience_years} years` : 'Not specified';
-  const languages = artist?.languages?.length ? artist.languages.join(', ') : 'Not specified';
   const upcomingEvents = artist?.booked_dates || [];
-  
+
   const isLongBio = about.length > 250 || about.split('\n').length > 4;
 
   // Calendar logic
@@ -158,13 +170,27 @@ export function ArtistDetails() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col sm:flex-row gap-3 w-full md:w-auto"
           >
-            <button
+            {/* <button
               onClick={handleSave}
               disabled={addFavoritesLoading}
               className={`w-full sm:w-auto px-10 py-4 flex justify-center cursor-pointer border border-white/5 items-center gap-2 rounded-[20px] bg-[rgba(255,255,255,0.07)] backdrop-blur-[8px] text-white text-base font-medium hover:scale-[1.02] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group`}
             >
               <Heart className={`w-5 h-5 transition-colors ${artist?.is_favorited ? 'fill-red-500 text-red-500' : 'group-hover:text-red-500'}`} />
               {artist?.is_favorited ? 'Saved' : 'Save'}
+            </button> */}
+            <button
+              onClick={artist?.is_favorited ? handleRemoveFavorites : handleSave}
+              disabled={artist?.is_favorited ? removeFavoritesLoading : addFavoritesLoading}
+              className="w-full cursor-pointer sm:w-auto px-10 py-4 flex justify-center items-center gap-2 rounded-[20px] bg-[rgba(255,255,255,0.07)] backdrop-blur-[8px] text-white text-base font-medium hover:scale-[1.02] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group"
+            >
+              <Heart
+                fill={artist?.is_favorited ? "currentColor" : "none"}
+                className={`w-5 h-5 transition-colors ${artist?.is_favorited
+                  ? "text-red-500"
+                  : "group-hover:text-red-500"
+                  }`}
+              />
+              {artist?.is_favorited ? "Saved" : "Save"}
             </button>
             <button
               onClick={() => setIsBookingModalOpen(true)}

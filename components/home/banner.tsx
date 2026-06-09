@@ -25,7 +25,6 @@ export function Banner() {
 
   const selectedGenreObj = genres.find((g: any) => g.slug === genre);
 
-  console.log(selectedGenreObj);
 
   const router = useRouter();
 
@@ -59,7 +58,7 @@ export function Banner() {
   return (
     <section
       className="relative w-full min-h-[1013px] flex flex-col items-center justify-center px-4 md:px-8 py-20 bg-cover bg-center bg-no-repeat overflow-hidden"
-      style={{ backgroundImage: "url('/image/banner.jpg')" }}
+      style={{ backgroundImage: "url('/image/hero.jpg')" }}
     >
       {/* Overlays */}
       <div className="absolute inset-0 bg-black/40 z-0"></div>
@@ -222,8 +221,8 @@ export function Banner() {
                         <div
                           key={g.id}
                           className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${isSelected
-                              ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
-                              : 'text-white/70 hover:bg-white/10 hover:text-white border border-transparent'
+                            ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white border border-transparent'
                             }`}
                           onClick={() => {
                             setGenre(g.slug);

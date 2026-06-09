@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/layout/navbar";
 import { ArtistDetails } from "@/components/search/ArtistDetails";
 
 export default function DetailsPage() {
