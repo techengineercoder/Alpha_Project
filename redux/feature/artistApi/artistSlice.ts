@@ -11,7 +11,7 @@ export const artistApi = baseApi.injectEndpoints({
                 method: "GET",
                 params,
             }),
-            providesTags: ["Artist"],
+            providesTags: ["Artist", "Booking"],
         }),
 
         // /catalog/artists/<<artist_profile_id>>/
@@ -20,7 +20,7 @@ export const artistApi = baseApi.injectEndpoints({
                 url: `/catalog/artists/${id}/`,
                 method: "GET",
             }),
-            providesTags: ["Artist"],
+            providesTags: ["Artist", "Booking"],
         }),
 
         // /catalog/recent-searches/

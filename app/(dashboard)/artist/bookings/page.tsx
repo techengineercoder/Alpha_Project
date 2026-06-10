@@ -193,23 +193,36 @@ export default function BookingsPage() {
 
   const [acceptOffer, { isLoading: acceptLoading }] = useAcceptOfferMutation();
   const [rejectOffer, { isLoading: rejectLoading }] = useRejectOfferMutation();
+  
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [actionType, setActionType] = useState<"accept" | "reject" | null>(null);
 
   const handleAcceptOffer = async (id: string) => {
+    setProcessingId(id);
+    setActionType("accept");
     try {
       await acceptOffer(id).unwrap();
       toast.success("Offer accepted successfully");
     } catch (error: any) {
       toast.error(error?.data?.error?.message || "Failed to accept offer");
+    } finally {
+      setProcessingId(null);
+      setActionType(null);
     }
   };
 
   const handleRejectOffer = async (id: string) => {
+    setProcessingId(id);
+    setActionType("reject");
     try {
       await rejectOffer(id).unwrap();
       toast.success("Offer rejected successfully");
     } catch (error: any) {
       console.log(error?.data?.error?.message)
       toast.error(error?.data?.error?.message || 'Failed to reject offer');
+    } finally {
+      setProcessingId(null);
+      setActionType(null);
     }
   };
 
@@ -304,11 +317,19 @@ export default function BookingsPage() {
                     <div className="flex items-center gap-3 w-full md:w-auto">
                       {activeTab === "pending" ? (
                         <>
-                          <button onClick={() => handleAcceptOffer(item.id)} className="flex-1 md:flex-none px-8 py-3 rounded-2xl bg-[#7C5CFF] text-white text-sm font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/10">
-                            {acceptLoading ? "Accepting..." : "Accept Offer"}
+                          <button 
+                            onClick={() => handleAcceptOffer(item.id)} 
+                            disabled={processingId === item.id || acceptLoading}
+                            className="flex-1 md:flex-none px-8 py-3 rounded-2xl bg-[#7C5CFF] text-white text-sm font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/10 disabled:opacity-50"
+                          >
+                            {processingId === item.id && actionType === "accept" ? "Accepting..." : "Accept Offer"}
                           </button>
-                          <button onClick={() => handleRejectOffer(item.id)} className="px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 text-gray-400 text-sm font-bold hover:bg-white/[0.08] hover:text-white transition-all">
-                            {rejectLoading ? "Rejecting..." : "Reject"}
+                          <button 
+                            onClick={() => handleRejectOffer(item.id)} 
+                            disabled={processingId === item.id || rejectLoading}
+                            className="px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 text-gray-400 text-sm font-bold hover:bg-white/[0.08] hover:text-white transition-all disabled:opacity-50"
+                          >
+                            {processingId === item.id && actionType === "reject" ? "Rejecting..." : "Reject"}
                           </button>
                         </>
                       ) : activeTab === "confirmed" ? (

@@ -62,7 +62,7 @@ function SearchContent() {
   }
 
 
-  const { data: artistsData, isLoading: isLoadingArtists, isFetching: isFetchingArtists } = useGetArtistsQuery(queryParams as Record<string, string>, {
+  const { data: artistsData, isLoading: isLoadingArtists, isFetching: isFetchingArtists, refetch } = useGetArtistsQuery(queryParams as Record<string, string>, {
     skip: params.type === 'venue'
   });
 
@@ -198,6 +198,7 @@ function SearchContent() {
                 isLoading={isLoading}
                 totalCount={totalCount}
                 limit={params.limit}
+                refetch={refetch}
                 offset={params.offset}
                 onPageChange={handlePageChange}
               />

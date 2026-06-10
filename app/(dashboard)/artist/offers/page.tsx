@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetDashboardQuery } from "@/redux/feature/artistApi/bookingSlice";
+import { useAcceptOfferMutation, useGetDashboardQuery, useRejectOfferMutation } from "@/redux/feature/artistApi/bookingSlice";
 import { motion } from "framer-motion";
 import {
   Inbox,
@@ -10,49 +10,33 @@ import {
   Search,
   Filter
 } from "lucide-react";
+import { toast } from "sonner";
 
-const offers = [
-  {
-    title: "Summer Music Festival",
-    location: "Central Park Arena",
-    date: "June 15, 2026",
-    price: "$5,000",
-    id: 1,
-    organizer: "Live Nation",
-    category: "Festival",
-  },
-  {
-    title: "Jazz Night",
-    location: "Blue Note Club",
-    date: "May 25, 2026",
-    price: "$2,500",
-    id: 2,
-    organizer: "Blue Note",
-    category: "Club Show",
-  },
-  {
-    title: "Corporate Event",
-    location: "Grand Hotel Ballroom",
-    date: "June 5, 2026",
-    price: "$3,800",
-    id: 3,
-    organizer: "Google Inc.",
-    category: "Corporate",
-  },
-  {
-    title: "Private Birthday Party",
-    location: "Beverly Hills",
-    date: "July 12, 2026",
-    price: "$4,200",
-    id: 4,
-    organizer: "Private Client",
-    category: "Private",
-  },
-];
+
 
 export default function IncomingOffersPage() {
 
   const { data, isLoading } = useGetDashboardQuery(undefined);
+  const [acceptOffer, { isLoading: isLoadingAccept }] = useAcceptOfferMutation();
+  const [rejectOffer, { isLoading: isLoadingReject }] = useRejectOfferMutation();
+
+  const handleAcceptOffer = async (id: string) => {
+    try {
+      await acceptOffer(id).unwrap();
+      toast.success("Offer accepted successfully!");
+    } catch (error: any) {
+      toast.error(error.data?.message || "Failed to accept offer");
+    }
+  };
+
+  const handleRejectOffer = async (id: string) => {
+    try {
+      await rejectOffer(id).unwrap();
+      toast.success("Offer rejected successfully!");
+    } catch (error: any) {
+      toast.error(error.data?.message || "Failed to reject offer");
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -154,12 +138,12 @@ export default function IncomingOffersPage() {
                 </div>
 
                 <div className="flex flex-row items-center gap-2 md:gap-3 w-full sm:w-auto">
-                  <button className="flex-1 sm:flex-none px-4 sm:px-6 md:px-8 py-2.5 md:py-3.5 rounded-xl md:rounded-2xl bg-[#7C5CFF] text-white text-xs md:text-sm font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/20">
-                    Accept
+                  <button onClick={() => handleAcceptOffer(offer.id)} disabled={isLoadingAccept || isLoadingReject} className="flex-1 sm:flex-none cursor-pointer px-4 sm:px-6 md:px-8 py-2.5 md:py-3.5 rounded-xl md:rounded-2xl bg-[#7C5CFF] text-white text-xs md:text-sm font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/20">
+                    {isLoadingAccept ? "Accepting..." : "Accept"}
                   </button>
 
-                  <button className="flex-1 sm:flex-none px-4 sm:px-6 md:px-8 py-2.5 md:py-3.5 rounded-xl md:rounded-2xl bg-white/[0.03] border border-white/5 text-gray-400 text-xs md:text-sm font-bold hover:bg-white/[0.08] hover:text-white transition-all">
-                    Reject
+                  <button onClick={() => handleRejectOffer(offer.id)} disabled={isLoadingAccept || isLoadingReject} className="flex-1 sm:flex-none cursor-pointer px-4 sm:px-6 md:px-8 py-2.5 md:py-3.5 rounded-xl md:rounded-2xl bg-white/[0.03] border border-white/5 text-gray-400 text-xs md:text-sm font-bold hover:bg-white/[0.08] hover:text-white transition-all">
+                    {isLoadingReject ? "Rejecting..." : "Reject"}
                   </button>
                 </div>
               </div>

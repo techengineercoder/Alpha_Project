@@ -30,7 +30,7 @@ export const bookingtApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: data,
             }),
-            invalidatesTags: ["Booking"],
+            invalidatesTags: ["Favorites"],
         }),
         // /catalog/favorites/<<id>>/
         removeFavorites: builder.mutation({
@@ -38,7 +38,7 @@ export const bookingtApi = baseApi.injectEndpoints({
                 url: `/catalog/favorites/${id}/`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["Booking"],
+            invalidatesTags: ["Favorites"],
         }),
 
         // /catalog/favorites/
@@ -47,7 +47,7 @@ export const bookingtApi = baseApi.injectEndpoints({
                 url: "/catalog/favorites/",
                 method: "GET",
             }),
-            providesTags: ["Booking"],
+            providesTags: ["Favorites"],
         }),
 
         // /bookings/dashboard/

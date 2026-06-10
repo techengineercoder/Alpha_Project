@@ -9,13 +9,6 @@ export const chatBotApi = createApi({
     tagTypes: ["Session"],
     baseQuery: fetchBaseQuery({
         baseUrl: API_URL,
-        prepareHeaders: (headers) => {
-            const token = localStorage.getItem("accessToken");
-            if (token) {
-                headers.set("Authorization", `Bearer ${token}`);
-            }
-            return headers;
-        },
     }),
     endpoints: (builder) => ({
         chat: builder.mutation({

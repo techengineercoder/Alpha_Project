@@ -18,7 +18,7 @@ const baseQuery = fetchBaseQuery({
       "googleLogin",
       "facebookLogin",
       "refreshAccessToken",
-      "getArtists",
+      // "getArtists",
       // "getArtistById",
       "getVenues",
       "getVenueById",
@@ -66,7 +66,8 @@ export const baseApi = createApi({
     "Booking",
     "Genres",
     "Venues",
-    "Session"
+    "Session",
+    "Favorites",
 
   ],
   endpoints: () => ({}),

@@ -15,7 +15,8 @@ export function ArtistList({
   totalCount = 0,
   limit = 20,
   offset = 0,
-  onPageChange
+  onPageChange,
+  refetch
 }: {
   artists?: any[];
   isLoading?: boolean;
@@ -23,11 +24,14 @@ export function ArtistList({
   limit?: number;
   offset?: number;
   onPageChange?: (newOffset: number) => void;
+  refetch: () => void;
 }) {
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
+  const [localFavorites, setLocalFavorites] = useState<Record<string, boolean>>({});
+  const [loadingFavorites, setLoadingFavorites] = useState<Record<string, boolean>>({});
 
-  const [addFavorites, { isLoading: addFavoritesLoading }] = useAddFavoritesMutation();
-  const [removeFavorites, { isLoading: removeFavoritesLoading }] = useRemoveFavoritesMutation();
+  const [addFavorites] = useAddFavoritesMutation();
+  const [removeFavorites] = useRemoveFavoritesMutation();
 
 
   const totalPages = Math.ceil(totalCount / limit) || 1;
@@ -69,8 +73,8 @@ export function ArtistList({
   return (
     <div className="w-full flex flex-col gap-6">
       {/* Artist Cards */}
-      <div className="flex flex-col gap-6">
-        {isLoading && (
+      <div className={`flex flex-col gap-6 transition-opacity duration-300 ${isLoading && artists.length > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
+        {isLoading && artists.length === 0 && (
           <>
             {[...Array(3)].map((_, i) => (
               <div key={i} className="w-full bg-[#121218] border border-white/5 rounded-lg overflow-hidden flex flex-col md:flex-row animate-pulse">
@@ -103,7 +107,7 @@ export function ArtistList({
         {!isLoading && artists.length === 0 && (
           <div className="text-[#A1A1AA] text-center py-10">No artists found.</div>
         )}
-        {!isLoading && artists.map((artist, index) => {
+        {artists.length > 0 && artists.map((artist, index) => {
           const name = artist.name || artist.user?.name || 'Unknown Artist';
           const role = artist.genres?.join(', ') || artist.user?.role || artist.provider_name || '';
           const image = artist.image || artist.cover_image || artist.user?.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80';
@@ -130,28 +134,42 @@ export function ArtistList({
           }
 
 
+          const isFavorited = localFavorites[artist.id] !== undefined ? localFavorites[artist.id] : artist.is_favorited;
+          const isFavoriteLoading = loadingFavorites[artist.id] || false;
+
           const handleSave = async (e: React.MouseEvent) => {
             e.preventDefault();
             e.stopPropagation();
+            setLocalFavorites(prev => ({ ...prev, [artist.id]: true }));
+            setLoadingFavorites(prev => ({ ...prev, [artist.id]: true }));
             try {
               await addFavorites({ artist_id: String(artist.id) }).unwrap();
-              toast.success(artist.is_favorited ? "Artist removed from favorites" : "Artist saved to favorites!");
+              toast.success("Artist saved to favorites!");
             } catch (error: any) {
+              setLocalFavorites(prev => ({ ...prev, [artist.id]: false }));
               if (error.status === 401 || error.data?.error?.status === 401) {
                 toast.error("Please log in to save favorites");
               } else {
                 toast.error(error.data?.error?.message || error.data?.message || "Failed to save artist");
               }
+            } finally {
+              setLoadingFavorites(prev => ({ ...prev, [artist.id]: false }));
             }
           };
 
-          const handleRemoveFavorites = async () => {
+          const handleRemoveFavorites = async (e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setLocalFavorites(prev => ({ ...prev, [artist.id]: false }));
+            setLoadingFavorites(prev => ({ ...prev, [artist.id]: true }));
             try {
               await removeFavorites(String(artist.id)).unwrap();
-              // await refetch();
               toast.success("Artist removed from favorites!");
             } catch (error: any) {
+              setLocalFavorites(prev => ({ ...prev, [artist.id]: true }));
               toast.error(error.data?.message || "Failed to remove artist from favorites");
+            } finally {
+              setLoadingFavorites(prev => ({ ...prev, [artist.id]: false }));
             }
           };
 
@@ -178,19 +196,17 @@ export function ArtistList({
 
               {/* Content */}
               <div className="flex-1 p-6 flex flex-col relative">
-                {/* Heart Icon */}
                 <button
-                  // onClick={handleSave}
-                  onClick={artist?.is_favorited ? handleRemoveFavorites : handleSave}
-                  disabled={artist?.is_favorited ? removeFavoritesLoading : addFavoritesLoading}
-                  className={`absolute cursor-pointer top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${addFavoritesLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
-                    } ${artist.is_favorited ? 'bg-white/10' : 'bg-white/5'}`}
+                  onClick={isFavorited ? handleRemoveFavorites : handleSave}
+                  disabled={isFavoriteLoading}
+                  className={`absolute cursor-pointer top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isFavoriteLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
+                    } ${isFavorited ? 'bg-white/10' : 'bg-white/5'}`}
                 >
                   <Heart
-                    fill={artist?.is_favorited ? "currentColor" : "none"}
-                    className={`w-5 h-5 transition-colors ${artist?.is_favorited
-                        ? "text-red-500"
-                        : "text-white group-hover:text-red-500"
+                    fill={isFavorited ? "currentColor" : "none"}
+                    className={`w-5 h-5 transition-colors ${isFavorited
+                      ? "text-red-500"
+                      : "text-white group-hover:text-red-500"
                       }`}
                   />
                 </button>
