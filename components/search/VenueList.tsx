@@ -46,7 +46,7 @@ export function VenueList({
           key={i}
           onClick={() => handlePageClick(i)}
           className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-medium transition-colors ${i === currentPage
-            ? 'bg-[#7C5CFF] text-white shadow-lg shadow-[#7C5CFF]/20'
+            ? 'bg-[#00A5E5] text-white shadow-lg shadow-[#7C5CFF]/20'
             : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'
             }`}
         >
@@ -135,7 +135,7 @@ export function VenueList({
                 <div className="mt-auto flex items-center justify-end gap-3 pt-2">
                   <Link
                     href={`/venue/${venue.id}`}
-                    className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] text-white text-sm font-medium hover:bg-[#6A4BE5] transition-colors shadow-lg shadow-[#7C5CFF]/20"
+                    className="px-6 py-2.5 rounded-full bg-[#00A5E5] text-white text-sm font-medium  transition-colors shadow-lg shadow-[#7C5CFF]/20"
                   >
                     View Venue
                   </Link>

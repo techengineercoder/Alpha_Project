@@ -14,7 +14,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-  
+
   if (!post) {
     return {
       title: "Post Not Found",
@@ -47,8 +47,8 @@ export default async function BlogPostPage({ params }: Props) {
       <div className="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-[#7C5CFF]/10 to-transparent pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <Link 
-          href="/blog" 
+        <Link
+          href="/blog"
           className="inline-flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors mb-10 group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
@@ -56,13 +56,13 @@ export default async function BlogPostPage({ params }: Props) {
         </Link>
 
         <div className="mb-12 text-center">
-          <div className="inline-block bg-[#7C5CFF]/10 text-[#7C5CFF] border border-[#7C5CFF]/20 px-4 py-1.5 rounded-full text-sm font-semibold uppercase tracking-wider mb-6">
+          <div className="inline-block bg-[#00A5E5]/10 text-[#7C5CFF] border border-[#7C5CFF]/20 px-4 py-1.5 rounded-full text-sm font-semibold uppercase tracking-wider mb-6">
             {post.category}
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight leading-tight">
             {post.title}
           </h1>
-          
+
           <div className="flex flex-wrap items-center justify-center gap-6 text-[#A1A1AA]">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20">
@@ -84,14 +84,14 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
 
         <div className="relative w-full h-[400px] md:h-[500px] rounded-[32px] overflow-hidden mb-16 border border-white/10 shadow-2xl">
-          <img 
-            src={post.image} 
-            alt={post.title} 
+          <img
+            src={post.image}
+            alt={post.title}
             className="w-full h-full object-cover"
           />
         </div>
 
-        <article 
+        <article
           className="max-w-none 
             [&_h2]:text-white [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-2xl [&_h2]:md:text-3xl [&_h2]:mt-10 [&_h2]:mb-4
             [&_p]:text-[#A1A1AA] [&_p]:leading-relaxed [&_p]:text-lg [&_p]:mb-6
@@ -102,7 +102,7 @@ export default async function BlogPostPage({ params }: Props) {
             [&_blockquote]:border-l-4 [&_blockquote]:border-[#7C5CFF] [&_blockquote]:bg-white/5 [&_blockquote]:px-6 [&_blockquote]:py-4 [&_blockquote]:rounded-r-lg [&_blockquote]:not-italic [&_blockquote]:text-white [&_blockquote]:my-8"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
-        
+
         {/* Call to action */}
         <div className="mt-24 p-10 bg-gradient-to-br from-[#7C5CFF]/10 to-[#FF4C8C]/10 border border-white/10 rounded-3xl text-center">
           <h3 className="text-2xl font-bold text-white mb-4">Ready to elevate your next event?</h3>
@@ -110,9 +110,9 @@ export default async function BlogPostPage({ params }: Props) {
             Browse our curated list of world-class artists and venues, and book directly through GetAvails.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link 
-              href="/search" 
-              className="px-8 py-3.5 rounded-full bg-[#7C5CFF] text-white font-bold hover:bg-[#6A4BE5] transition-all shadow-[0_0_20px_rgba(124,92,255,0.3)] animate-pulse-glow"
+            <Link
+              href="/search"
+              className="px-8 py-3.5 rounded-full bg-[#00A5E5] text-white font-bold  transition-all shadow-[0_0_20px_rgba(124,92,255,0.3)] animate-pulse-glow"
             >
               Browse Artists
             </Link>

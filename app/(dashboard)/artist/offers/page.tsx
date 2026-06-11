@@ -76,7 +76,7 @@ export default function IncomingOffersPage() {
               className="p-5 md:p-8 rounded-[24px] md:rounded-[32px] bg-[#111116] border border-white/5 hover:border-white/10 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-6 md:gap-8 group"
             >
               <div className="flex items-start gap-4 md:gap-6">
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-[16px] md:rounded-[20px] bg-[#7C5CFF]/10 flex items-center justify-center text-[#7C5CFF] border border-[#7C5CFF]/20 flex-shrink-0">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-[16px] md:rounded-[20px] bg-[#00A5E5]/10 flex items-center justify-center text-[#7C5CFF] border border-[#7C5CFF]/20 flex-shrink-0">
                   <Inbox size={24} className="md:w-8 md:h-8" />
                 </div>
 
@@ -138,7 +138,7 @@ export default function IncomingOffersPage() {
                 </div>
 
                 <div className="flex flex-row items-center gap-2 md:gap-3 w-full sm:w-auto">
-                  <button onClick={() => handleAcceptOffer(offer.id)} disabled={isLoadingAccept || isLoadingReject} className="flex-1 sm:flex-none cursor-pointer px-4 sm:px-6 md:px-8 py-2.5 md:py-3.5 rounded-xl md:rounded-2xl bg-[#7C5CFF] text-white text-xs md:text-sm font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/20">
+                  <button onClick={() => handleAcceptOffer(offer.id)} disabled={isLoadingAccept || isLoadingReject} className="flex-1 sm:flex-none cursor-pointer px-4 sm:px-6 md:px-8 py-2.5 md:py-3.5 rounded-xl md:rounded-2xl bg-[#00A5E5] text-white text-xs md:text-sm font-bold  transition-all shadow-lg shadow-[#7C5CFF]/20">
                     {isLoadingAccept ? "Accepting..." : "Accept"}
                   </button>
 

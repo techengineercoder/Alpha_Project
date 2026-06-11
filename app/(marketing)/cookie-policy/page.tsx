@@ -6,7 +6,7 @@ export default function CookiePolicyPage() {
     <div className="min-h-screen bg-[#0E0E13] text-white pt-32 pb-24 px-4 md:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#7C5CFF]/10 text-[#7C5CFF] mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#00A5E5]/10 text-[#7C5CFF] mb-6">
             <Cookie className="w-8 h-8" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Cookie Policy</h1>
@@ -38,7 +38,7 @@ export default function CookiePolicyPage() {
                 <p className="text-[#A1A1AA] leading-relaxed">
                   We use first-party and third-party cookies for several reasons. Some cookies are required for technical reasons in order for our websites to operate, and we refer to these as "essential" or "strictly necessary" cookies. Other cookies also enable us to track and target the interests of our users to enhance the experience on our properties.
                 </p>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                   <div className="p-6 bg-white/5 rounded-xl border border-white/10">
                     <h3 className="text-white font-semibold mb-2">Essential Cookies</h3>
@@ -73,12 +73,12 @@ export default function CookiePolicyPage() {
               </section>
             </div>
 
-            <div className="mt-16 p-6 bg-[#7C5CFF]/5 border border-[#7C5CFF]/20 rounded-2xl">
+            <div className="mt-16 p-6 bg-[#00A5E5]/5 border border-[#7C5CFF]/20 rounded-2xl">
               <h3 className="text-xl font-semibold text-white mb-2">Manage Preferences</h3>
               <p className="text-[#A1A1AA] mb-4">
                 You can update your cookie preferences at any time by clicking the button below.
               </p>
-              <button className="px-6 py-2 bg-[#7C5CFF] hover:bg-[#6A4BE5] text-white rounded-xl font-medium transition-colors">
+              <button className="px-6 py-2 bg-[#00A5E5]  text-white rounded-xl font-medium transition-colors">
                 Cookie Settings
               </button>
             </div>

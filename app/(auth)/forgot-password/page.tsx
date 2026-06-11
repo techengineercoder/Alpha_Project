@@ -37,7 +37,7 @@ export default function ForgotPassword() {
           <button
             type="submit"
             onClick={() => window.location.href = '/verify'}
-            className="w-full bg-[#7C5CFF] hover:bg-[#6A4BE5] text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            className="w-full bg-[#00A5E5]  text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
             Send Reset Link <ArrowRight size={20} />
           </button>

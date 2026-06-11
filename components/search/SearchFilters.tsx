@@ -107,14 +107,14 @@ export function SearchFilters({
         <div className="flex  p-1 gap-2  ">
           <button
             onClick={() => onChange({ type: 'artists' })}
-            className={`flex-1 py-2.5 text-sm font-medium rounded bg-[#121218] border border-white/10 cursor-pointer transition-all ${lookingFor === 'artists' ? 'border-white/10 bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] text-white shadow-lg shadow-[#9D7CFF]/20' : 'text-[#A1A1AA] hover:text-white'
+            className={`flex-1 py-2.5 text-sm font-medium rounded  border border-white/10 cursor-pointer transition-all ${lookingFor === 'artists' ? 'border-[#00A5E5]/10 bg-[#00A5E5] text-white shadow-lg shadow-[#00A5E5]/20' : 'text-[#A1A1AA] hover:text-white'
               }`}
           >
             Find Artists
           </button>
           <button
             onClick={() => onChange({ type: 'venue' })}
-            className={`flex-1 py-2.5 text-sm font-medium rounded transition-all ${lookingFor === 'venue' ? 'border-white/10 bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] text-white shadow-lg shadow-[#9D7CFF]/20' : 'text-[#A1A1AA] hover:text-white'
+            className={`flex-1 py-2.5 text-sm font-medium rounded transition-all ${lookingFor === 'venue' ? 'border-[#00A5E5]/10 bg-[#00A5E5] text-white shadow-lg shadow-[#00A5E5]/20' : 'text-[#A1A1AA] hover:text-white'
               }`}
           >
             Find Venue
@@ -222,8 +222,8 @@ export function SearchFilters({
               <div className="absolute top-full left-0 mt-2 w-full max-h-[280px] overflow-y-auto custom-scrollbar bg-[#121218] border border-white/10 rounded-xl shadow-2xl z-50 flex flex-col p-1.5 gap-1">
                 <div
                   className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${!filters.genres
-                      ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
-                      : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
+                    ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
+                    : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
                     }`}
                   onClick={() => {
                     onChange({ genres: '' });
@@ -240,8 +240,8 @@ export function SearchFilters({
                     <div
                       key={g.id}
                       className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between ${isSelected
-                          ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
-                          : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
+                        ? 'bg-gradient-to-r from-[#7C5CFF]/20 to-[#9D7CFF]/20 text-white border border-[#7C5CFF]/30 shadow-inner'
+                        : 'text-[#A1A1AA] hover:bg-white/10 hover:text-white border border-transparent'
                         }`}
                       onClick={() => {
                         onChange({ genres: g.slug });
@@ -341,7 +341,7 @@ export function SearchFilters({
       {/* Search Button */}
       <button
         onClick={onApply}
-        className="w-full border-white/10 bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] hover:bg-[#8B6BE6] text-white py-3.5 rounded-full text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#9D7CFF]/20 mt-2">
+        className="w-full border-[#00A5E5]/10 bg-[#00A5E5] text-white py-3.5 rounded-full text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#9D7CFF]/20 mt-2">
         Search
       </button>
 

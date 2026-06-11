@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 // Replace with your base URL
 // const API_URL = "http://10.10.12.111:8001/ai/api";
-const API_URL = "http://31.220.59.215:5678/webhook/0e1cd1fa-5f4d-4184-be07-9d58929172b4";
+const API_URL = "https://n8n.getavails.com/webhook/0e1cd1fa-5f4d-4184-be07-9d58929172b4";
 
 export const chatBotApi = createApi({
     reducerPath: "chatApi",

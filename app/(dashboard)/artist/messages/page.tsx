@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Search, 
-  MoreVertical, 
-  Image as ImageIcon, 
-  Paperclip, 
+import {
+  Search,
+  MoreVertical,
+  Image as ImageIcon,
+  Paperclip,
   Send,
   Plus
 } from "lucide-react";
@@ -70,9 +70,9 @@ export default function MessagesPage() {
             <h2 className="text-2xl font-bold text-white">Messages</h2>
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-              <input 
-                type="text" 
-                placeholder="Search conversations..." 
+              <input
+                type="text"
+                placeholder="Search conversations..."
                 className="w-full pl-12 pr-6 py-3.5 bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white focus:outline-none focus:border-[#7C5CFF]/50 transition-all"
               />
             </div>
@@ -84,13 +84,13 @@ export default function MessagesPage() {
                 key={conv.id}
                 onClick={() => setActiveTab(conv.id)}
                 className={`w-full flex items-start gap-4 p-5 rounded-[24px] transition-all relative group
-                  ${activeTab === conv.id ? "bg-[#7C5CFF]/10" : "hover:bg-white/[0.02]"}
+                  ${activeTab === conv.id ? "bg-[#00A5E5]/10" : "hover:bg-white/[0.02]"}
                 `}
               >
                 {activeTab === conv.id && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-[#7C5CFF] rounded-r-full" />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-[#00A5E5] rounded-r-full" />
                 )}
-                
+
                 <div className="relative flex-shrink-0">
                   <div className="w-14 h-14 rounded-2xl overflow-hidden border border-white/10 group-hover:border-[#7C5CFF]/30 transition-all">
                     <img src={conv.avatar} alt={conv.name} className="w-full h-full object-cover" />
@@ -108,7 +108,7 @@ export default function MessagesPage() {
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm text-gray-500 truncate font-medium">{conv.lastMessage}</p>
                     {conv.unread > 0 && (
-                      <span className="flex-shrink-0 w-5 h-5 bg-[#7C5CFF] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(124,92,255,0.3)]">
+                      <span className="flex-shrink-0 w-5 h-5 bg-[#00A5E5] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(124,92,255,0.3)]">
                         {conv.unread}
                       </span>
                     )}
@@ -145,13 +145,13 @@ export default function MessagesPage() {
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar">
             {messages.map((msg) => (
-              <div 
+              <div
                 key={msg.id}
                 className={`flex flex-col ${msg.sender === 'me' ? 'items-end' : 'items-start'} max-w-[80%] ${msg.sender === 'me' ? 'ml-auto' : 'mr-auto'}`}
               >
                 <div className={`p-5 rounded-[24px] text-sm font-medium leading-relaxed
-                  ${msg.sender === 'me' 
-                    ? 'bg-[#7C5CFF] text-white rounded-tr-none shadow-[0_0_20px_rgba(124,92,255,0.1)]' 
+                  ${msg.sender === 'me'
+                    ? 'bg-[#00A5E5] text-white rounded-tr-none shadow-[0_0_20px_rgba(124,92,255,0.1)]'
                     : 'bg-white/[0.03] text-gray-200 rounded-tl-none border border-white/5'}
                 `}>
                   {msg.text}
@@ -174,16 +174,16 @@ export default function MessagesPage() {
                   <Paperclip size={20} />
                 </button>
               </div>
-              
+
               <div className="flex-1 relative flex items-center">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  placeholder="Type a message..." 
+                  placeholder="Type a message..."
                   className="w-full pl-6 pr-14 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white focus:outline-none focus:border-[#7C5CFF]/50 transition-all placeholder:text-gray-600"
                 />
-                <button className="absolute right-2 p-3 rounded-xl bg-[#7C5CFF] text-white hover:bg-[#6A4BE5] transition-all shadow-[0_0_15px_rgba(124,92,255,0.2)]">
+                <button className="absolute right-2 p-3 rounded-xl bg-[#00A5E5] text-white  transition-all shadow-[0_0_15px_rgba(124,92,255,0.2)]">
                   <Send size={18} />
                 </button>
               </div>

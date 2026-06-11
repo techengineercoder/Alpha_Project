@@ -7,7 +7,7 @@ export default function PressPage() {
     <div className="min-h-screen bg-[#0E0E13] text-white pt-32 pb-24 px-4 md:px-8">
       {/* Hero Section */}
       <div className="max-w-5xl mx-auto text-center mb-24">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#7C5CFF]/10 text-[#7C5CFF] mb-6">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#00A5E5]/10 text-[#7C5CFF] mb-6">
           <Newspaper className="w-8 h-8" />
         </div>
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
@@ -17,7 +17,7 @@ export default function PressPage() {
           The latest news, announcements, and media resources from GetAvails. For media inquiries, please reach out to our press team.
         </p>
         <div className="mt-8">
-          <a href="mailto:press@getavails.com" className="inline-flex items-center gap-2 px-8 py-4 bg-[#7C5CFF] text-white font-bold rounded-full hover:bg-[#6A4BE5] transition-colors shadow-[0_0_20px_rgba(124,92,255,0.3)]">
+          <a href="mailto:press@getavails.com" className="inline-flex items-center gap-2 px-8 py-4 bg-[#00A5E5] text-white font-bold rounded-full  transition-colors shadow-[0_0_20px_rgba(124,92,255,0.3)]">
             <Mail size={18} />
             Contact Press Team
           </a>
@@ -57,7 +57,7 @@ export default function PressPage() {
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl font-bold mb-8">Latest News</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           <div className="group bg-[#111116] border border-white/5 p-8 rounded-3xl hover:border-[#7C5CFF]/30 transition-colors cursor-pointer flex flex-col h-full">
             <span className="text-[#7C5CFF] text-sm font-bold mb-4 tracking-wider uppercase">Press Release</span>
             <h3 className="text-2xl font-bold mb-4 group-hover:text-white transition-colors">GetAvails Announces $15M Series A Funding</h3>

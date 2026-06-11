@@ -7,7 +7,7 @@ export default function CareersPage() {
     <div className="min-h-screen bg-[#0E0E13] text-white pt-32 pb-24 px-4 md:px-8">
       {/* Hero Section */}
       <div className="max-w-6xl mx-auto text-center mb-24">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#7C5CFF]/10 text-[#7C5CFF] mb-6">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#00A5E5]/10 text-[#7C5CFF] mb-6">
           <Briefcase className="w-8 h-8" />
         </div>
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
@@ -56,14 +56,14 @@ export default function CareersPage() {
       {/* Open Roles */}
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold mb-8">Open Roles</h2>
-        
+
         <div className="space-y-4">
           <div className="bg-[#111116] border border-white/5 p-6 md:p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-[#7C5CFF]/50 transition-all group cursor-pointer">
             <div>
               <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#7C5CFF] transition-colors">Senior Full Stack Engineer</h3>
               <p className="text-[#A1A1AA]">Engineering • Remote (US/EU Timezones)</p>
             </div>
-            <Link href="#" className="inline-flex items-center gap-2 text-sm font-bold text-[#7C5CFF] bg-[#7C5CFF]/10 px-6 py-3 rounded-full hover:bg-[#7C5CFF]/20 transition-colors">
+            <Link href="#" className="inline-flex items-center gap-2 text-sm font-bold text-[#7C5CFF] bg-[#00A5E5]/10 px-6 py-3 rounded-full hover:bg-[#00A5E5]/20 transition-colors">
               Apply Now <ArrowRight size={16} />
             </Link>
           </div>
@@ -73,7 +73,7 @@ export default function CareersPage() {
               <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#7C5CFF] transition-colors">Product Designer</h3>
               <p className="text-[#A1A1AA]">Design • Remote (Global)</p>
             </div>
-            <Link href="#" className="inline-flex items-center gap-2 text-sm font-bold text-[#7C5CFF] bg-[#7C5CFF]/10 px-6 py-3 rounded-full hover:bg-[#7C5CFF]/20 transition-colors">
+            <Link href="#" className="inline-flex items-center gap-2 text-sm font-bold text-[#7C5CFF] bg-[#00A5E5]/10 px-6 py-3 rounded-full hover:bg-[#00A5E5]/20 transition-colors">
               Apply Now <ArrowRight size={16} />
             </Link>
           </div>
@@ -83,13 +83,13 @@ export default function CareersPage() {
               <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#7C5CFF] transition-colors">Artist Relations Manager</h3>
               <p className="text-[#A1A1AA]">Operations • Los Angeles / Hybrid</p>
             </div>
-            <Link href="#" className="inline-flex items-center gap-2 text-sm font-bold text-[#7C5CFF] bg-[#7C5CFF]/10 px-6 py-3 rounded-full hover:bg-[#7C5CFF]/20 transition-colors">
+            <Link href="#" className="inline-flex items-center gap-2 text-sm font-bold text-[#7C5CFF] bg-[#00A5E5]/10 px-6 py-3 rounded-full hover:bg-[#00A5E5]/20 transition-colors">
               Apply Now <ArrowRight size={16} />
             </Link>
           </div>
         </div>
 
-        <div className="mt-12 text-center p-8 bg-[#7C5CFF]/5 border border-[#7C5CFF]/10 rounded-3xl">
+        <div className="mt-12 text-center p-8 bg-[#00A5E5]/5 border border-[#7C5CFF]/10 rounded-3xl">
           <h3 className="text-xl font-bold mb-2">Don't see a fit?</h3>
           <p className="text-[#A1A1AA] mb-4">We're always looking for talented people. Send us your resume anyway.</p>
           <a href="mailto:careers@getavails.com" className="text-[#7C5CFF] hover:underline font-medium">careers@getavails.com</a>

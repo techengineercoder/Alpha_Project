@@ -86,7 +86,7 @@ export default function HowItWorksPage() {
                             transition={{ duration: 0.6 }}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/5 backdrop-blur-sm mb-8"
                         >
-                            <div className="w-2 h-2 rounded-full bg-[#7C5CFF]"></div>
+                            <div className="w-2 h-2 rounded-full bg-[#00A5E5]"></div>
                             <span className="text-sm font-medium text-gray-200">Over 10,000+ verified artists available</span>
                         </motion.div>
 

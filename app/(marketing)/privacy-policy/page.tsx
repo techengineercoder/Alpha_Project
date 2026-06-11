@@ -6,7 +6,7 @@ export default function PrivacyPolicyPage() {
     <div className="min-h-screen bg-[#0E0E13] text-white pt-32 pb-24 px-4 md:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#7C5CFF]/10 text-[#7C5CFF] mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#00A5E5]/10 text-[#7C5CFF] mb-6">
             <Shield className="w-8 h-8" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Privacy Policy</h1>
@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
               </section>
             </div>
 
-            <div className="mt-16 p-6 bg-[#7C5CFF]/5 border border-[#7C5CFF]/20 rounded-2xl">
+            <div className="mt-16 p-6 bg-[#00A5E5]/5 border border-[#7C5CFF]/20 rounded-2xl">
               <h3 className="text-xl font-semibold text-white mb-2">Questions regarding our policy?</h3>
               <p className="text-[#A1A1AA]">
                 If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact us at <a href="mailto:privacy@getavails.com" className="text-[#7C5CFF] hover:underline">privacy@getavails.com</a>.

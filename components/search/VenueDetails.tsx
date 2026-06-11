@@ -59,7 +59,7 @@ export function VenueDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0b0f] text-white  font-sans selection:bg-[#7C5CFF]/30">
+    <div className="min-h-screen bg-[#0b0b0f] text-white  font-sans selection:bg-[#00A5E5]/30">
       {/* Top Image Section */}
       <div className="relative w-full h-[300px] md:h-[450px] overflow-hidden">
         <Image

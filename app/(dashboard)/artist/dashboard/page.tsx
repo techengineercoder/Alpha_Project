@@ -72,7 +72,7 @@ export default function ArtistDashboard() {
           <div className="bg-[#111116] border border-white/5 rounded-[32px] overflow-hidden">
             <div className="p-5 md:p-8 border-b border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-[#7C5CFF]/10 flex items-center justify-center text-[#7C5CFF] border border-[#7C5CFF]/20">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-[#00A5E5]/10 flex items-center justify-center text-[#7C5CFF] border border-[#7C5CFF]/20">
                   <DollarSign size={20} className="md:w-6 md:h-6" />
                 </div>
                 <div>
@@ -80,7 +80,7 @@ export default function ArtistDashboard() {
                   <p className="text-xs md:text-sm text-gray-500">3 pending offers</p>
                 </div>
               </div>
-              <button className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#7C5CFF] text-white text-sm font-semibold hover:bg-[#6A4BE5] transition-all shadow-[0_0_20px_rgba(124,92,255,0.2)] hover:shadow-[0_0_30px_rgba(124,92,255,0.4)] animate-shine animate-pulse-glow">
+              <button className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#00A5E5] text-white text-sm font-semibold  transition-all shadow-[0_0_20px_rgba(124,92,255,0.2)] hover:shadow-[0_0_30px_rgba(124,92,255,0.4)] animate-shine animate-pulse-glow">
                 View All Offers
               </button>
             </div>
@@ -149,7 +149,7 @@ export default function ArtistDashboard() {
                         <div className="flex items-center gap-2 w-full sm:w-auto">
                           <button
                             // onClick={() => }
-                            className="flex-1 sm:flex-none px-5 py-2 rounded-xl bg-[#7C5CFF] text-white text-sm font-bold hover:bg-[#6A4BE5] transition-all"
+                            className="flex-1 sm:flex-none px-5 py-2 rounded-xl bg-[#00A5E5] text-white text-sm font-bold  transition-all"
                           >
                             Accept
                           </button>

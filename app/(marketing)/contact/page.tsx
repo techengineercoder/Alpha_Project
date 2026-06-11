@@ -24,7 +24,7 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
@@ -38,7 +38,7 @@ export default function ContactPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#7C5CFF]/10 text-[#7C5CFF] mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#00A5E5]/10 text-[#7C5CFF] mb-6">
             <MessageSquare className="w-8 h-8" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Get in Touch</h1>
@@ -60,7 +60,7 @@ export default function ContactPage() {
 
               <div className="space-y-8">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-[#00A5E5]/10 flex items-center justify-center shrink-0">
                     <Phone className="w-5 h-5 text-[#7C5CFF]" />
                   </div>
                   <div>
@@ -70,7 +70,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-[#00A5E5]/10 flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5 text-[#7C5CFF]" />
                   </div>
                   <div>
@@ -80,7 +80,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-[#00A5E5]/10 flex items-center justify-center shrink-0">
                     <MapPin className="w-5 h-5 text-[#7C5CFF]" />
                   </div>
                   <div>
@@ -158,7 +158,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#7C5CFF] hover:bg-[#6A4BE5] text-white py-4 rounded-[14px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-[#00A5E5]  text-white py-4 rounded-[14px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     "Sending..."

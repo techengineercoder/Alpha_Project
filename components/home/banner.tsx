@@ -78,7 +78,7 @@ export function Banner() {
           transition={{ duration: 0.6 }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8"
         >
-          <span className="w-2 h-2 rounded-full bg-[#7C5CFF]"></span>
+          <span className="w-2 h-2 rounded-full bg-[#00A5E5]"></span>
           <span className="text-sm font-medium text-white/90">Countless verified artists available</span>
         </motion.div>
 
@@ -242,7 +242,7 @@ export function Banner() {
             {/* ── Search Button ── */}
             <button
               onClick={handleSearch}
-              className="w-full md:w-auto h-full cursor-pointer min-h-[54px] md:min-h-[58px] border-white  border bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] hover:bg-[#6A4BE5] text-white px-8 rounded-2xl md:rounded-[20px] font-medium flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#7C5CFF]/25"
+              className="w-full md:w-auto h-full cursor-pointer min-h-[54px] md:min-h-[58px] border-white  border bg-[#00A5E5] text-white px-8 rounded-2xl md:rounded-[20px] font-medium flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#7C5CFF]/25"
             >
               <Search className="w-5 h-5" />
               <span>Search</span>

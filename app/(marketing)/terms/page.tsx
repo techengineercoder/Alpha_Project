@@ -6,7 +6,7 @@ export default function TermsOfServicePage() {
     <div className="min-h-screen bg-[#0E0E13] text-white pt-32 pb-24 px-4 md:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#7C5CFF]/10 text-[#7C5CFF] mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#00A5E5]/10 text-[#7C5CFF] mb-6">
             <FileText className="w-8 h-8" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Terms of Service</h1>
@@ -60,7 +60,7 @@ export default function TermsOfServicePage() {
                   Cancellation policies are determined by the individual artist and agreed upon at the time of booking. GetAvails will facilitate refunds in accordance with the artist's stated cancellation policy. In the event of a dispute, our support team will mediate to reach a fair resolution.
                 </p>
               </section>
-              
+
               <section>
                 <h2 className="text-2xl font-semibold mb-4 text-white">5. Intellectual Property</h2>
                 <p className="text-[#A1A1AA] leading-relaxed">
@@ -69,7 +69,7 @@ export default function TermsOfServicePage() {
               </section>
             </div>
 
-            <div className="mt-16 p-6 bg-[#7C5CFF]/5 border border-[#7C5CFF]/20 rounded-2xl">
+            <div className="mt-16 p-6 bg-[#00A5E5]/5 border border-[#7C5CFF]/20 rounded-2xl">
               <h3 className="text-xl font-semibold text-white mb-2">Need to report a violation?</h3>
               <p className="text-[#A1A1AA]">
                 If you believe another user is violating these terms, please contact our trust and safety team at <a href="mailto:legal@getavails.com" className="text-[#7C5CFF] hover:underline">legal@getavails.com</a>.

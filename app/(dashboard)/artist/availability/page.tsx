@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
+import {
+  ChevronLeft,
+  ChevronRight,
   Calendar as CalendarIcon,
   Clock,
   MapPin,
@@ -63,7 +63,7 @@ export default function AvailabilityPage() {
           <h1 className="text-2xl md:text-[32px] font-bold text-white mb-2">Availability</h1>
           <p className="text-sm md:text-base text-gray-400 font-medium">Manage your calendar and availability</p>
         </div>
-        <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#7C5CFF] text-white font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/20 w-full md:w-auto">
+        <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#00A5E5] text-white font-bold  transition-all shadow-lg shadow-[#7C5CFF]/20 w-full md:w-auto">
           <Plus size={20} />
           <span>Add Block Date</span>
         </button>
@@ -95,7 +95,7 @@ export default function AvailabilityPage() {
                 {day}
               </div>
             ))}
-            
+
             {/* Empty slots for month start (assuming May 2026 starts on Friday based on image) */}
             <div className="h-[50px] sm:h-[60px] md:h-[100px]"></div>
             <div className="h-[50px] sm:h-[60px] md:h-[100px]"></div>
@@ -104,22 +104,22 @@ export default function AvailabilityPage() {
             <div className="h-[50px] sm:h-[60px] md:h-[100px]"></div>
 
             {calendarData.map((data) => (
-              <div 
+              <div
                 key={data.day}
                 className={`relative h-[50px] sm:h-[60px] md:h-[100px] rounded-xl md:rounded-2xl border transition-all flex items-center justify-center cursor-pointer group
-                  ${data.status === 'available' ? 'bg-[#10B981]/5 border-white/5 hover:border-[#10B981]/30' : 
-                    data.status === 'booked' ? 'bg-[#EF4444]/10 border-[#EF4444]/20' : 
-                    'bg-[#F59E0B]/10 border-[#F59E0B]/20'}
+                  ${data.status === 'available' ? 'bg-[#10B981]/5 border-white/5 hover:border-[#10B981]/30' :
+                    data.status === 'booked' ? 'bg-[#EF4444]/10 border-[#EF4444]/20' :
+                      'bg-[#F59E0B]/10 border-[#F59E0B]/20'}
                 `}
               >
                 <span className={`text-sm md:text-lg font-bold
-                  ${data.status === 'available' ? 'text-gray-500 group-hover:text-[#10B981]' : 
-                    data.status === 'booked' ? 'text-[#EF4444]' : 
-                    'text-[#F59E0B]'}
+                  ${data.status === 'available' ? 'text-gray-500 group-hover:text-[#10B981]' :
+                    data.status === 'booked' ? 'text-[#EF4444]' :
+                      'text-[#F59E0B]'}
                 `}>
                   {data.day}
                 </span>
-                
+
                 {data.status !== 'available' && (
                   <div className={`absolute bottom-3 w-1.5 h-1.5 rounded-full
                     ${data.status === 'booked' ? 'bg-[#EF4444]' : 'bg-[#F59E0B]'}
@@ -148,7 +148,7 @@ export default function AvailabilityPage() {
         {/* Side List Section */}
         <div className="bg-[#111116] border border-white/5 rounded-[32px] p-8 space-y-8">
           <h2 className="text-xl font-bold text-white">Upcoming Events</h2>
-          
+
           <div className="space-y-4">
             {upcomingEvents.map((event, index) => (
               <div key={index} className="p-6 rounded-[24px] bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all space-y-4">
@@ -161,7 +161,7 @@ export default function AvailabilityPage() {
                     <h4 className="font-bold text-white">{event.title}</h4>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col gap-2.5 text-sm text-gray-500">
                   <div className="flex items-center gap-2">
                     <MapPin size={14} className="text-gray-600" />

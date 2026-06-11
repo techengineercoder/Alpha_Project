@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, User, Mail, Phone, Clock, Check, MapPin, DollarSign, Type } from 'lucide-react';
-import { useCreateBookingMutation } from '@/redux/feature/artistApi/bookingSlice';
+import { X, Calendar, User, Mail, Phone, Clock, Check, MapPin, DollarSign, Type, Search } from 'lucide-react';
+import { useCreateBookingMutation, useGetSendToQuery } from '@/redux/feature/artistApi/bookingSlice';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -17,6 +18,22 @@ interface BookingModalProps {
 export function BookingModal({ isOpen, onClose, artistName, artistId, initialDate }: BookingModalProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [createBooking, { isLoading }] = useCreateBookingMutation();
+
+  const [sendToRole, setSendToRole] = useState<'venue' | 'talent-buyer'>('venue');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedSendTo, setSelectedSendTo] = useState<number | string | null>(null);
+
+  // debounce search
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const { data: sendToData, isLoading: isSendToLoading } = useGetSendToQuery({
+    role: sendToRole,
+    ...(debouncedSearch ? { search: debouncedSearch } : {})
+  });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -70,7 +87,8 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
         contact_name: formData.contact_name,
         contact_email: formData.contact_email,
         contact_phone: formData.contact_phone,
-        notes: formData.notes
+        notes: formData.notes,
+        recipient_id: selectedSendTo,
       };
 
       await createBooking(payload).unwrap();
@@ -261,6 +279,80 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
                       />
                     </div>
 
+                    {/* Send To Group */}
+                    <div className="flex flex-col gap-4">
+                      <h3 className="text-sm font-medium text-white">Send To</h3>
+
+                      {/* Segmented Control */}
+                      <div className="flex p-1 bg-[#1C1C28] rounded-xl border border-white/5">
+                        <button
+                          type="button"
+                          onClick={() => setSendToRole('venue')}
+                          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${sendToRole === 'venue'
+                            ? 'bg-[#00A5E5] text-white'
+                            : 'text-[#A1A1AA] hover:text-white'
+                            }`}
+                        >
+                          Venue
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSendToRole('talent-buyer')}
+                          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${sendToRole === 'talent-buyer'
+                            ? 'bg-[#00A5E5] text-white'
+                            : 'text-[#A1A1AA] hover:text-white'
+                            }`}
+                        >
+                          Talent Buyer
+                        </button>
+                      </div>
+
+                      {/* Search Input */}
+                      <div className="relative">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A1A1AA]" />
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search..."
+                          className="w-full bg-[#1C1C28] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-[#7C5CFF]/50"
+                        />
+                      </div>
+
+                      {/* Search Results */}
+                      {debouncedSearch && (
+                        <div className="flex flex-col gap-2 max-h-40 overflow-y-auto [&::-webkit-scrollbar]:hidden">
+                          {isSendToLoading ? (
+                            <div className="text-sm text-[#A1A1AA] text-center py-2">Searching...</div>
+                          ) : sendToData?.length > 0 || sendToData?.results?.length > 0 ? (
+                            (sendToData?.results || sendToData).map((item: any) => (
+                              <div
+                                key={item.id}
+                                onClick={() => {
+                                  setSelectedSendTo(item.id);
+                                  setSearchQuery(item.name || item.username || item.email || '');
+                                }}
+                                className={`p-3 rounded-xl border text-sm flex items-center justify-between cursor-pointer transition-colors ${selectedSendTo === item.id
+                                  ? 'bg-[#00A5E5]/10 border-[#00A5E5] text-white'
+                                  : 'bg-[#1C1C28] border-white/5 text-[#A1A1AA] hover:border-white/20 hover:text-white'
+                                  }`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  {item.profile_image && (
+                                    <img src={item.profile_image} alt="" className="w-6 h-6 rounded-full object-cover" />
+                                  )}
+                                  <span>{item.name || item.username || item.email || 'Unknown User'}</span>
+                                </div>
+                                {selectedSendTo === item.id && <Check className="w-4 h-4 text-[#00A5E5]" />}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-sm text-[#A1A1AA] text-center py-2">No results found</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
                     {/* Footer Buttons */}
                     <div className="flex items-center justify-between gap-4 pt-4 shrink-0">
                       <button
@@ -274,7 +366,7 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex-1 py-3.5 rounded-xl border-white/10 bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] text-white text-sm font-medium hover:bg-[#6A4BE5] transition-colors disabled:opacity-50 flex items-center justify-center"
+                        className="flex-1 py-3.5 rounded-xl border-white/10 bg-[#00A5E5] text-white text-sm font-medium  transition-colors disabled:opacity-50 flex items-center justify-center"
                       >
                         {isLoading ? 'Sending...' : 'Submit Booking Request'}
                       </button>
@@ -287,7 +379,7 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
                     animate={{ opacity: 1, scale: 1 }}
                     className="flex flex-col items-center text-center py-8"
                   >
-                    <div className="w-16 h-16 rounded-full border-2 border-[#7C5CFF] flex items-center justify-center mb-6 bg-[#7C5CFF]/10">
+                    <div className="w-16 h-16 rounded-full border-2 border-[#7C5CFF] flex items-center justify-center mb-6 bg-[#00A5E5]/10">
                       <Check className="w-8 h-8 text-[#7C5CFF]" />
                     </div>
 
@@ -329,12 +421,13 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
                       >
                         View Messages
                       </button>
-                      <button
-                        onClick={resetAndClose}
-                        className="flex-1 max-w-[200px] px-6 py-3.5 rounded-xl border-white/10 bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF] text-white text-sm font-medium hover:bg-[#6A4BE5] transition-colors shadow-lg shadow-[#7C5CFF]/20"
-                      >
-                        Go to Dashboard
-                      </button>
+                      <Link href="/artist/dashboard">
+                        <button
+                          className="flex-1 max-w-[200px] px-6 py-3.5 rounded-xl border-white/10 bg-[#00A5E5] text-white text-sm font-medium  transition-colors shadow-lg shadow-[#7C5CFF]/20"
+                        >
+                          Go to Dashboard
+                        </button>
+                      </Link>
                     </div>
 
                   </motion.div>

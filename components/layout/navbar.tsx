@@ -135,7 +135,7 @@ export function MarketingNavbar() {
                   flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full
                   border transition-all duration-200
                   ${isProfileOpen
-                    ? 'bg-[#7C5CFF]/20 border-[#7C5CFF]/40'
+                    ? 'bg-[#00A5E5]/20 border-[#7C5CFF]/40'
                     : 'bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.15]'}
                 `}
               >
@@ -238,20 +238,14 @@ export function MarketingNavbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <Link
-                href="/login"
-                className="px-5 py-2 rounded-full text-[13px] font-normal text-white/60
-                           hover:text-white hover:bg-white/[0.06] transition-all duration-200"
-              >
-                Log in
-              </Link>
+
               <Link
                 href="/login"
                 className="px-5 py-2 rounded-full text-[13px] font-medium text-white
-                           bg-[#7C5CFF] hover:bg-[#6A4BE5] transition-colors duration-200
+                           bg-[#00A5E5] hover:bg-[#00A5E5]/80 transition-colors duration-200
                            shadow-[0_0_20px_rgba(124,92,255,0.25)]"
               >
-                Sign up free
+                Sign In
               </Link>
             </div>
           )}
@@ -332,7 +326,7 @@ export function MarketingNavbar() {
                     href="/artist/dashboard"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="w-full text-center py-3.5 rounded-[16px] text-[14px] font-medium
-                               bg-[#7C5CFF] text-white hover:bg-[#6A4BE5] transition-colors"
+                               bg-[#00A5E5] text-white  transition-colors"
                   >
                     Dashboard
                   </Link>
@@ -350,18 +344,9 @@ export function MarketingNavbar() {
                     href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex-1 text-center py-3.5 rounded-[16px] text-[14px] font-medium
-                               bg-white/[0.05] text-white/70 hover:bg-white/[0.09] hover:text-white
-                               transition-all border border-white/[0.06]"
+                               bg-[#00A5E5] text-white hover:bg-[#00A5E5]/80 transition-colors"
                   >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex-1 text-center py-3.5 rounded-[16px] text-[14px] font-medium
-                               bg-[#7C5CFF] text-white hover:bg-[#6A4BE5] transition-colors"
-                  >
-                    Sign up free
+                    Sign In
                   </Link>
                 </div>
               )}
@@ -507,7 +492,7 @@ export function DashboardNavbar() {
           {/* Notifications */}
           <button className="relative text-gray-400 hover:text-white transition-colors group p-1">
             <Bell size={20} className="group-hover:rotate-12 transition-transform" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#7C5CFF] rounded-full border border-[#050505]"></span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#00A5E5] rounded-full border border-[#050505]"></span>
           </button>
 
           {user ? (
@@ -516,8 +501,8 @@ export function DashboardNavbar() {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className={`flex items-center gap-4 pl-1.5 pr-5 py-1.5 rounded-full transition-all border animate-pulse-glow
                   ${isProfileOpen
-                    ? 'bg-[#7C5CFF] border-[#7C5CFF] shadow-[0_0_25px_rgba(124,92,255,0.4)]'
-                    : 'bg-[#7C5CFF]/80 border-[#7C5CFF]/20 hover:bg-[#7C5CFF] hover:shadow-[0_0_20px_rgba(124,92,255,0.3)]'}
+                    ? 'bg-[#00A5E5] shadow-[0_0_25px_rgba(124,92,255,0.4)]'
+                    : 'bg-[#00A5E5]/80 border-[#00A5E5]/20 hover:bg-[#00A5E5] hover:shadow-[0_0_20px_rgba(124,92,255,0.3)]'}
                 `}
               >
                 <div className="w-10 h-10 rounded-full overflow-hidden  shadow-md">
@@ -574,7 +559,7 @@ export function DashboardNavbar() {
               </AnimatePresence>
             </div>
           ) : (
-            <Link href="/login" className="px-8 py-2.5 rounded-full bg-[#7C5CFF] text-white text-sm font-bold hover:bg-[#6A4BE5] transition-all animate-shine animate-pulse-glow">
+            <Link href="/login" className="px-8 py-2.5 rounded-full bg-[#00A5E5] text-white text-sm font-bold  transition-all animate-shine animate-pulse-glow">
               Sign In
             </Link>
           )}
@@ -611,7 +596,7 @@ export function DashboardNavbar() {
                 <Search size={20} /><span className="text-sm font-bold">Search</span>
               </button>
               <button className="relative p-4 rounded-2xl bg-white/5 border border-white/5 text-gray-300">
-                <Bell size={20} /><span className="absolute top-4 right-4 w-2 h-2 bg-[#7C5CFF] rounded-full border border-[#111116]"></span>
+                <Bell size={20} /><span className="absolute top-4 right-4 w-2 h-2 bg-[#00A5E5] rounded-full border border-[#111116]"></span>
               </button>
             </div>
             <div className="space-y-2">
@@ -624,7 +609,7 @@ export function DashboardNavbar() {
                 <LogOut size={20} /><span>Sign Out</span>
               </button>
             ) : (
-              <Link href="/login" className="px-6 py-4 rounded-2xl bg-[#7C5CFF] text-white text-center font-bold mt-4">Sign In</Link>
+              <Link href="/login" className="px-6 py-4 rounded-2xl bg-[#00A5E5] text-white text-center font-bold mt-4">Sign In</Link>
             )}
           </motion.div>
         )}

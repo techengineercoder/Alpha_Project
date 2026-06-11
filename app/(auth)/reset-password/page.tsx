@@ -21,10 +21,10 @@ export default function ResetPassword() {
         <div className="bg-[#111116] border border-white/5 p-8 md:p-10 rounded-[28px] shadow-2xl">
           <div className="flex flex-col items-center mb-8 text-center">
             <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-8 relative">
-                <div className="absolute inset-0 rounded-full bg-green-500/5 animate-ping" />
-                <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <Check className="text-green-500" size={32} />
-                </div>
+              <div className="absolute inset-0 rounded-full bg-green-500/5 animate-ping" />
+              <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center">
+                <Check className="text-green-500" size={32} />
+              </div>
             </div>
             <h1 className="text-white text-[30px] font-medium mb-4 tracking-tight">Password Reset Successful!</h1>
             <p className="text-[#A1A1AA] text-base leading-relaxed">
@@ -34,20 +34,20 @@ export default function ResetPassword() {
 
           <div className="relative my-10">
             <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/5"></div>
+              <div className="w-full border-t border-white/5"></div>
             </div>
             <div className="relative flex justify-center">
-                <div className="bg-[#111116] px-4">
-                    <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center">
-                        <Lock className="text-gray-500" size={16} />
-                    </div>
+              <div className="bg-[#111116] px-4">
+                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center">
+                  <Lock className="text-gray-500" size={16} />
                 </div>
+              </div>
             </div>
           </div>
 
           <Link
             href="/login"
-            className="w-full bg-[#7C5CFF] hover:bg-[#6A4BE5] text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all flex items-center justify-center"
+            className="w-full bg-[#00A5E5]  text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             Back to Login
           </Link>
@@ -88,11 +88,11 @@ export default function ResetPassword() {
               placeholder="New Password"
             />
             <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
             >
-                <Eye size={20} />
+              <Eye size={20} />
             </button>
           </div>
 
@@ -107,17 +107,17 @@ export default function ResetPassword() {
               placeholder="Confirm New Password"
             />
             <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
             >
-                <Eye size={20} />
+              <Eye size={20} />
             </button>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-[#7C5CFF] hover:bg-[#6A4BE5] text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all mt-4"
+            className="w-full bg-[#00A5E5]  text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all mt-4"
           >
             Reset Password
           </button>

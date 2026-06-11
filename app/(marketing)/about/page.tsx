@@ -17,7 +17,7 @@ export default function AboutUsPage() {
       {/* Grid Features */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
         <div className="bg-[#111116] border border-white/5 p-8 rounded-3xl hover:border-white/10 transition-colors">
-          <div className="w-12 h-12 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center mb-6">
+          <div className="w-12 h-12 rounded-full bg-[#00A5E5]/10 flex items-center justify-center mb-6">
             <Globe className="w-6 h-6 text-[#7C5CFF]" />
           </div>
           <h3 className="text-2xl font-semibold mb-3">Global Reach</h3>
@@ -25,9 +25,9 @@ export default function AboutUsPage() {
             Access thousands of artists and venues worldwide. We remove geographical barriers to bring the best talent to your stage, wherever it may be.
           </p>
         </div>
-        
+
         <div className="bg-[#111116] border border-white/5 p-8 rounded-3xl hover:border-white/10 transition-colors">
-          <div className="w-12 h-12 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center mb-6">
+          <div className="w-12 h-12 rounded-full bg-[#00A5E5]/10 flex items-center justify-center mb-6">
             <ShieldIcon className="w-6 h-6 text-[#7C5CFF]" />
           </div>
           <h3 className="text-2xl font-semibold mb-3">Secure Bookings</h3>
@@ -37,7 +37,7 @@ export default function AboutUsPage() {
         </div>
 
         <div className="bg-[#111116] border border-white/5 p-8 rounded-3xl hover:border-white/10 transition-colors">
-          <div className="w-12 h-12 rounded-full bg-[#7C5CFF]/10 flex items-center justify-center mb-6">
+          <div className="w-12 h-12 rounded-full bg-[#00A5E5]/10 flex items-center justify-center mb-6">
             <Star className="w-6 h-6 text-[#7C5CFF]" />
           </div>
           <h3 className="text-2xl font-semibold mb-3">Premium Quality</h3>
@@ -57,7 +57,7 @@ export default function AboutUsPage() {
                 Founded in 2024, GetAvails was born out of a simple frustration: booking great talent was too complicated, opaque, and outdated.
               </p>
               <p>
-                Our founders, veterans of both the tech and music industries, envisioned a platform where booking a Grammy-winning artist could be as seamless as booking a flight. 
+                Our founders, veterans of both the tech and music industries, envisioned a platform where booking a Grammy-winning artist could be as seamless as booking a flight.
               </p>
               <p>
                 Today, GetAvails powers thousands of events annually, from intimate corporate gatherings to massive international festivals, fundamentally changing how the live entertainment industry operates.

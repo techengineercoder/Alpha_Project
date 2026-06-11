@@ -61,7 +61,7 @@
 //             {activeTab === tab && (
 //               <motion.div
 //                 layoutId="bookingTab"
-//                 className="absolute inset-0 bg-[#7C5CFF] rounded-[20px]"
+//                 className="absolute inset-0 bg-[#00A5E5] rounded-[20px]"
 //                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
 //               />
 //             )}
@@ -91,7 +91,7 @@
 //                     <h3 className="text-xl font-bold text-white">{item.title}</h3>
 //                     {item.status && (
 //                       <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border
-//                         ${item.status === 'Confirmed' ? 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/20' : 'bg-[#7C5CFF]/10 text-[#7C5CFF] border-[#7C5CFF]/20'}
+//                         ${item.status === 'Confirmed' ? 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/20' : 'bg-[#00A5E5]/10 text-[#7C5CFF] border-[#7C5CFF]/20'}
 //                       `}>
 //                         {item.status}
 //                       </span>
@@ -124,7 +124,7 @@
 //                 <div className="flex items-center gap-3 w-full md:w-auto">
 //                   {activeTab === "Pending Offers" ? (
 //                     <>
-//                       <button className="flex-1 md:flex-none px-8 py-3 rounded-2xl bg-[#7C5CFF] text-white text-sm font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/10">
+//                       <button className="flex-1 md:flex-none px-8 py-3 rounded-2xl bg-[#00A5E5] text-white text-sm font-bold  transition-all shadow-lg shadow-[#7C5CFF]/10">
 //                         Accept Offer
 //                       </button>
 //                       <button className="px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 text-gray-400 text-sm font-bold hover:bg-white/[0.08] hover:text-white transition-all">
@@ -137,7 +137,7 @@
 //                       Message Client
 //                     </button>
 //                   ) : (
-//                     <button className="p-3 rounded-full bg-white/[0.03] border border-white/5 text-gray-500 group-hover:text-[#7C5CFF] group-hover:bg-[#7C5CFF]/10 transition-all">
+//                     <button className="p-3 rounded-full bg-white/[0.03] border border-white/5 text-gray-500 group-hover:text-[#7C5CFF] group-hover:bg-[#00A5E5]/10 transition-all">
 //                       <ChevronRight size={20} />
 //                     </button>
 //                   )}
@@ -193,7 +193,7 @@ export default function BookingsPage() {
 
   const [acceptOffer, { isLoading: acceptLoading }] = useAcceptOfferMutation();
   const [rejectOffer, { isLoading: rejectLoading }] = useRejectOfferMutation();
-  
+
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [actionType, setActionType] = useState<"accept" | "reject" | null>(null);
 
@@ -247,7 +247,7 @@ export default function BookingsPage() {
             {activeTab === tab.status && (
               <motion.div
                 layoutId="bookingTab"
-                className="absolute inset-0 bg-[#7C5CFF] rounded-[20px]"
+                className="absolute inset-0 bg-[#00A5E5] rounded-[20px]"
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
               />
             )}
@@ -285,7 +285,7 @@ export default function BookingsPage() {
                           ${item.status === "confirmed"
                             ? "bg-[#10B981]/10 text-[#10B981] border-[#10B981]/20"
                             : item.status === "pending"
-                              ? "bg-[#7C5CFF]/10 text-[#7C5CFF] border-[#7C5CFF]/20"
+                              ? "bg-[#00A5E5]/10 text-[#7C5CFF] border-[#7C5CFF]/20"
                               : "bg-white/5 text-gray-400 border-white/10"
                           }`}
                         >
@@ -317,15 +317,15 @@ export default function BookingsPage() {
                     <div className="flex items-center gap-3 w-full md:w-auto">
                       {activeTab === "pending" ? (
                         <>
-                          <button 
-                            onClick={() => handleAcceptOffer(item.id)} 
+                          <button
+                            onClick={() => handleAcceptOffer(item.id)}
                             disabled={processingId === item.id || acceptLoading}
-                            className="flex-1 md:flex-none px-8 py-3 rounded-2xl bg-[#7C5CFF] text-white text-sm font-bold hover:bg-[#6A4BE5] transition-all shadow-lg shadow-[#7C5CFF]/10 disabled:opacity-50"
+                            className="flex-1 md:flex-none px-8 py-3 rounded-2xl bg-[#00A5E5] text-white text-sm font-bold  transition-all shadow-lg shadow-[#7C5CFF]/10 disabled:opacity-50"
                           >
                             {processingId === item.id && actionType === "accept" ? "Accepting..." : "Accept Offer"}
                           </button>
-                          <button 
-                            onClick={() => handleRejectOffer(item.id)} 
+                          <button
+                            onClick={() => handleRejectOffer(item.id)}
                             disabled={processingId === item.id || rejectLoading}
                             className="px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 text-gray-400 text-sm font-bold hover:bg-white/[0.08] hover:text-white transition-all disabled:opacity-50"
                           >
@@ -338,7 +338,7 @@ export default function BookingsPage() {
                           Message Client
                         </button>
                       ) : (
-                        <button className="p-3 rounded-full bg-white/[0.03] border border-white/5 text-gray-500 group-hover:text-[#7C5CFF] group-hover:bg-[#7C5CFF]/10 transition-all">
+                        <button className="p-3 rounded-full bg-white/[0.03] border border-white/5 text-gray-500 group-hover:text-[#7C5CFF] group-hover:bg-[#00A5E5]/10 transition-all">
                           <ChevronRight size={20} />
                         </button>
                       )}

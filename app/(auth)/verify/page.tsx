@@ -141,7 +141,7 @@ function VerifyCode() {
         <button
           onClick={handleVerify}
           disabled={isVerifying}
-          className="w-full bg-[#7C5CFF] hover:bg-[#6A4BE5] text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full bg-[#00A5E5]  text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {isVerifying ? "Verifying..." : "Verify Code"}
         </button>

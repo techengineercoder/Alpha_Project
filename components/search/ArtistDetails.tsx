@@ -11,15 +11,16 @@ import { useGetArtistByIdQuery } from '@/redux/feature/artistApi/artistSlice';
 import { useAddFavoritesMutation, useRemoveFavoritesMutation } from '@/redux/feature/artistApi/bookingSlice';
 import { toast } from 'sonner';
 
-const gradientClass = "bg-gradient-to-r from-[#7C5CFF] to-[#9D7CFF]";
+const gradientClass = "bg-[#00A5E5]";
 
 export function ArtistDetails() {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState<'availability' | 'booked'>('availability');
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 3, 1));
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
+  const [hasSetInitialMonth, setHasSetInitialMonth] = useState(false);
 
   const { data: response, isLoading, refetch } = useGetArtistByIdQuery(id as string);
 
@@ -94,6 +95,16 @@ export function ArtistDetails() {
     });
   };
 
+  React.useEffect(() => {
+    if (artist?.available_ranges?.length > 0 && !hasSetInitialMonth) {
+      const sortedRanges = [...artist.available_ranges].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+      if (sortedRanges[0]?.start) {
+        setCurrentMonth(new Date(sortedRanges[0].start + 'T00:00:00'));
+        setHasSetInitialMonth(true);
+      }
+    }
+  }, [artist?.available_ranges, hasSetInitialMonth]);
+
   if (isLoading || !artist) {
     return (
       <div className="min-h-screen bg-[#0b0b0f] text-white font-sans animate-pulse">
@@ -127,7 +138,7 @@ export function ArtistDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0b0f] text-white font-sans selection:bg-[#7C5CFF]/30 overflow-x-hidden w-full">
+    <div className="min-h-screen bg-[#0b0b0f] text-white font-sans selection:bg-[#00A5E5]/30 overflow-x-hidden w-full">
       {/* Top Image Section */}
       <div className="relative w-full h-[400px] md:h-[550px] lg:h-[650px] overflow-hidden">
         <Image
@@ -259,7 +270,7 @@ export function ArtistDetails() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="border border-white/[0.08] rounded-[16px] shadow-2xl overflow-hidden p-4 sm:p-5 md:p-[25px] bg-[#121218] w-full"
               >
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#7C5CFF]/5 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#00A5E5]/5 blur-[100px] rounded-full pointer-events-none" />
 
                 <div className="flex items-center justify-between mb-6 relative z-10">
                   <h3 className="text-[20px] font-bold tracking-tight">Availability</h3>
@@ -295,18 +306,22 @@ export function ArtistDetails() {
                     const isBooked = isDateBooked(day);
                     const isSelected = selectedDate && isSameDay(selectedDate, day);
 
+                    let dayClass = 'text-[#A1A1AA] hover:text-white';
+                    if (isSelected) {
+                      dayClass = 'bg-[#00A5E5] text-white border-transparent shadow-md sm:shadow-xl shadow-[#00A5E5]/40 ring-2 sm:ring-4 ring-[#00A5E5]/20';
+                    } else if (isBooked) {
+                      dayClass = 'bg-[#FB2C3633] text-[#FF6467] border border-[#EF4444]/30';
+                    } else if (isAvailable) {
+                      dayClass = 'bg-[#7C5CFF33] text-[#7C5CFF] border border-[#7C5CFF]/30';
+                    }
+
                     return (
                       <div key={i} className="flex items-center justify-center w-full">
                         <motion.div
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => isAvailable && setSelectedDate(day)}
-                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[12px] sm:text-[14px] font-normal transition-all cursor-pointer relative
-                                                      ${isAvailable ? 'bg-[#7C5CFF33] text-[#7C5CFF] border border-[#7C5CFF]/30' : ''}
-                                                      ${isBooked ? 'bg-[#FB2C3633] text-[#FF6467] border border-[#EF4444]/30' : ''}
-                                                      ${isSelected ? gradientClass + ' text-white border-transparent shadow-md sm:shadow-xl shadow-[#7C5CFF]/40 ring-2 sm:ring-4 ring-[#7C5CFF]/20' : ''}
-                                                      ${!isAvailable && !isBooked ? 'text-[#A1A1AA] hover:text-white ' : ''}
-                                                  `}
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[12px] sm:text-[14px] font-normal transition-all cursor-pointer relative ${dayClass}`}
                         >
                           {format(day, 'd')}
                         </motion.div>
@@ -317,7 +332,7 @@ export function ArtistDetails() {
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-5 pb-2 relative z-10 w-full">
                   <div className="flex items-center gap-3 sm:gap-4">
-                    <div className={`w-3 h-3 sm:w-4 sm:h-4 bg-[#7C5CFF]/30 rounded-[4px] border border-[#7C5CFF]`} />
+                    <div className={`w-3 h-3 sm:w-4 sm:h-4 bg-[#00A5E5]/30 rounded-[4px] border border-[#7C5CFF]`} />
                     <span className="text-[12px] sm:text-[14px] font-normal tracking-wide sm:tracking-widest text-[#A1A1AA]">Available</span>
                   </div>
                   <div className="flex items-center gap-3 sm:gap-4">
@@ -412,7 +427,7 @@ export function ArtistDetails() {
                       onClick={() => setSelectedDate(day)}
                       transition={{ duration: 0.3, delay: i * 0.02 }}
                       className={`flex flex-col items-center justify-center py-5 px-4 rounded-[12px] bg-[#121218] border transition-all cursor-pointer group
-                        ${isDaySelected ? 'border-[#7C5CFF] bg-[#7C5CFF]/5' : 'border-white/10 hover:border-white/20'}
+                        ${isDaySelected ? 'border-[#7C5CFF] bg-[#00A5E5]/5' : 'border-white/10 hover:border-white/20'}
                       `}
                     >
                       <p className={`text-[14px] mb-1 font-normal transition-colors

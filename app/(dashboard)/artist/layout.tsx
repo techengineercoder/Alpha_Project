@@ -36,7 +36,7 @@ export default function ArtistLayout({ children }: { children: React.ReactNode }
                   className="absolute inset-0 rounded-[16px] border border-[#D2C7FF]/18 shadow-[0_4px_30px_rgba(125,102,255,0.37)] animate-pulse-glow overflow-hidden"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#7C5CFF]/[0.41] to-[#9D7CFF]/[0.17]" />
+                  <div className="absolute inset-0 bg-[#00A5E5]" />
                   {/* Subtle inner shine */}
                   <div className="absolute inset-0 bg-gradient-to-t from-white/[0.05] to-transparent pointer-events-none" />
                 </motion.div>

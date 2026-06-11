@@ -75,6 +75,15 @@ export const bookingtApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["Booking"],
         }),
+        // /bookings/send-to/?role=talent-buyer&search=akib
+        getSendTo: builder.query({
+            query: (params?: Record<string, any>) => ({
+                url: "/bookings/send-to/",
+                method: "GET",
+                params,
+            }),
+            providesTags: ["Booking"],
+        }),
 
     }),
 });
@@ -87,5 +96,6 @@ export const {
     useGetFavoritesQuery,
     useGetDashboardQuery,
     useAcceptOfferMutation,
-    useRejectOfferMutation
+    useRejectOfferMutation,
+    useGetSendToQuery
 } = bookingtApi;

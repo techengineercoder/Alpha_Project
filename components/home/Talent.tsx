@@ -7,22 +7,22 @@ const talents = [
     {
         title: 'Agents',
         description: 'Update availability dates, view booking inquiries.',
-        image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80',
+        image: '/image.png',
     },
     {
         title: 'Artists',
         description: 'Manage multiple artist profiles, claim artists and upload avails.',
-        image: 'https://images.unsplash.com/photo-1611414779790-abb3e1ec462e?w=800&q=80',
+        image: '/image copy.png',
     },
     {
         title: 'Venues',
         description: 'Manage venue profiles, claim venue and track booking request.',
-        image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80',
+        image: '/image copy 2.png',
     },
     {
         title: 'Buyers',
         description: 'Search history, saved profiles, and direct messaging.',
-        image: 'https://images.unsplash.com/photo-1598387181032-a3103a2db5b3?w=800&q=80',
+        image: '/image copy 3.png',
     }
 ];
 

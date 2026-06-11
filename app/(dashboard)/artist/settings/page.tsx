@@ -72,85 +72,86 @@ export default function ProfileSettingsPage() {
           </button>
 
           <form onSubmit={handleProfileUpdate}>
-          {/* Profile Identity */}
-          <div className="flex flex-col md:flex-row items-start gap-8 mb-10">
-            <div className="relative">
-              <div className="w-24 h-24 rounded-[28px] overflow-hidden border-2 border-[#7C5CFF]/30">
-                <img
-                  src={imagePreview || (data?.user?.image ? (data.user.image.startsWith('http') ? data.user.image : `${IMAGE}${data.user.image.startsWith('/') ? '' : '/'}${data.user.image}`) : "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop")}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
+            {/* Profile Identity */}
+            <div className="flex flex-col md:flex-row items-start gap-8 mb-10">
+              <div className="relative">
+                <div className="w-24 h-24 rounded-[28px] overflow-hidden border-2 border-[#7C5CFF]/30">
+                  <img
+                    src={imagePreview || (data?.user?.image ? (data.user.image.startsWith('http') ? data.user.image : `${IMAGE}${data.user.image.startsWith('/') ? '' : '/'}${data.user.image}`) : "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop")}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <label htmlFor="profileImage" className="absolute -bottom-1 -right-1 p-2 bg-[#00A5E5] text-white rounded-lg border-2 border-[#111116] cursor-pointer  transition-colors">
+                  <Camera size={14} />
+                  <input type="file" id="profileImage" name="image" className="hidden" accept="image/*" onChange={handleImageChange} />
+                </label>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold text-white">{data?.user?.name || "Loading..."}</h3>
+                <p className="text-gray-400 font-medium">{data?.user?.genre || data?.user?.role || "Artist"}</p>
+                <p className="text-sm text-gray-500 max-w-lg leading-relaxed">
+                  {data?.user?.bio || "No bio provided."}
+                </p>
+              </div>
+            </div>
+
+            {/* Input Fields Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={data?.user?.name || ""}
+                  className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all"
                 />
               </div>
-              <label htmlFor="profileImage" className="absolute -bottom-1 -right-1 p-2 bg-[#7C5CFF] text-white rounded-lg border-2 border-[#111116] cursor-pointer hover:bg-[#6A4BE5] transition-colors">
-                <Camera size={14} />
-                <input type="file" id="profileImage" name="image" className="hidden" accept="image/*" onChange={handleImageChange} />
-              </label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Genre / Role</label>
+                <input
+                  type="text"
+                  name="role"
+                  readOnly
+                  defaultValue={data?.user?.role || ""}
+                  className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-gray-400 font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all opacity-70 cursor-not-allowed"
+                />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Bio</label>
+                <textarea
+                  rows={4}
+                  name="bio"
+                  defaultValue={data?.user?.bio || ""}
+                  className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all resize-none"
+                ></textarea>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Phone</label>
+                <input
+                  type="text"
+                  name="phone"
+                  defaultValue={data?.user?.phone || ""}
+                  className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  readOnly
+                  defaultValue={data?.user?.email || ""}
+                  className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-gray-400 font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all opacity-70 cursor-not-allowed"
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-white">{data?.user?.name || "Loading..."}</h3>
-              <p className="text-gray-400 font-medium">{data?.user?.genre || data?.user?.role || "Artist"}</p>
-              <p className="text-sm text-gray-500 max-w-lg leading-relaxed">
-                {data?.user?.bio || "No bio provided."}
-              </p>
-            </div>
-          </div>
 
-          {/* Input Fields Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Name</label>
-              <input
-                type="text"
-                name="name"
-                defaultValue={data?.user?.name || ""}
-                className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all"
-              />
+            <div className="flex justify-end mt-8">
+              <button disabled={isLoadingUpdate} type="submit" className="px-10 py-3 rounded-2xl bg-[#00A5E5] text-white font-bold  transition-all shadow-[0_0_20px_rgba(124,92,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed">
+                {isLoadingUpdate ? "Saving..." : "Save Changes"}
+              </button>
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Genre / Role</label>
-              <input
-                type="text"
-                name="role"
-                defaultValue={data?.user?.role || ""}
-                className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all"
-              />
-            </div>
-            <div className="md:col-span-2 space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Bio</label>
-              <textarea
-                rows={4}
-                name="bio"
-                defaultValue={data?.user?.bio || ""}
-                className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all resize-none"
-              ></textarea>
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Phone</label>
-              <input
-                type="text"
-                name="phone"
-                defaultValue={data?.user?.phone || ""}
-                className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Email</label>
-              <input
-                type="email"
-                name="email"
-                readOnly
-                defaultValue={data?.user?.email || ""}
-                className="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-2xl text-gray-400 font-medium focus:outline-none focus:border-[#7C5CFF]/50 transition-all opacity-70 cursor-not-allowed"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end mt-8">
-            <button disabled={isLoadingUpdate} type="submit" className="px-10 py-3 rounded-2xl bg-[#7C5CFF] text-white font-bold hover:bg-[#6A4BE5] transition-all shadow-[0_0_20px_rgba(124,92,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed">
-              {isLoadingUpdate ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
           </form>
         </motion.div>
 
@@ -162,7 +163,7 @@ export default function ProfileSettingsPage() {
           className="md:w-2/3 bg-[#111116] border border-white/5 rounded-[24px] p-8 shadow-2xl space-y-8"
         >
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-[#7C5CFF]/10 flex items-center justify-center text-[#7C5CFF] border border-[#7C5CFF]/20">
+            <div className="w-10 h-10 rounded-xl bg-[#00A5E5]/10 flex items-center justify-center text-[#7C5CFF] border border-[#7C5CFF]/20">
               <Lock size={20} />
             </div>
             <h2 className="text-xl font-bold text-white">Change Password</h2>
@@ -198,7 +199,7 @@ export default function ProfileSettingsPage() {
           </div>
 
           <div className="flex justify-end">
-            <button className="flex items-center gap-2.5 px-8 py-3 rounded-2xl bg-[#7C5CFF]/10 border border-[#7C5CFF]/20 text-[#7C5CFF] font-bold hover:bg-[#7C5CFF] hover:text-white transition-all animate-shine">
+            <button className="flex items-center gap-2.5 px-8 py-3 rounded-2xl bg-[#00A5E5]/10 border border-[#7C5CFF]/20 text-[#7C5CFF] font-bold hover:bg-[#00A5E5] hover:text-white transition-all animate-shine">
               <ShieldCheck size={18} />
               Update Password
             </button>
@@ -232,14 +233,14 @@ export default function ProfileSettingsPage() {
                 </div>
                 <div className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" className="sr-only peer" defaultChecked={idx !== 2} />
-                  <div className="w-11 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#7C5CFF]"></div>
+                  <div className="w-11 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00A5E5]"></div>
                 </div>
               </div>
             ))}
           </div>
 
           <div className="flex justify-end">
-            <button className="flex items-center gap-2.5 px-8 py-3 rounded-2xl bg-[#7C5CFF] text-white font-bold hover:bg-[#6A4BE5] transition-all">
+            <button className="flex items-center gap-2.5 px-8 py-3 rounded-2xl bg-[#00A5E5] text-white font-bold  transition-all">
               <Save size={18} />
               Save Preferences
             </button>

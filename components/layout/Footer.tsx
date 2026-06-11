@@ -39,13 +39,13 @@ export function Footer() {
             {/* Contact Information */}
             <div className="flex flex-col gap-3 mb-8">
               <a href="mailto:Booking@GetAvails.com" className="flex items-center gap-3 text-[#A1A1AA] hover:text-white transition-colors group">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#7C5CFF]/20 group-hover:text-[#7C5CFF] transition-colors">
+                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#00A5E5]/20 group-hover:text-[#7C5CFF] transition-colors">
                   <Mail className="w-4 h-4" />
                 </div>
                 <span className="text-sm font-medium">Booking@GetAvails.com</span>
               </a>
               <a href="tel:4255309913" className="flex items-center gap-3 text-[#A1A1AA] hover:text-white transition-colors group">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#7C5CFF]/20 group-hover:text-[#7C5CFF] transition-colors">
+                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#00A5E5]/20 group-hover:text-[#7C5CFF] transition-colors">
                   <Phone className="w-4 h-4" />
                 </div>
                 <span className="text-sm font-medium">(425) 530-9913</span>
