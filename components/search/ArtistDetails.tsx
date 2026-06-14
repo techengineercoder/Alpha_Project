@@ -473,8 +473,11 @@ export function ArtistDetails() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
+                    onClick={() => {
+                      window.open(event?.url, "_blank");
+                    }}
                     transition={{ duration: 0.4, delay: i * 0.1 }}
-                    className="w-full bg-[#121218] border border-white/[0.05] rounded-[12px] p-6 flex flex-col md:flex-row justify-between items-start md:items-center group hover:bg-[#121218]/80 transition-all hover:border-white/10"
+                    className="w-full bg-[#121218] border cursor-pointer border-white/[0.05] rounded-[12px] p-6 flex flex-col md:flex-row justify-between items-start md:items-center group hover:bg-[#121218]/80 transition-all hover:border-white/10"
                   >
                     <div className="flex flex-col gap-1 mb-4 md:mb-0">
                       <h4 className="text-[18px] font-bold text-white tracking-tight">{event.event_name || event.title || 'Event'}</h4>

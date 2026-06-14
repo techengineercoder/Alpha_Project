@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, User, Mail, Phone, Clock, Check, MapPin, DollarSign, Type, Search } from 'lucide-react';
+import { X, Calendar, User, Mail, Phone, Clock, Check, MapPin, DollarSign, Type, Search, ChevronDown } from 'lucide-react';
 import { useCreateBookingMutation, useGetSendToQuery } from '@/redux/feature/artistApi/bookingSlice';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -19,7 +19,7 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
   const [step, setStep] = useState<1 | 2>(1);
   const [createBooking, { isLoading }] = useCreateBookingMutation();
 
-  const [sendToRole, setSendToRole] = useState<'venue' | 'talent-buyer'>('venue');
+  const [sendToRole, setSendToRole] = useState<'artist' | 'agent' | 'talent-buyer' | 'venue' | 'organizer'>('venue');
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedSendTo, setSelectedSendTo] = useState<number | string | null>(null);
@@ -282,6 +282,22 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
                     {/* Send To Group */}
                     <div className="flex flex-col gap-4">
                       <h3 className="text-sm font-medium text-white">Send To</h3>
+
+                      {/* Role Dropdown */}
+                      <div className="relative mb-2">
+                        <select
+                          value={sendToRole}
+                          onChange={(e) => setSendToRole(e.target.value as any)}
+                          className="w-full bg-[#1C1C28] border border-white/5 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-[#7C5CFF]/50 appearance-none"
+                        >
+                          <option value="artist">Artist</option>
+                          <option value="agent">Agent</option>
+                          <option value="talent-buyer">Talent Buyer</option>
+                          <option value="venue">Venue</option>
+                          <option value="organizer">Organizer</option>
+                        </select>
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A1A1AA] pointer-events-none" />
+                      </div>
 
                       {/* Segmented Control */}
                       <div className="flex p-1 bg-[#1C1C28] rounded-xl border border-white/5">

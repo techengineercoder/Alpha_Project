@@ -114,7 +114,7 @@ function MarketingNavbarContent() {
             } else {
               isActive = pathname === href || pathname === href.split('#')[0];
             }
-            
+
             return (
               <Link
                 key={href}
@@ -208,7 +208,7 @@ function MarketingNavbarContent() {
 
                     {/* Menu items */}
                     <div className="p-2">
-                      <Link
+                      {/* <Link
                         href="/artist/dashboard"
                         onClick={() => setIsProfileOpen(false)}
                         className="flex items-center gap-3 px-4 py-3 rounded-[14px]
@@ -227,7 +227,7 @@ function MarketingNavbarContent() {
                       >
                         <Settings size={16} className="text-white/40" />
                         Settings
-                      </Link>
+                      </Link> */}
 
                       <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
 
@@ -296,7 +296,7 @@ function MarketingNavbarContent() {
                 } else {
                   isActive = pathname === href || pathname === href.split('#')[0];
                 }
-                
+
                 return (
                   <Link
                     key={href}
