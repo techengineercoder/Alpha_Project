@@ -40,7 +40,7 @@ export function ArtistDetails() {
       await refetch();
       toast.success(artist?.is_favorited ? "Artist removed from favorites" : "Artist saved to favorites!");
     } catch (error: any) {
-      toast.error(error.data?.message || "Failed to save artist");
+      toast.error(error.data?.error?.message || error.data?.message || "Failed to save artist");
     }
   };
 
@@ -50,7 +50,7 @@ export function ArtistDetails() {
       await refetch();
       toast.success("Artist removed from favorites!");
     } catch (error: any) {
-      toast.error(error.data?.message || "Failed to remove artist from favorites");
+      toast.error(error.data?.error?.message || error.data?.message || "Failed to remove artist from favorites");
     }
   };
 
@@ -169,17 +169,19 @@ export function ArtistDetails() {
                 </span>
               ))}
             </div> */}
-            <div className="flex gap-5 items-center">
-              <div className="relative size-[150px] shrink-0">
+            <div className="flex flex-col md:flex-row gap-4 md:gap-5 items-center md:items-start text-center md:text-left">
+              <div className="relative size-[100px] md:size-[150px] shrink-0">
                 <Image
                   src={profile}
                   alt={name}
                   fill
-                  sizes="150px"
+                  sizes="(max-width: 768px) 100px, 150px"
                   className="object-cover object-center rounded-2xl border-4 border-white/10 shadow-2xl"
                 />
               </div>
-              <h1 className="text-[46px] font-bold tracking-tight leading-[1.1] break-words drop-shadow-lg">{name}</h1>
+              <div className="flex flex-col justify-center min-h-[100px] md:min-h-[150px]">
+                <h1 className="text-3xl md:text-[46px] font-bold tracking-tight leading-[1.1] break-words drop-shadow-lg">{name}</h1>
+              </div>
             </div>
             {/* <div className="flex items-center gap-3 text-[#A1A1AA]">
               <MapPin className="w-5 h-5 text-[#A1A1AA]" />

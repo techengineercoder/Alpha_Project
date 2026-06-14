@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import Image from 'next/image';
@@ -89,6 +88,7 @@ export function VenueList({
           const location = venue.city ? `${venue.city}, ${venue.state}` : (venue.location || venue.address || 'Location unknown');
           const capacity = venue.capacity ? `${venue.capacity} capacity` : 'Capacity unknown';
           const image = venue.image || venue.cover_image || venue.user?.image || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80';
+          const website = venue.website;
 
           return (
             <motion.div
@@ -133,6 +133,14 @@ export function VenueList({
                 </div>
 
                 <div className="mt-auto flex items-center justify-end gap-3 pt-2">
+                  <button
+                    onClick={() => {
+                      window.open(website, "_blank");
+                    }}
+                    className="px-6 py-2.5 rounded-full cursor-pointer bg-none text-white text-sm font-medium  transition-colors border border-[#00A5E5]"
+                  >
+                    View Tickets
+                  </button>
                   <Link
                     href={`/venue/${venue.id}`}
                     className="px-6 py-2.5 rounded-full bg-[#00A5E5] text-white text-sm font-medium  transition-colors shadow-lg shadow-[#7C5CFF]/20"

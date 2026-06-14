@@ -123,16 +123,20 @@ export function ArtistList({
           };
 
           let availableDates = ['Available'];
-          if (artist.booked_dates && artist.booked_dates.length > 0) {
-            availableDates = artist.booked_dates
-              .map((d: any) => formatDate(d.start_date || d.date))
-              .slice(0, 4);
+          
+          if (artist.important_dates && artist.important_dates.length > 0) {
+            availableDates = artist.important_dates
+              .map((d: any) => formatDate(d.date))
+              .slice(0, 3);
           } else if (artist.available_ranges && artist.available_ranges.length > 0) {
             availableDates = artist.available_ranges
               .map((r: any) => `${formatDate(r.start)} to ${formatDate(r.end)}`)
               .slice(0, 3);
+          } else if (artist.booked_dates && artist.booked_dates.length > 0) {
+            availableDates = artist.booked_dates
+              .map((d: any) => formatDate(d.start_date || d.date))
+              .slice(0, 3);
           }
-
 
           const isFavorited = localFavorites[artist.id] !== undefined ? localFavorites[artist.id] : artist.is_favorited;
           const isFavoriteLoading = loadingFavorites[artist.id] || false;
@@ -148,7 +152,7 @@ export function ArtistList({
             } catch (error: any) {
               setLocalFavorites(prev => ({ ...prev, [artist.id]: false }));
               if (error.status === 401 || error.data?.error?.status === 401) {
-                toast.error("Please log in to save favorites");
+                toast.error(error.data?.error?.message || error.data?.message || "Failed to save ")
               } else {
                 toast.error(error.data?.error?.message || error.data?.message || "Failed to save artist");
               }
