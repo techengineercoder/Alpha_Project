@@ -232,9 +232,8 @@ export function VenueDetails() {
                 </motion.a>
               )}
             </div>
-
             {/* Map Section */}
-            {googlemap && (venue?.latitude || fullAddress) && (
+            {/* {googlemap && (venue?.latitude || fullAddress) && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -254,7 +253,7 @@ export function VenueDetails() {
                   ></iframe>
                 </div>
               </motion.section>
-            )}
+            )} */}
           </div>
           <div className="flex flex-col gap-6 relative w-full max-w-full">
             <div className="lg:sticky lg:top-28 flex flex-col gap-6 w-full">
