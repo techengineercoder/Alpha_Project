@@ -300,7 +300,7 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
                       </div>
 
                       {/* Segmented Control */}
-                      <div className="flex p-1 bg-[#1C1C28] rounded-xl border border-white/5">
+                      {/* <div className="flex p-1 bg-[#1C1C28] rounded-xl border border-white/5">
                         <button
                           type="button"
                           onClick={() => setSendToRole('venue')}
@@ -321,7 +321,7 @@ export function BookingModal({ isOpen, onClose, artistName, artistId, initialDat
                         >
                           Talent Buyer
                         </button>
-                      </div>
+                      </div> */}
 
                       {/* Search Input */}
                       <div className="relative">
