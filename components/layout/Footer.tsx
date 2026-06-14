@@ -71,7 +71,7 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-6">For Clients</h4>
             <div className="flex flex-col gap-4">
               <Link href="/search" className="text-[#A1A1AA] hover:text-white transition-colors text-sm">Browse Artists</Link>
-              <Link href="/#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="text-[#A1A1AA] hover:text-white transition-colors text-sm">How It Works</Link>
+              <Link href="/how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="text-[#A1A1AA] hover:text-white transition-colors text-sm">How It Works</Link>
               {/* <Link href="#" className="text-[#A1A1AA] hover:text-white transition-colors text-sm">Pricing</Link>
               <Link href="#" className="text-[#A1A1AA] hover:text-white transition-colors text-sm">FAQ</Link> */}
             </div>

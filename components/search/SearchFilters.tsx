@@ -114,7 +114,7 @@ export function SearchFilters({
           </button>
           <button
             onClick={() => onChange({ type: 'venue' })}
-            className={`flex-1 py-2.5 text-sm font-medium rounded transition-all ${lookingFor === 'venue' ? 'border-[#00A5E5]/10 bg-[#00A5E5] text-white shadow-lg shadow-[#00A5E5]/20' : 'text-[#A1A1AA] hover:text-white'
+            className={`flex-1 py-2.5 text-sm font-medium rounded border border-white/10 transition-all ${lookingFor === 'venue' ? 'border-[#00A5E5]/10 bg-[#00A5E5] text-white shadow-lg shadow-[#00A5E5]/20' : 'text-[#A1A1AA] hover:text-white'
               }`}
           >
             Find Venue
@@ -129,7 +129,7 @@ export function SearchFilters({
           type="text"
           value={filters.q}
           onChange={(e) => onChange({ q: e.target.value })}
-          placeholder="Search Artist..."
+          placeholder={lookingFor === 'venue' ? "Find Venue..." : "Search Artist..."}
           className="w-full bg-[#121218] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder:text-[#A1A1AA]/50 focus:outline-none focus:border-[#9D7CFF]/50 transition-colors"
         />
       </div>

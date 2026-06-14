@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useGoogleLoginMutation, useLoginMutation } from "@/redux/feature/authApi";
 import { toast } from "sonner";
 import { handleError } from "@/lib/handleError";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/feature/authSlice";
+import { Logo } from "@/components/icon/logo";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-
 
 export default function Login() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function Login() {
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
 
-  const [googleLogin] = useGoogleLoginMutation();
+  const [googleLoginMutation] = useGoogleLoginMutation();
 
   const handleGoogleSuccess = async (credentialResponse: {
     credential?: string;
@@ -35,13 +35,12 @@ export default function Login() {
       }
 
       // Send to backend
-      const response = await googleLogin({
+      const response = await googleLoginMutation({
         id_token: credentialResponse.credential,
       }).unwrap();
 
       // Save to cookies securely on the client side
       document.cookie = `token=${response.access}; path=/; max-age=31536000; SameSite=Lax`;
-
 
       // Save to Redux (and localStorage via slice)
       dispatch(setUser({
@@ -63,7 +62,6 @@ export default function Login() {
     toast.error("Google login failed. Please try again.");
   };
 
-  // Load remembered email on mount
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("rememberedEmail");
     if (rememberedEmail) {
@@ -83,6 +81,10 @@ export default function Login() {
     }));
   };
 
+  const toggleRememberMe = () => {
+    setFormData(prev => ({ ...prev, remember_me: !prev.remember_me }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -97,14 +99,12 @@ export default function Login() {
       if (res.success) {
         toast.success(res.message || "Login successful!");
 
-        // Handle Remember Me
         if (formData.remember_me) {
           localStorage.setItem("rememberedEmail", formData.email);
         } else {
           localStorage.removeItem("rememberedEmail");
         }
 
-        // Save to Redux (and localStorage via slice)
         dispatch(setUser({
           user: res.user,
           access: res.access,
@@ -119,140 +119,109 @@ export default function Login() {
   };
 
   return (
-    <div>
-      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_API_KEY_CLIENT_ID || ''}>
-
-        <div className="w-full max-w-[440px] mx-auto px-4 py-10">
-          {/* Header Section */}
-          <div className="text-center mb-12">
-            <h2 className="text-white text-2xl font-semibold mb-6 tracking-tight">ArtistBook</h2>
-            <h1 className="text-white text-[30px] font-medium mb-4 tracking-tight">Welcome Back</h1>
-            <p className="text-[#A1A1AA] text-base font-medium">Sign in to your account to continue</p>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_API_KEY_CLIENT_ID || ''}>
+      <div className="w-full max-w-[400px]">
+        <div className="mb-10">
+          <div className="mb-8">
+            <Logo />
           </div>
-
-          <div className="bg-[#111116] border border-white/5 p-8 md:p-10 rounded-[28px] shadow-2xl">
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* Email Address */}
-              <div className="space-y-3">
-                <label className="block text-base font-medium text-[#FFFFFF] ml-1">
-                  Email Address
-                </label>
-                <div className="relative flex items-center group">
-                  <div className="absolute left-4 text-gray-500 group-focus-within:text-[#7C5CFF] transition-colors">
-                    <Mail size={20} />
-                  </div>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full h-[50px] bg-white/[0.04] border border-white/[0.08] rounded-[14px] pl-[48px] pr-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#7C5CFF] focus:border-[#7C5CFF] transition-all"
-                    placeholder="you@example.com"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between ml-1">
-                  <label className="block text-base font-medium text-[#FFFFFF] ml-1">
-                    Password
-                  </label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs text-[#FF4B4B] hover:text-[#ff6b6b] transition-colors font-semibold"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-                <div className="relative flex items-center group">
-                  <div className="absolute left-4 text-gray-500 group-focus-within:text-[#7C5CFF] transition-colors">
-                    <Lock size={20} />
-                  </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full h-[50px] bg-white/[0.04] border border-white/[0.08] rounded-[14px] pl-[48px] pr-[48px] py-3 text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#7C5CFF] focus:border-[#7C5CFF] transition-all"
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 text-gray-500 hover:text-white transition-colors"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center ml-1">
-                <div className="relative flex items-center h-5">
-                  <input
-                    type="checkbox"
-                    id="remember_me"
-                    name="remember_me"
-                    checked={formData.remember_me}
-                    onChange={handleInputChange}
-                    className="w-4 h-4 rounded border-white/10 bg-white/5 text-[#7C5CFF] focus:ring-[#7C5CFF] focus:ring-offset-0 transition-all cursor-pointer"
-                  />
-                </div>
-                <label htmlFor="remember_me" className="ml-2 text-sm text-gray-400 cursor-pointer select-none">
-                  Remember me
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-[#00A5E5]  text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {isLoading ? "Signing In..." : "Sign In"}
-              </button>
-            </form>
-
-            {/* Divider */}
-            <div className="relative my-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/5"></div>
-              </div>
-              <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-medium">
-                <span className="bg-[#111116] px-4 text-gray-500">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
-            <div className="flex justify-center w-full">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                useOneTap
-                shape="pill"
-                theme="filled_black"
-                size="large"
-                text="continue_with"
-                width="300"
-              />
-            </div>
-
-            <div className="mt-8 text-center">
-              <p className="text-gray-500 text-sm font-medium">
-                Don't have an account?{" "}
-                <Link
-                  href="/register"
-                  className="text-[#7C5CFF] font-bold hover:underline"
-                >
-                  Sign up
-                </Link>
-              </p>
-            </div>
-          </div>
+          <h1 className="text-white text-[28px] font-semibold mb-2 tracking-tight">Welcome Back!</h1>
+          <p className="text-gray-400 text-sm font-medium">Log in to connect, book, and manage with ease</p>
         </div>
-      </GoogleOAuthProvider>
-    </div>
+
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="space-y-2">
+            <label className="block text-[13px] font-medium text-gray-200">
+              Email Address
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              className="w-full h-[48px] bg-[#1E1E24] border border-transparent rounded-[10px] px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#00A5E5] focus:border-[#00A5E5] transition-all text-sm"
+              placeholder="Enter Your email"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-[13px] font-medium text-gray-200">
+              Password
+            </label>
+            <div className="relative flex items-center">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+                className="w-full h-[48px] bg-[#1E1E24] border border-transparent rounded-[10px] pl-4 pr-[48px] py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#00A5E5] focus:border-[#00A5E5] transition-all text-sm"
+                placeholder="Enter password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 text-gray-500 hover:text-white transition-colors"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-1 pb-2">
+            <div className="flex items-center gap-3 cursor-pointer" onClick={toggleRememberMe}>
+              <div className={`w-[36px] h-[20px] rounded-full p-0.5 transition-colors duration-200 ease-in-out ${formData.remember_me ? 'bg-white' : 'bg-[#1E1E24] border border-white/10'}`}>
+                <div className={`w-[16px] h-[16px] rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${formData.remember_me ? 'translate-x-[16px] bg-[#00A5E5]' : 'translate-x-0 bg-gray-400'}`} />
+              </div>
+              <span className="text-[13px] text-gray-300 select-none">Remember me</span>
+            </div>
+            <Link
+              href="/forgot-password"
+              className="text-[13px] text-[#FF4B4B] hover:text-[#ff6b6b] transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full h-[48px] bg-[#00A5E5] text-white rounded-[10px] font-medium text-sm hover:bg-[#00A5E5]/90 active:scale-[0.99] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <div className="my-8">
+          <div className="w-full border-t border-white/10"></div>
+        </div>
+
+        <div className="flex justify-center w-full">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            useOneTap
+            shape="pill"
+            theme="filled_black"
+            size="large"
+            text="continue_with"
+            width="300"
+          />
+        </div>
+
+        <div className="mt-8 text-center">
+          <p className="text-gray-400 text-[13px]">
+            Don't have an account?{" "}
+            <Link
+              href="/register"
+              className="text-white font-medium hover:underline ml-1"
+            >
+              Sign up now
+            </Link>
+          </p>
+        </div>
+      </div>
+    </GoogleOAuthProvider>
   );
 }

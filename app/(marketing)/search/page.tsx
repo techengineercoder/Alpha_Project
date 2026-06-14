@@ -34,6 +34,14 @@ function SearchContent() {
   const [debouncedParams, setDebouncedParams] = useState(params);
 
   React.useEffect(() => {
+    const urlType = searchParams.get('type') || 'artists';
+    setParams(prev => {
+      if (prev.type === urlType) return prev;
+      return { ...prev, type: urlType };
+    });
+  }, [searchParams]);
+
+  React.useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedParams(params);
     }, 500); // 500ms debounce delay
@@ -174,7 +182,17 @@ function SearchContent() {
             <div>
               <SearchFilters
                 filters={params}
-                onChange={React.useCallback((updates) => setParams(prev => ({ ...prev, ...updates })), [])}
+                onChange={React.useCallback((updates: any) => {
+                  setParams(prev => ({ ...prev, ...updates }));
+                  if (updates.type) {
+                    const currentType = searchParams.get('type') || 'artists';
+                    if (updates.type !== currentType) {
+                      const newQuery = new URLSearchParams(searchParams.toString());
+                      newQuery.set('type', updates.type);
+                      router.replace(`/search?${newQuery.toString()}`, { scroll: false });
+                    }
+                  }
+                }, [searchParams, router])}
                 onApply={handleApplyFilters}
                 onReset={handleResetFilters}
               />

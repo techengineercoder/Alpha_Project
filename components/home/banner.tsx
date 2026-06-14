@@ -61,7 +61,7 @@ export function Banner() {
       style={{ backgroundImage: "url('/image/hero.jpg')" }}
     >
       {/* Overlays */}
-      <div className="absolute inset-0 bg-black/40 z-0"></div>
+      <div className="absolute inset-0 bg-black/65 z-0"></div>
       <div
         className="absolute inset-0 z-0"
         style={{

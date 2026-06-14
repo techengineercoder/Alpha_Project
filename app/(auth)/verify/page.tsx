@@ -3,12 +3,13 @@
 import { useState, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Smartphone } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useVerifyEmailMutation, useResendOTPMutation } from "@/redux/feature/authApi";
 import { toast } from "sonner";
 import { handleError } from "@/lib/handleError";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/feature/authSlice";
+import { Logo } from "@/components/icon/logo";
 
 function VerifyCode() {
   const router = useRouter();
@@ -88,72 +89,74 @@ function VerifyCode() {
   };
 
   return (
-    <div className="w-full max-w-[440px] mx-auto px-4 py-10">
-      <Link
+    <div className="w-full max-w-[400px]">
+      <Link 
         href="/register"
-        className="flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-8 ml-2 font-medium"
+        className="mb-8 flex items-center text-[13px] font-medium text-gray-400 hover:text-white transition-colors"
       >
-        <ArrowLeft size={18} /> Back
+        <ChevronDown size={16} className="rotate-90 mr-1" />
+        Back
       </Link>
-
-      <div className="bg-[#111116] border border-white/5 p-8 md:p-10 rounded-[28px] shadow-2xl">
-        <div className="flex flex-col items-center mb-10">
-          <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center mb-6">
-            <Smartphone className="text-white" size={28} />
-          </div>
-          <h1 className="text-white text-[30px] font-medium mb-4 tracking-tight text-center">Verification Code</h1>
-          <p className="text-[#A1A1AA] text-base text-center max-w-[280px]">
-            We sent a 6-digit code to <span className="text-white">{email || "your email"}</span>
-          </p>
+      
+      {/* Header Section */}
+      <div className="mb-10 text-center">
+        <div className="mb-8 flex justify-center">
+          <Logo />
         </div>
+        <h1 className="text-white text-[28px] font-semibold mb-2 tracking-tight">Verification Code</h1>
+        <p className="text-gray-400 text-sm font-medium">
+          We sent a 6-digit code to <span className="text-white">{email || "your email"}</span>
+        </p>
+      </div>
 
-        <div className="flex justify-between gap-2 mb-4">
-          {code.map((digit, index) => (
-            <input
-              key={index}
-              ref={(el: HTMLInputElement | null) => { inputs.current[index] = el; }}
-              type="text"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              className="w-[50px] h-[60px] bg-white/[0.04] border border-white/[0.08] rounded-[14px] text-center text-white text-xl font-bold focus:outline-none focus:ring-2 focus:ring-[#7C5CFF]/50 focus:border-[#7C5CFF] transition-all"
-            />
-          ))}
-        </div>
+      <div className="flex justify-between gap-2 mb-8">
+        {code.map((digit, index) => (
+          <input
+            key={index}
+            ref={(el: HTMLInputElement | null) => { inputs.current[index] = el; }}
+            type="text"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            className="w-[52px] h-[52px] bg-[#1E1E24] border border-transparent rounded-[10px] text-center text-white text-xl font-medium focus:outline-none focus:ring-1 focus:ring-[#00A5E5] focus:border-[#00A5E5] transition-all"
+          />
+        ))}
+      </div>
 
-        <div className="text-center mb-10">
-          <p className="text-xs text-gray-500 font-medium">
-            {countdown > 0 ? (
-              <>Resend Code in <span className="text-white">00:{countdown.toString().padStart(2, "0")}</span></>
-            ) : (
-              <button
-                onClick={handleResend}
-                disabled={isResending}
-                className="text-[#7C5CFF] hover:underline font-bold"
-              >
-                {isResending ? "Resending..." : "Resend Code Now"}
-              </button>
-            )}
-          </p>
-        </div>
+      <div className="text-center mb-8">
+        <p className="text-[13px] text-gray-400 font-medium">
+          {countdown > 0 ? (
+            <>Resend Code in <span className="text-[#00A5E5]">00:{countdown.toString().padStart(2, "0")}</span></>
+          ) : (
+            <button
+              onClick={handleResend}
+              disabled={isResending}
+              className="text-[#00A5E5] hover:underline font-medium"
+            >
+              {isResending ? "Resending..." : "Resend Code Now"}
+            </button>
+          )}
+        </p>
+      </div>
 
+      <div className="pt-2">
         <button
           onClick={handleVerify}
           disabled={isVerifying}
-          className="w-full bg-[#00A5E5]  text-white py-3 rounded-[20px] font-medium text-base shadow-lg shadow-[#7C5CFF]/20 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full h-[48px] bg-[#00A5E5] text-white rounded-[10px] font-medium text-sm hover:bg-[#00A5E5]/90 active:scale-[0.99] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {isVerifying ? "Verifying..." : "Verify Code"}
         </button>
+      </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-gray-500 text-sm font-medium leading-relaxed">
-            Didn't get the code? Check your spam folder or{" "}
-            <Link href="/register" className="text-[#7C5CFF] font-bold hover:underline block mx-auto mt-1">
-              try a different email
-            </Link>
-          </p>
-        </div>
+      <div className="mt-8 text-center">
+        <p className="text-gray-400 text-[13px] font-medium leading-relaxed">
+          Didn't get the code? Check your spam folder or{" "}
+          <Link href="/register" className="text-white hover:underline block mx-auto mt-1">
+            try a different email
+          </Link>
+        </p>
       </div>
     </div>
   );

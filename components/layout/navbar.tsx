@@ -5,9 +5,9 @@ import { useGetUsersQuery } from '@/redux/feature/userSlice';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/redux/feature/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import baseApi from '@/redux/api/baseApi';
 import { Logo } from '../icon/logo';
 import { useGetArtistsQuery } from '@/redux/feature/artistApi/artistSlice';
@@ -21,15 +21,15 @@ const getImageUrl = (imagePath: string) => {
 };
 
 const NAV_LINKS = [
-  { label: 'Browse Artists', href: '/search' },
-  { label: 'Browse Venue', href: '/search' },
+  { label: 'Browse Artists', href: '/search?type=artists' },
+  { label: 'Browse Venue', href: '/search?type=venue' },
   { label: 'Features', href: '/feature' },
   { label: 'How it works', href: '/how-it-works' },
   { label: 'Services', href: '/services' },
   { label: 'Blog', href: '/blog' },
 ];
 
-export function MarketingNavbar() {
+function MarketingNavbarContent() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -37,6 +37,7 @@ export function MarketingNavbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { data: userProfile } = useGetUsersQuery(undefined);
   const user = userProfile?.user;
@@ -105,7 +106,15 @@ export function MarketingNavbar() {
         {/* Desktop centre links — absolutely centered so logo/actions never shift them */}
         <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
           {NAV_LINKS.map(({ label, href }) => {
-            const isActive = pathname === href || pathname === href.split('#')[0];
+            let isActive = false;
+            if (href.startsWith('/search?type=')) {
+              const linkType = href.split('type=')[1];
+              const activeType = searchParams.get('type') || 'artists';
+              isActive = pathname === '/search' && linkType === activeType;
+            } else {
+              isActive = pathname === href || pathname === href.split('#')[0];
+            }
+            
             return (
               <Link
                 key={href}
@@ -279,7 +288,15 @@ export function MarketingNavbar() {
             {/* Links */}
             <div className="flex flex-col p-3 gap-0.5">
               {NAV_LINKS.map(({ label, href }) => {
-                const isActive = pathname === href || pathname === href.split('#')[0];
+                let isActive = false;
+                if (href.startsWith('/search?type=')) {
+                  const linkType = href.split('type=')[1];
+                  const activeType = searchParams.get('type') || 'artists';
+                  isActive = pathname === '/search' && linkType === activeType;
+                } else {
+                  isActive = pathname === href || pathname === href.split('#')[0];
+                }
+                
                 return (
                   <Link
                     key={href}
@@ -355,6 +372,14 @@ export function MarketingNavbar() {
         )}
       </AnimatePresence>
     </header>
+  );
+}
+
+export function MarketingNavbar() {
+  return (
+    <Suspense fallback={<div className="h-20" />}>
+      <MarketingNavbarContent />
+    </Suspense>
   );
 }
 

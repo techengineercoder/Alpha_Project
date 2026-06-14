@@ -69,7 +69,7 @@ export function Contact() {
                 </p>
                 <div className="flex items-center gap-3 text-white">
                   <Mail className="w-5 h-5 text-white" />
-                  <span className="font-medium">support@getavails.com</span>
+                  <a href="mailto:[Booking@GetAvails.com]" className="font-medium">Booking@GetAvails.com</a>
                 </div>
               </motion.div>
 
@@ -86,7 +86,7 @@ export function Contact() {
                 </p>
                 <div className="flex items-center gap-3 text-white">
                   <MessageCircle className="w-5 h-5 text-white" />
-                  <span className="font-medium">Available 9 AM – 9 PM</span>
+                  <span className="font-medium">Available 9 AM – 9 PM (PST)</span>
                 </div>
               </motion.div>
 
@@ -103,7 +103,7 @@ export function Contact() {
                 </p>
                 <div className="flex items-center gap-3 text-white">
                   <Phone className="w-5 h-5 text-white" />
-                  <span className="font-medium">Call Us: +1 (XXX) XXX-XXXX</span>
+                  <a href="tel:+14255309913" className="font-medium">Call Us: (425) 530-9913</a>
                 </div>
               </motion.div>
 
@@ -132,8 +132,8 @@ export function Contact() {
                           key={role}
                           onClick={() => setActiveRole(role)}
                           className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${activeRole === role
-                              ? 'bg-[#00A5E5] text-white border border-[#00A5E5]'
-                              : 'bg-transparent text-[#A1A1AA] border border-white/20 hover:border-white/40'
+                            ? 'bg-[#00A5E5] text-white border border-[#00A5E5]'
+                            : 'bg-transparent text-[#A1A1AA] border border-white/20 hover:border-white/40'
                             }`}
                         >
                           {role}

@@ -55,7 +55,8 @@ export function ArtistDetails() {
   };
 
   const name = artist?.name || artist?.user?.name || 'Unknown Artist';
-  const image = artist?.image || artist?.cover_image || artist?.user?.image || 'https://images.unsplash.com/photo-1600119692885-8b04faa7f329?w=1200&q=80';
+  const profile = artist?.image || artist?.cover_image || artist?.user?.image || '/image/banner.jpg';
+  const image = '/image/banner.jpg';
   const location = artist?.location || 'Location unknown';
   const about = artist?.bio || 'No biography available for this artist.';
   const upcomingEvents = artist?.booked_dates || [];
@@ -168,11 +169,22 @@ export function ArtistDetails() {
                 </span>
               ))}
             </div> */}
-            <h1 className="text-4xl md:text-[56px] font-bold mb-3 md:mb-4 tracking-tight leading-[1.1] break-words">{name}</h1>
-            <div className="flex items-center gap-3 text-[#A1A1AA]">
+            <div className="flex gap-5 items-center">
+              <div className="relative size-[150px] shrink-0">
+                <Image
+                  src={profile}
+                  alt={name}
+                  fill
+                  sizes="150px"
+                  className="object-cover object-center rounded-2xl border-4 border-white/10 shadow-2xl"
+                />
+              </div>
+              <h1 className="text-[46px] font-bold tracking-tight leading-[1.1] break-words drop-shadow-lg">{name}</h1>
+            </div>
+            {/* <div className="flex items-center gap-3 text-[#A1A1AA]">
               <MapPin className="w-5 h-5 text-[#A1A1AA]" />
               <span className="text-[18px] font-normal text-[#A1A1AA]">{location}</span>
-            </div>
+            </div> */}
           </motion.div>
 
           <motion.div

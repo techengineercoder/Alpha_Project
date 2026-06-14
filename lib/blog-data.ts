@@ -90,6 +90,50 @@ export const blogPosts: BlogPost[] = [
     category: "Marketing",
     readTime: "6 min read",
     image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&q=80&w=1200&h=800",
+  },
+  {
+    id: "4",
+    slug: "streamlining-artist-booking-workflow",
+    title: "How Agents Can Streamline Their Artist Booking Workflow",
+    excerpt: "Learn how modern platforms help agents manage multiple artists, track offers, and close more bookings with less back-and-forth.",
+    content: `
+      <h2>The Problem with Emails</h2>
+      <p>Relying on long email threads to negotiate offers often leads to miscommunication, lost documents, and delayed responses.</p>
+      
+      <h2>Centralizing Offers</h2>
+      <p>Using a centralized dashboard allows agents to see all incoming offers at a glance, compare them, and respond quickly.</p>
+      
+      <h2>Automating Contracts</h2>
+      <p>Automated contract generation and e-signatures reduce the administrative burden and speed up the booking process.</p>
+    `,
+    author: "Michael Chang",
+    authorImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150&h=150",
+    date: "July 10, 2026",
+    category: "Productivity",
+    readTime: "4 min read",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200&h=800",
+  },
+  {
+    id: "5",
+    slug: "why-event-organizers-are-switching",
+    title: "Why Event Organizers are Switching to Unified Dashboards",
+    excerpt: "See how moving away from emails and spreadsheets into a centralized dashboard changes the game for festivals.",
+    content: `
+      <h2>The Chaos of Spreadsheets</h2>
+      <p>Managing hundreds of artists, riders, and schedules using spreadsheets is a recipe for disaster. Version control issues are rampant.</p>
+      
+      <h2>Real-time Updates</h2>
+      <p>Unified dashboards provide real-time updates. If an artist's flight is delayed, the entire team knows instantly.</p>
+      
+      <h2>Better Collaboration</h2>
+      <p>Event teams can collaborate more effectively when everyone has access to the same centralized information.</p>
+    `,
+    author: "Sarah Jenkins",
+    authorImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150&h=150",
+    date: "August 05, 2026",
+    category: "Technology",
+    readTime: "5 min read",
+    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1200&h=800",
   }
 ];
 

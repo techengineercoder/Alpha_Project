@@ -1,33 +1,35 @@
-import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/navbar";
 import Image from "next/image";
+import Link from "next/link";
+import { Logo } from "@/components/icon/logo";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden">
-      {/* Background Image Container */}
-      <div className="fixed inset-0 z-0">
+    <div className="flex min-h-screen w-full bg-[#0b0c10] overflow-hidden">
+      {/* Left side Image - Hidden on mobile, takes half screen on lg */}
+      <div className="hidden lg:block lg:w-1/2 relative h-screen">
         <Image
-          src="/image/BG.png"
+          src="/auth.png"
           alt="Authentication Background"
           fill
           priority
           className="object-cover object-center"
         />
-        {/* Gradient Overlay for depth and readability */}
-        {/* <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/40 to-black/80" /> */}
-        {/* <div className="absolute inset-0 backdrop-blur-[2px]" /> */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-[#0b0c10]/90 pointer-events-none" />
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-        <Navbar />
+      {/* Right side Content - Full width on mobile, half screen on lg */}
+      <div className="w-full lg:w-1/2 flex flex-col h-screen relative bg-[#0b0c10] overflow-y-auto">
+        {/* Header with Logo */}
+        {/* <div className="absolute top-0 left-0 w-full p-6 flex justify-start z-20">
+          <Link href="/" className="transition-opacity hover:opacity-80">
+            <Logo />
+          </Link>
+        </div> */}
 
-        <main className="flex-grow flex items-center justify-center pt-32 pb-20 px-4">
+        {/* Form Container */}
+        <main className="flex-grow flex flex-col items-center justify-center py-20 px-4 sm:px-8 lg:px-12 w-full">
           {children}
         </main>
-
-        <Footer />
       </div>
     </div>
   );
