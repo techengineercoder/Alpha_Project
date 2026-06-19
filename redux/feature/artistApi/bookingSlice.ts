@@ -85,6 +85,16 @@ export const bookingtApi = baseApi.injectEndpoints({
             providesTags: ["Booking"],
         }),
 
+
+        // /catalog/favorites/
+        favoritesByAll: builder.query({
+            query: () => ({
+                url: "/catalog/favorites/",
+                method: "GET",
+            }),
+            providesTags: ["Favorites"],
+        }),
+
     }),
 });
 
@@ -97,5 +107,6 @@ export const {
     useGetDashboardQuery,
     useAcceptOfferMutation,
     useRejectOfferMutation,
-    useGetSendToQuery
+    useGetSendToQuery,
+    useFavoritesByAllQuery
 } = bookingtApi;

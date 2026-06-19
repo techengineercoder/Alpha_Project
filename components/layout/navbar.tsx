@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, X, Search, Bell, User, Settings, LogOut, ChevronDown, LayoutDashboard } from 'lucide-react';
+import { Menu, X, Search, Bell, User, Settings, LogOut, ChevronDown, LayoutDashboard, Heart } from 'lucide-react';
 import { useGetUsersQuery } from '@/redux/feature/userSlice';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/redux/feature/authSlice';
@@ -11,6 +11,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import baseApi from '@/redux/api/baseApi';
 import { Logo } from '../icon/logo';
 import { useGetArtistsQuery } from '@/redux/feature/artistApi/artistSlice';
+import { useFavoritesByAllQuery } from '@/redux/feature/artistApi/bookingSlice';
 
 const IMAGE = 'https://backend.getavails.com';
 
@@ -41,6 +42,8 @@ function MarketingNavbarContent() {
 
   const { data: userProfile } = useGetUsersQuery(undefined);
   const user = userProfile?.user;
+  const { data: favoritesRes } = useFavoritesByAllQuery(undefined, { skip: !user });
+  const favorites = favoritesRes?.results || [];
 
   /* ── scroll + outside click ── */
   useEffect(() => {
@@ -88,7 +91,7 @@ function MarketingNavbarContent() {
       {/* ── Pill Nav ── */}
       <nav
         className={`
-          mx-auto max-w-[1100px] flex items-center justify-between
+          relative mx-auto max-w-[1100px] flex items-center justify-between
           bg-white/[0.04] backdrop-blur-xl
           border border-white/[0.08] rounded-full
           px-3 py-1.5
@@ -135,6 +138,8 @@ function MarketingNavbarContent() {
         {/* Desktop right actions */}
         <div className="hidden md:flex items-center gap-2 flex-shrink-0">
           {user ? (
+            <div className="flex items-center gap-2">
+            
             <div className="relative" ref={dropdownRef}>
 
               {/* Avatar pill button */}
@@ -230,6 +235,19 @@ function MarketingNavbarContent() {
                       </Link> */}
 
                       <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
+                      
+                      <Link
+                        href="/favorites"
+                        onClick={() => setIsProfileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-[14px]
+                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
+                                   transition-all duration-150"
+                      >
+                        <Heart size={16} className="text-white/40" />
+                        Favorites
+                      </Link>
+                      
+                      <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
 
                       <button
                         onClick={handleLogout}
@@ -244,6 +262,8 @@ function MarketingNavbarContent() {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+            
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -396,13 +416,16 @@ export function DashboardNavbar() {
   const dispatch = useDispatch();
   const [queryParams, setQueryParams] = useState({
     q: "",
-  })
+    type: "events"
+  });
 
   const { data: artistsData, isLoading: isLoadingArtists, isFetching: isFetchingArtists } = useGetArtistsQuery(queryParams as any);
 
   const { data } = useGetUsersQuery(undefined)
   const { data: userProfile } = useGetUsersQuery(undefined);
   const user = userProfile?.user;
+  const { data: favoritesRes } = useFavoritesByAllQuery(undefined, { skip: !user });
+  const favorites = favoritesRes?.results || [];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -572,6 +595,10 @@ export function DashboardNavbar() {
                       <Link href="/artist/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3.5 rounded-[20px] text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">
                         <Settings size={18} className="text-gray-400" />
                         <span>Settings</span>
+                      </Link>
+                      <Link href="/favorites" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3.5 rounded-[20px] text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+                        <Heart size={18} className="text-gray-400" />
+                        <span>Favorites</span>
                       </Link>
                       <div className="h-px bg-white/5 my-1.5 mx-2"></div>
                       <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[20px] text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-400/5 transition-all">

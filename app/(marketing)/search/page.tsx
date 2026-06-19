@@ -22,8 +22,8 @@ function SearchContent() {
     radius_miles: searchParams.get('radius_miles') || '',
     latitude: searchParams.get('latitude') || '',
     longitude: searchParams.get('longitude') || '',
-    available_start: searchParams.get('available_from') || searchParams.get('available_on') || '',
-    available_end: searchParams.get('available_to') || searchParams.get('available_on') || '',
+    available_start: searchParams.get('available_start') || searchParams.get('available_from') || searchParams.get('available_on') || '',
+    available_end: searchParams.get('available_end') || searchParams.get('available_to') || searchParams.get('available_on') || '',
     favorites_only: searchParams.get('favorites_only') === 'true',
     locationText: searchParams.get('locationText') || '',
     limit: Number(searchParams.get('limit')) || 20,
@@ -58,16 +58,34 @@ function SearchContent() {
   delete queryParams.locationText;
 
   // Handle date filters according to API requirements
-  if (params.available_start) {
-    if (!params.available_end || params.available_start === params.available_end) {
-      queryParams.available_on = params.available_start;
+  if (debouncedParams.available_start) {
+    if (!debouncedParams.available_end || debouncedParams.available_start === debouncedParams.available_end) {
+      queryParams.available_on = debouncedParams.available_start;
     } else {
-      queryParams.available_from = params.available_start;
-      queryParams.available_to = params.available_end;
+      queryParams.available_from = debouncedParams.available_start;
+      queryParams.available_to = debouncedParams.available_end;
     }
     delete queryParams.available_start;
     delete queryParams.available_end;
   }
+
+  // Sync URL with active filters for easy sharing
+  React.useEffect(() => {
+    // We want the URL to explicitly mirror our exact debounced state structure
+    const urlQuery = new URLSearchParams();
+    Object.entries(debouncedParams).forEach(([k, v]) => {
+      if (v !== '' && v !== false) {
+        urlQuery.set(k, String(v));
+      }
+    });
+
+    const newQueryStr = urlQuery.toString();
+    const currentQueryStr = new URLSearchParams(window.location.search).toString();
+    
+    if (currentQueryStr !== newQueryStr) {
+      router.replace(`/search?${newQueryStr}`, { scroll: false });
+    }
+  }, [debouncedParams, router]);
 
 
   const { data: artistsData, isLoading: isLoadingArtists, isFetching: isFetchingArtists, refetch } = useGetArtistsQuery(queryParams as Record<string, string>, {
