@@ -139,81 +139,81 @@ function MarketingNavbarContent() {
         <div className="hidden md:flex items-center gap-2 flex-shrink-0">
           {user ? (
             <div className="flex items-center gap-2">
-            
-            <div className="relative" ref={dropdownRef}>
 
-              {/* Avatar pill button */}
-              <button
-                onClick={() => setIsProfileOpen((p) => !p)}
-                className={`
+              <div className="relative" ref={dropdownRef}>
+
+                {/* Avatar pill button */}
+                <button
+                  onClick={() => setIsProfileOpen((p) => !p)}
+                  className={`
                   flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full
                   border transition-all duration-200
                   ${isProfileOpen
-                    ? 'bg-[#00A5E5]/20 border-[#7C5CFF]/40'
-                    : 'bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.15]'}
+                      ? 'bg-[#00A5E5]/20 border-[#7C5CFF]/40'
+                      : 'bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.15]'}
                 `}
-              >
-                {/* Avatar */}
-                <span className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 block">
-                  {user.image ? (
-                    <img src={getImageUrl(user.image)} alt={user.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="w-full h-full bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-medium text-[11px]">
-                      {user.name.charAt(0).toUpperCase()}
+                >
+                  {/* Avatar */}
+                  <span className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 block">
+                    {user.image ? (
+                      <img src={getImageUrl(user.image)} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="w-full h-full bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-medium text-[11px]">
+                        {user.name.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </span>
+
+                  {/* Name + email */}
+                  <span className="flex flex-col items-start text-left min-w-0">
+                    <span className="text-[13px] font-medium text-white leading-tight truncate max-w-[120px]">
+                      {user.name}
                     </span>
-                  )}
-                </span>
-
-                {/* Name + email */}
-                <span className="flex flex-col items-start text-left min-w-0">
-                  <span className="text-[13px] font-medium text-white leading-tight truncate max-w-[120px]">
-                    {user.name}
+                    <span className="text-[11px] text-white/40 leading-tight truncate max-w-[120px]">
+                      {user.email}
+                    </span>
                   </span>
-                  <span className="text-[11px] text-white/40 leading-tight truncate max-w-[120px]">
-                    {user.email}
-                  </span>
-                </span>
 
-                <ChevronDown
-                  size={13}
-                  className={`text-white/40 flex-shrink-0 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
-                />
-              </button>
+                  <ChevronDown
+                    size={13}
+                    className={`text-white/40 flex-shrink-0 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
 
-              {/* Dropdown */}
-              <AnimatePresence>
-                {isProfileOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                    transition={{ duration: 0.18, ease: 'easeOut' }}
-                    className="absolute right-0 mt-3 w-64 origin-top-right
+                {/* Dropdown */}
+                <AnimatePresence>
+                  {isProfileOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className="absolute right-0 mt-3 w-64 origin-top-right
                                rounded-[20px] bg-[#111116]
                                border border-white/[0.08]
                                shadow-[0_20px_48px_rgba(0,0,0,0.55)]
                                overflow-hidden z-50"
-                  >
-                    {/* Header */}
-                    <div className="flex items-center gap-3 p-5 border-b border-white/[0.06]">
-                      <span className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 block">
-                        {user.image ? (
-                          <img src={getImageUrl(user.image)} alt={user.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="w-full h-full bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-medium text-sm">
-                            {user.name.charAt(0).toUpperCase()}
-                          </span>
-                        )}
-                      </span>
-                      <span className="flex flex-col min-w-0">
-                        <span className="text-[14px] font-medium text-white truncate">{user.name}</span>
-                        <span className="text-[12px] text-white/40 truncate">{user.email}</span>
-                      </span>
-                    </div>
+                    >
+                      {/* Header */}
+                      <div className="flex items-center gap-3 p-5 border-b border-white/[0.06]">
+                        <span className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 block">
+                          {user.image ? (
+                            <img src={getImageUrl(user.image)} alt={user.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="w-full h-full bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-medium text-sm">
+                              {user.name.charAt(0).toUpperCase()}
+                            </span>
+                          )}
+                        </span>
+                        <span className="flex flex-col min-w-0">
+                          <span className="text-[14px] font-medium text-white truncate">{user.name}</span>
+                          <span className="text-[12px] text-white/40 truncate">{user.email}</span>
+                        </span>
+                      </div>
 
-                    {/* Menu items */}
-                    <div className="p-2">
-                      {/* <Link
+                      {/* Menu items */}
+                      <div className="p-2">
+                        {/* <Link
                         href="/artist/dashboard"
                         onClick={() => setIsProfileOpen(false)}
                         className="flex items-center gap-3 px-4 py-3 rounded-[14px]
@@ -234,36 +234,36 @@ function MarketingNavbarContent() {
                         Settings
                       </Link> */}
 
-                      <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
-                      
-                      <Link
-                        href="/favorites"
-                        onClick={() => setIsProfileOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-[14px]
+                        <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
+
+                        <Link
+                          href="/favorites"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 rounded-[14px]
                                    text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
                                    transition-all duration-150"
-                      >
-                        <Heart size={16} className="text-white/40" />
-                        Favorites
-                      </Link>
-                      
-                      <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
+                        >
+                          <Heart size={16} className="text-white/40" />
+                          Favorites
+                        </Link>
 
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px]
+                        <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
+
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px]
                                    text-[13px] text-red-400/80 hover:text-red-400 hover:bg-red-400/[0.06]
                                    transition-all duration-150"
-                      >
-                        <LogOut size={16} />
-                        Sign out
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-            
+                        >
+                          <LogOut size={16} />
+                          Sign out
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
             </div>
           ) : (
             <div className="flex items-center gap-2">

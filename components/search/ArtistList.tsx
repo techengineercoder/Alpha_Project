@@ -26,7 +26,8 @@ export function ArtistList({
   onPageChange?: (newOffset: number) => void;
   refetch: () => void;
 }) {
-  const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
+  const [selectedArtist, setSelectedArtist] = useState<{ id: string | number, name: string } | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [localFavorites, setLocalFavorites] = useState<Record<string, boolean>>({});
   const [loadingFavorites, setLoadingFavorites] = useState<Record<string, boolean>>({});
 
@@ -225,7 +226,19 @@ export function ArtistList({
                     {availableDates.map((date: string, i: number) => (
                       <span
                         key={i}
-                        className="px-3 py-1.5 rounded-full border border-white/10 text-[10px] md:text-xs text-[#A1A1AA] hover:border-white/30 hover:text-white transition-colors cursor-pointer"
+                        onClick={() => {
+                          setSelectedArtist({ id: artist.id, name });
+                          if (date !== 'Available') {
+                            if (date.includes('to')) {
+                              setSelectedDate(new Date(date.split(' to ')[0]));
+                            } else {
+                              setSelectedDate(new Date(date));
+                            }
+                          } else {
+                            setSelectedDate(null);
+                          }
+                        }}
+                        className="px-3 py-1.5 rounded-full border border-white/10 text-[10px] md:text-xs text-[#A1A1AA] hover:border-[#00A5E5] hover:text-[#00A5E5] transition-colors cursor-pointer"
                       >
                         {date}
                       </span>
@@ -238,7 +251,10 @@ export function ArtistList({
                     See All Availability
                   </Link>
                   <button
-                    onClick={() => setSelectedArtist(name)}
+                    onClick={() => {
+                      setSelectedArtist({ id: artist.id, name });
+                      setSelectedDate(null);
+                    }}
                     className="px-6 py-2.5 rounded-full bg-[#00A5E5] text-white text-sm font-medium  transition-colors shadow-lg shadow-[#7C5CFF]/20"
                   >
                     Book Now
@@ -285,9 +301,13 @@ export function ArtistList({
       {/* Booking Modal */}
       <BookingModal
         isOpen={!!selectedArtist}
-        onClose={() => setSelectedArtist(null)}
-        artistName={selectedArtist || ''}
-        artistId={selectedArtist || ''}
+        onClose={() => {
+          setSelectedArtist(null);
+          setSelectedDate(null);
+        }}
+        artistName={selectedArtist?.name || ''}
+        artistId={selectedArtist?.id || ''}
+        initialDate={selectedDate}
       />
     </div>
   );

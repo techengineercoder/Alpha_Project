@@ -81,7 +81,7 @@ function SearchContent() {
 
     const newQueryStr = urlQuery.toString();
     const currentQueryStr = new URLSearchParams(window.location.search).toString();
-    
+
     if (currentQueryStr !== newQueryStr) {
       router.replace(`/search?${newQueryStr}`, { scroll: false });
     }

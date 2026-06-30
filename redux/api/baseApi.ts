@@ -68,7 +68,6 @@ export const baseApi = createApi({
     "Venues",
     "Session",
     "Favorites",
-
   ],
   endpoints: () => ({}),
 });

@@ -23,6 +23,14 @@ export function VenueList({
   const totalPages = Math.ceil(totalCount / limit) || 1;
   const currentPage = Math.floor(offset / limit) + 1;
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
   const handlePageClick = (page: number) => {
     if (onPageChange) {
       onPageChange((page - 1) * limit);
@@ -90,6 +98,18 @@ export function VenueList({
           const image = venue.image || venue.cover_image || venue.user?.image || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80';
           const website = venue.website;
 
+          // Availability Logic
+          let availableDates: string[] = ['Available'];
+          if (venue.important_dates && venue.important_dates.length > 0) {
+            availableDates = venue.important_dates
+              .map((d: any) => formatDate(d.date))
+              .slice(0, 3);
+          } else if (venue.available_ranges && venue.available_ranges.length > 0) {
+            availableDates = venue.available_ranges
+              .map((r: any) => `${formatDate(r.start)} to ${formatDate(r.end)}`)
+              .slice(0, 3);
+          }
+
           return (
             <motion.div
               key={venue.id}
@@ -113,23 +133,37 @@ export function VenueList({
 
               {/* Content */}
               <div className="flex-1 p-6 flex flex-col relative">
-                <div className="flex items-baseline gap-3 mb-4 pr-12">
+                <div className="flex items-baseline gap-3 mb-3 pr-12">
                   <h2 className="text-xl md:text-2xl font-bold text-white">{name}</h2>
                 </div>
 
-                <div className="mb-6 flex flex-col gap-2 text-[#A1A1AA]">
+                <div className="mb-3 flex flex-col gap-1.5 text-[#A1A1AA]">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
                     <span className="text-sm">{location}</span>
                   </div>
-                  <div className="text-sm mt-1">
-                    {capacity}
+                  <div className="text-sm flex items-center gap-2">
+                    <span>{capacity}</span>
+                    {venue.score > 0 && (
+                      <span className="px-2 py-0.5 rounded bg-white/5 text-xs">
+                        Score: {(venue.score * 100).toFixed(0)}/100
+                      </span>
+                    )}
                   </div>
-                  {venue.score > 0 && (
-                    <div className="text-sm mt-1">
-                      Score: {(venue.score * 100).toFixed(0)}/100
-                    </div>
-                  )}
+                </div>
+
+                <div className="mb-3">
+                  <h3 className="text-xs text-[#A1A1AA] mb-2">Availability</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {availableDates.map((date: string, i: number) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1.5 rounded-full border border-white/10 text-[10px] md:text-xs text-[#A1A1AA]"
+                      >
+                        {date}
+                      </span>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="mt-auto flex items-center justify-end gap-3 pt-2">
