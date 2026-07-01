@@ -92,12 +92,12 @@ function MarketingNavbarContent() {
       <nav
         className={`
           relative mx-auto max-w-[1100px] flex items-center justify-between
-          bg-white/[0.04] backdrop-blur-xl
-          border border-white/[0.08] rounded-full
+          bg-white/[0.06] backdrop-blur-2xl
+          border border-white/[0.1] rounded-full
           px-3 py-1.5
-          shadow-[0_4px_24px_rgba(0,0,0,0.35)]
+          shadow-[0_8px_32px_rgba(0,0,0,0.4)]
           transition-all duration-500
-          ${isScrolled ? 'border-white/[0.12] shadow-[0_4px_32px_rgba(0,0,0,0.5)]' : ''}
+          ${isScrolled ? 'bg-black/40 border-white/[0.16] shadow-[0_12px_40px_rgba(0,0,0,0.6)]' : ''}
         `}
       >
 

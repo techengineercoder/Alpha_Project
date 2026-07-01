@@ -279,3 +279,61 @@
   display: none !important;
   background-image: none !important;
 }
+
+/* --- Sonner Toast Glassmorphism Customization (Premium Card Style) --- */
+[data-sonner-toast] {
+  background-color: rgba(10, 10, 15, 0.75) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  font-family: var(--font-sans), sans-serif !important;
+  padding: 14px 18px !important;
+}
+
+[data-sonner-toast][data-theme="dark"] {
+  background-color: rgba(10, 10, 15, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+/* Success status toast customizations */
+[data-sonner-toast][data-type="success"] {
+  background-color: rgba(10, 12, 18, 0.8) !important;
+  border: 1px solid rgba(0, 165, 229, 0.3) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 35px rgba(0, 165, 229, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-sonner-toast][data-type="success"] svg {
+  color: #00A5E5 !important;
+  fill: rgba(0, 165, 229, 0.15) !important;
+}
+
+/* Error status toast customizations */
+[data-sonner-toast][data-type="error"] {
+  background-color: rgba(18, 10, 10, 0.8) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 35px rgba(239, 68, 68, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-sonner-toast][data-type="error"] svg {
+  color: #ef4444 !important;
+  fill: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Info status toast customizations */
+[data-sonner-toast][data-type="info"] {
+  background-color: rgba(12, 10, 18, 0.8) !important;
+  border: 1px solid rgba(124, 92, 255, 0.3) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 35px rgba(124, 92, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-sonner-toast][data-type="info"] svg {
+  color: #7C5CFF !important;
+  fill: rgba(124, 92, 255, 0.1) !important;
+}
