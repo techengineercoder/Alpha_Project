@@ -6,7 +6,7 @@ export const shareFavApi = baseApi.injectEndpoints({
         // /catalog/favorites/share/
         shareList: builder.mutation({
             query: (body) => ({
-                url: "/catalog/favorites/share/",
+                url: "/catalog/favorites/share/artist/",
                 method: "POST",
                 body,
             }),
@@ -33,7 +33,7 @@ export const shareFavApi = baseApi.injectEndpoints({
         // /catalog/favorites/share/
         shareStatusCheck: builder.query({
             query: () => ({
-                url: `/catalog/favorites/share/`,
+                url: `/catalog/favorites/share/artist/`,
                 method: "GET",
             }),
             providesTags: ["Favorites"],

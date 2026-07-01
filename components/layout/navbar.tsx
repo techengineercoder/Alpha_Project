@@ -359,13 +359,23 @@ function MarketingNavbarContent() {
                     </span>
                   </div>
 
-                  <Link
+                  {/* <Link
                     href="/artist/dashboard"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="w-full text-center py-3.5 rounded-[16px] text-[14px] font-medium
                                bg-[#00A5E5] text-white  transition-colors"
                   >
                     Dashboard
+                  </Link> */}
+                  <Link
+                    href="/favorites"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] border border-white/[0.06] rounded-[14px]
+                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
+                                   transition-all duration-150"
+                  >
+                    <Heart size={16} className="text-white/40" />
+                    Favorites
                   </Link>
                   <button
                     onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }}

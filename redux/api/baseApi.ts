@@ -20,8 +20,8 @@ const baseQuery = fetchBaseQuery({
       "refreshAccessToken",
       // "getArtists",
       // "getArtistById",
-      "getVenues",
-      "getVenueById",
+      // "getVenues",
+      // "getVenueById",
     ];
 
     if (token && !noAuthEndpoints.includes(endpoint as string)) {

@@ -26,7 +26,7 @@ export const bookingtApi = baseApi.injectEndpoints({
         // /catalog/favorites/
         addFavorites: builder.mutation({
             query: (data: Record<string, string>) => ({
-                url: "/catalog/favorites/",
+                url: "/catalog/favorites/artist/",
                 method: "POST",
                 body: data,
             }),
@@ -35,7 +35,7 @@ export const bookingtApi = baseApi.injectEndpoints({
         // /catalog/favorites/<<id>>/
         removeFavorites: builder.mutation({
             query: (id: string) => ({
-                url: `/catalog/favorites/${id}/`,
+                url: `/catalog/favorites/artist/${id}/`,
                 method: "DELETE",
             }),
             invalidatesTags: ["Favorites"],
@@ -44,7 +44,7 @@ export const bookingtApi = baseApi.injectEndpoints({
         // /catalog/favorites/
         getFavorites: builder.query({
             query: () => ({
-                url: "/catalog/favorites/",
+                url: "/catalog/favorites/artist/",
                 method: "GET",
             }),
             providesTags: ["Favorites"],
@@ -89,7 +89,7 @@ export const bookingtApi = baseApi.injectEndpoints({
         // /catalog/favorites/
         favoritesByAll: builder.query({
             query: () => ({
-                url: "/catalog/favorites/",
+                url: "/catalog/favorites/artist/",
                 method: "GET",
             }),
             providesTags: ["Favorites"],
