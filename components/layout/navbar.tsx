@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, X, Search, Bell, User, Settings, LogOut, ChevronDown, LayoutDashboard, Heart } from 'lucide-react';
+import { Menu, X, Search, Bell, User, Settings, LogOut, ChevronDown, LayoutDashboard, Heart, History } from 'lucide-react';
 import { useGetUsersQuery } from '@/redux/feature/userSlice';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/redux/feature/authSlice';
@@ -234,6 +234,17 @@ function MarketingNavbarContent() {
                         Settings
                       </Link> */}
 
+                        <Link
+                          href="/search-history"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 rounded-[14px]
+                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
+                                   transition-all duration-150"
+                        >
+                          <History size={16} className="text-white/40" />
+                          Search History
+                        </Link>
+
                         <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
 
                         <Link
@@ -367,6 +378,16 @@ function MarketingNavbarContent() {
                   >
                     Dashboard
                   </Link> */}
+                  <Link
+                    href="/search-history"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-[14px]
+                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
+                                   transition-all duration-150"
+                  >
+                    <History size={16} className="text-white/40" />
+                    Search History
+                  </Link>
                   <Link
                     href="/favorites"
                     onClick={() => setIsProfileOpen(false)}

@@ -11,6 +11,16 @@ export const venuesApi = baseApi.injectEndpoints({
                 params,
             }),
             providesTags: ["Venues"],
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(
+                        venuesApi.util.invalidateTags(["RecentSearches"])
+                    );
+                } catch (err) {
+                    // fail silently
+                }
+            },
         }),
         // /catalog/venues/{id}/
         getVenueById: builder.query({

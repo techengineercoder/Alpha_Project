@@ -12,6 +12,16 @@ export const artistApi = baseApi.injectEndpoints({
                 params,
             }),
             providesTags: ["Artist", "Booking"],
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(
+                        artistApi.util.invalidateTags(["RecentSearches"])
+                    );
+                } catch (err) {
+                    // fail silently
+                }
+            },
         }),
 
         // /catalog/artists/<<artist_profile_id>>/
@@ -30,8 +40,9 @@ export const artistApi = baseApi.injectEndpoints({
                 method: "GET",
                 params,
             }),
-            providesTags: ["Artist"],
+            providesTags: ["RecentSearches"],
         }),
+
     }),
 });
 
