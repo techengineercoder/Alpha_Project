@@ -1,0 +1,126 @@
+{
+  "notifications": [
+    {
+      "id": "1",
+      "type": "invitation",
+      "title": "Team Invitation",
+      "timestamp": "2m ago",
+      "isRead": false,
+      "description": "You've been invited to join Apex Agency as Talent Buyer",
+      "invitationData": {
+        "agency": "Apex Agency",
+        "role": "Talent Buyer",
+        "invitedBy": "Ghost Reyes"
+      }
+    },
+    {
+      "id": "2",
+      "type": "offer_accepted",
+      "title": "Offer Accepted",
+      "timestamp": "5m ago",
+      "isRead": false,
+      "description": "Nova Collins accepted your offer for the Oct 3 Shrine Auditorium date."
+    },
+    {
+      "id": "3",
+      "type": "message",
+      "title": "New Message from Agent",
+      "timestamp": "22m ago",
+      "isRead": false,
+      "description": "WME (Jake Rivera) replied to your negotiation thread."
+    },
+    {
+      "id": "4",
+      "type": "deposit",
+      "title": "Deposit Due",
+      "timestamp": "1h ago",
+      "isRead": false,
+      "description": "50% deposit for Nova Collins - Shrine - Oct 3 is due in 3 days."
+    },
+    {
+      "id": "5",
+      "type": "contract",
+      "title": "Contract Signed",
+      "timestamp": "4h ago",
+      "isRead": true,
+      "description": "Both parties have signed the Radio City Hall contract for Sep 15."
+    }
+  ],
+  "members": [
+    {
+      "id": "1",
+      "name": "Ghost Reyes",
+      "email": "ghost@apexagency.com",
+      "role": "CEO / GM",
+      "status": "Active",
+      "avatarBg": "bg-purple-600",
+      "avatarChar": "G",
+      "memberSince": "Jan 12, 2024",
+      "lastActive": "2 min ago",
+      "offersInvolved": 142,
+      "contractsSigned": 38
+    },
+    {
+      "id": "2",
+      "name": "Sarah Kim",
+      "email": "sarah@apexagency.com",
+      "role": "Responsible Agent",
+      "status": "Active",
+      "avatarBg": "bg-sky-500",
+      "avatarChar": "S",
+      "memberSince": "Feb 05, 2024",
+      "lastActive": "15 min ago",
+      "offersInvolved": 98,
+      "contractsSigned": 24
+    },
+    {
+      "id": "3",
+      "name": "example@gmail.com",
+      "email": "example@gmail.com",
+      "role": "Talent Buyer",
+      "status": "Pending",
+      "avatarBg": "bg-gray-500",
+      "avatarChar": "E",
+      "memberSince": "Invite pending",
+      "lastActive": "Never",
+      "offersInvolved": 0,
+      "contractsSigned": 0
+    },
+    {
+      "id": "4",
+      "name": "Marco Lee",
+      "email": "marco@apexagency.com",
+      "role": "Entertainment Manager",
+      "status": "Active",
+      "avatarBg": "bg-amber-500",
+      "avatarChar": "M",
+      "memberSince": "Mar 22, 2024",
+      "lastActive": "1 hour ago",
+      "offersInvolved": 74,
+      "contractsSigned": 19
+    }
+  ],
+  "teams": [
+    {
+      "id": "1",
+      "name": "Ghost Reyes",
+      "type": "Personal",
+      "avatarBg": "bg-purple-600",
+      "avatarChar": "G"
+    },
+    {
+      "id": "2",
+      "name": "Apex Agency",
+      "type": "Team",
+      "avatarBg": "bg-red-500",
+      "avatarChar": "A"
+    },
+    {
+      "id": "3",
+      "name": "Bluewave Festival",
+      "type": "Team",
+      "avatarBg": "bg-sky-500",
+      "avatarChar": "B"
+    }
+  ]
+}

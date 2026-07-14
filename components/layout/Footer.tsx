@@ -54,7 +54,7 @@ export function Footer() {
 
             {/* Social Icons */}
             <div className="flex items-center gap-4">
-              <Link href="https://www.facebook.com/pages/Getavails.com/909195455610994/" target="_blank" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:scale-110 transition-all shadow-[0_0_15px_rgba(124,92,255,0)] hover:shadow-[0_0_15px_rgba(124,92,255,0.3)] hover:text-[#7C5CFF] hover:border-[#7C5CFF]/30">
+              <Link href="https://www.facebook.com/people/GetAvailscom/61585291584796/" target="_blank" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:scale-110 transition-all shadow-[0_0_15px_rgba(124,92,255,0)] hover:shadow-[0_0_15px_rgba(124,92,255,0.3)] hover:text-[#7C5CFF] hover:border-[#7C5CFF]/30">
                 <FaFacebookF className="w-4 h-4" />
               </Link>
               <Link href="https://www.instagram.com/getavails/" target="_blank" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:scale-110 transition-all shadow-[0_0_15px_rgba(124,92,255,0)] hover:shadow-[0_0_15px_rgba(124,92,255,0.3)] hover:text-[#7C5CFF] hover:border-[#7C5CFF]/30">

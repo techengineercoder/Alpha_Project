@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, Heart, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { VenueInquiryModal } from './VenueInquiryModal';
 
 export function VenueList({
   venues = [],
@@ -32,6 +33,8 @@ export function VenueList({
 
   const [localFavorites, setLocalFavorites] = useState<Record<string, boolean>>({});
   const [loadingFavorites, setLoadingFavorites] = useState<Record<string, boolean>>({});
+  const [selectedVenue, setSelectedVenue] = useState<{ id: string | number, name: string } | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const handleSave = async (e: React.MouseEvent, venueId: string) => {
     e.preventDefault();
@@ -218,7 +221,19 @@ export function VenueList({
                     {availableDates.map((date: string, i: number) => (
                       <span
                         key={i}
-                        className="px-3 py-1.5 rounded-full border border-white/10 text-[10px] md:text-xs text-[#A1A1AA]"
+                        onClick={() => {
+                          setSelectedVenue({ id: venue.id, name });
+                          if (date !== 'Available') {
+                            if (date.includes(' to ')) {
+                              setSelectedDate(new Date(date.split(' to ')[0]));
+                            } else {
+                              setSelectedDate(new Date(date));
+                            }
+                          } else {
+                            setSelectedDate(null);
+                          }
+                        }}
+                        className="px-3 py-1.5 rounded-full border border-white/10 text-[10px] md:text-xs text-[#A1A1AA] hover:border-[#00A5E5] hover:text-[#00A5E5] transition-colors cursor-pointer"
                       >
                         {date}
                       </span>
@@ -227,20 +242,23 @@ export function VenueList({
                 </div>
 
                 <div className="mt-auto flex items-center justify-end gap-3 pt-2">
-                  <button
-                    onClick={() => {
-                      window.open(website, "_blank");
-                    }}
-                    className="px-6 py-2.5 rounded-full cursor-pointer bg-none text-white text-sm font-medium  transition-colors border border-[#00A5E5]"
-                  >
-                    View Tickets
-                  </button>
                   <Link
                     href={`/venue/${venue.id}`}
-                    className="px-6 py-2.5 rounded-full bg-[#00A5E5] text-white text-sm font-medium  transition-colors shadow-lg shadow-[#7C5CFF]/20"
+                    className="px-6 py-2.5 rounded-full cursor-pointer bg-none text-white text-sm font-medium  transition-colors border border-[#00A5E5]"
+
                   >
-                    View Venue
+                    View Details
                   </Link>
+                  <button
+                    onClick={() => {
+                      setSelectedVenue({ id: venue.id, name: name });
+                      setSelectedDate(null);
+                    }}
+                    className="px-6 py-2.5 cursor-pointer rounded-full bg-[#00A5E5] text-white text-sm font-medium  transition-colors shadow-lg shadow-[#7C5CFF]/20"
+
+                  >
+                    Inquire
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -279,6 +297,18 @@ export function VenueList({
           </button>
         </div>
       )}
+
+      {/* Venue Inquiry Modal */}
+      <VenueInquiryModal
+        isOpen={!!selectedVenue}
+        onClose={() => {
+          setSelectedVenue(null);
+          setSelectedDate(null);
+        }}
+        venueName={selectedVenue?.name || ''}
+        venueId={selectedVenue?.id || ''}
+        initialDate={selectedDate}
+      />
     </div>
   );
 }
