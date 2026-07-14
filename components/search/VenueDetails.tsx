@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useGetVenueByIdQuery } from '@/redux/feature/artistApi/venuesSlice';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isToday } from 'date-fns';
+import { VenueInquiryModal } from './VenueInquiryModal';
 const gradientClass = "bg-[#00A5E5]";
 
 
@@ -33,6 +34,7 @@ export function VenueDetails() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState<'availability' | 'booked'>('availability');
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
   const [hasSetInitialMonth, setHasSetInitialMonth] = useState(false);
 
   const upcomingEvents = venue?.booked_dates || [];
@@ -337,12 +339,12 @@ export function VenueDetails() {
 
               {/* Buttons outside the background box */}
               <div className="flex flex-col gap-4 relative z-10">
-                {/* <button
-                onClick={() => setIsBookingModalOpen(true)}
-                className={`w-full py-4 cursor-pointer rounded-[20px] ${gradientClass} text-white font-medium text-base   hover:scale-[1.02]  transition-all`}
-              >
-                Book Now
-              </button> */}
+                <button
+                  onClick={() => setIsInquiryModalOpen(true)}
+                  className={`w-full py-4 cursor-pointer rounded-[20px] ${gradientClass} text-white font-medium text-base   hover:scale-[1.02]  transition-all`}
+                >
+                  Inquire
+                </button>
                 <button className="w-full py-4 cursor-pointer rounded-[20px] bg-[#1c1c24] border border-white/10 text-white font-medium text-base tracking-wide md:tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3">
                   <MessageCircle className="w-5 h-5" />
                   Send Message
@@ -415,7 +417,10 @@ export function VenueDetails() {
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
-                      onClick={() => setSelectedDate(day)}
+                      onClick={() => {
+                        setSelectedDate(day);
+                        setIsInquiryModalOpen(true);
+                      }}
                       transition={{ duration: 0.3, delay: i * 0.02 }}
                       className={`flex flex-col items-center justify-center py-5 px-4 rounded-[12px] bg-[#121218] border transition-all cursor-pointer group
                                 ${isDaySelected ? 'border-[#7C5CFF] bg-[#00A5E5]/5' : 'border-white/10 hover:border-white/20'}
@@ -484,6 +489,18 @@ export function VenueDetails() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Venue Inquiry Modal */}
+      <VenueInquiryModal
+        isOpen={isInquiryModalOpen}
+        onClose={() => {
+          setIsInquiryModalOpen(false);
+          setSelectedDate(null);
+        }}
+        venueName={name}
+        venueId={venue?.id || ''}
+        initialDate={selectedDate}
+      />
     </div>
   );
 }
