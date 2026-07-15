@@ -55,15 +55,15 @@ export function DashboardHeader() {
   }, []);
 
   return (
-    <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 relative z-50">
+    <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 relative z-30">
       <div>
         <h1 className="text-2xl md:text-[28px] font-bold text-white tracking-tight">Talent Buyer Dashboard</h1>
         <p className="text-sm text-gray-500 font-medium mt-1">Marcus Reid - Live Nation West</p>
       </div>
 
-      <div className="flex items-center gap-4 w-full md:w-auto relative" ref={dropdownRef}>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto relative" ref={dropdownRef}>
         {/* Search Input Container */}
-        <div className="relative flex-1 md:flex-initial md:w-[280px]">
+        <div className="relative w-full sm:flex-1 md:flex-initial md:w-[280px]">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input
             type="text"
@@ -155,19 +155,22 @@ export function DashboardHeader() {
           )}
         </div>
 
-        {/* Notifications */}
-        <button className="w-10 h-10 rounded-full bg-[#121218] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors relative cursor-pointer shrink-0">
-          <Bell className="w-4 h-4" />
-          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-600 border border-black flex items-center justify-center text-[10px] font-bold text-white">
-            3
-          </span>
-        </button>
+        {/* Buttons Group Row */}
+        <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
+          {/* Notifications */}
+          <button className="w-10 h-10 rounded-full bg-[#121218] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors relative cursor-pointer shrink-0">
+            <Bell className="w-4 h-4" />
+            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-600 border border-black flex items-center justify-center text-[10px] font-bold text-white">
+              3
+            </span>
+          </button>
 
-        {/* Action Button */}
-        <button className="px-5 py-2.5 rounded-full bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-[0_4px_16px_rgba(0,165,229,0.25)] shrink-0">
-          <Plus className="w-4 h-4" />
-          <span>New Offer</span>
-        </button>
+          {/* Action Button */}
+          <button className="px-5 py-2.5 rounded-full bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_4px_16px_rgba(0,165,229,0.25)] shrink-0 flex-1 sm:flex-initial">
+            <Plus className="w-4 h-4" />
+            <span>New Offer</span>
+          </button>
+        </div>
       </div>
     </header>
   );

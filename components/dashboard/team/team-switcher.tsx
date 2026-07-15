@@ -54,21 +54,23 @@ export function TeamSwitcher({
   );
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative w-full sm:w-auto" ref={dropdownRef}>
       <div
         onClick={() => setIsTeamDropdownOpen(!isTeamDropdownOpen)}
-        className="flex items-center gap-3 bg-[#0E0E10] border border-white/5 rounded-[18px] p-1.5 pr-4 hover:border-white/10 hover:bg-[#131317] transition-all cursor-pointer select-none group h-12"
+        className="flex items-center justify-between sm:justify-start gap-3 bg-[#0E0E10] border border-white/5 rounded-[18px] p-1.5 pr-4 hover:border-white/10 hover:bg-[#131317] transition-all cursor-pointer select-none group h-12 w-full sm:w-auto"
       >
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-semibold text-sm shrink-0 border border-white/10 ${activeTeam.avatarBg}`}>
-          {activeTeam.avatarChar}
+        <div className="flex items-center gap-3 min-w-0">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-semibold text-sm shrink-0 border border-white/10 ${activeTeam.avatarBg}`}>
+            {activeTeam.avatarChar}
+          </div>
+          <span className="font-semibold text-white tracking-[0px] text-[17.3px] leading-[24.71px] truncate max-w-[120px] xs:max-w-[160px] sm:max-w-none">
+            {activeTeam.name}
+          </span>
+          <span className="px-2.5 py-0.5 rounded-lg bg-white/5 text-gray-400 text-xs font-semibold border border-white/5 shrink-0">
+            {activeTeam.type}
+          </span>
         </div>
-        <span className="font-semibold text-white tracking-[0px] text-[17.3px] leading-[24.71px] truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">
-          {activeTeam.name}
-        </span>
-        <span className="px-2.5 py-0.5 rounded-lg bg-white/5 text-gray-400 text-xs font-semibold border border-white/5">
-          {activeTeam.type}
-        </span>
-        <ChevronDown size={14} className={`text-gray-500 group-hover:text-white transition-transform ${isTeamDropdownOpen ? "rotate-180" : ""}`} />
+        <ChevronDown size={14} className={`text-gray-500 group-hover:text-white transition-transform shrink-0 sm:ml-1 ${isTeamDropdownOpen ? "rotate-180" : ""}`} />
       </div>
 
       <AnimatePresence>

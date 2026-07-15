@@ -12,17 +12,14 @@ import {
   Ticket,
   ActivityIcon
 } from "lucide-react";
+import { LogoLoader } from "@/components/ui/logo-loader";
 
 export default function ArtistDashboard() {
 
   const { data, isLoading } = useGetDashboardQuery(undefined);
   console.log(data?.incoming_offers, '====================>');
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
-      </div>
-    );
+    return <LogoLoader fullScreen={true} text="Loading Artist Portal..." />;
   }
   // "stats": {
   //   "incoming_offers": 6,

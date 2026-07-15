@@ -98,11 +98,6 @@ const ROLE_DETAILS: Record<string, { desc: string; permissions: { sendOffers: bo
 const ROLES_LIST = Object.keys(ROLE_DETAILS);
 
 export default function TeamManagementPage() {
-  // Members State
-  const [members, setMembers] = useState<Member[]>(
-    mockData.members as Member[]
-  );
-
   // Teams State
   const [teams, setTeams] = useState<Team[]>(
     mockData.teams as Team[]
@@ -112,6 +107,85 @@ export default function TeamManagementPage() {
   const [isTeamDropdownOpen, setIsTeamDropdownOpen] = useState(false);
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
   const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
+
+  // Team-specific Members Map State
+  const [teamMembers, setTeamMembers] = useState<Record<string, Member[]>>({
+    "1": [
+      {
+        id: "1",
+        name: "Ghost Reyes",
+        email: "ghost@apexagency.com",
+        role: "CEO / GM",
+        status: "Active",
+        avatarBg: "bg-purple-600",
+        avatarChar: "G",
+        memberSince: "Jan 12, 2024",
+        lastActive: "2 min ago",
+        offersInvolved: 142,
+        contractsSigned: 38
+      }
+    ],
+    "2": mockData.members as Member[],
+    "3": [
+      {
+        id: "5",
+        name: "Lucas Vance",
+        email: "lucas@bluewavefest.com",
+        role: "CEO / GM",
+        status: "Active",
+        avatarBg: "bg-teal-500",
+        avatarChar: "L",
+        memberSince: "Nov 10, 2023",
+        lastActive: "Just now",
+        offersInvolved: 210,
+        contractsSigned: 65
+      },
+      {
+        id: "6",
+        name: "Chloe Bennett",
+        email: "chloe@bluewavefest.com",
+        role: "Marketing Director",
+        status: "Active",
+        avatarBg: "bg-pink-500",
+        avatarChar: "C",
+        memberSince: "Dec 01, 2023",
+        lastActive: "8 min ago",
+        offersInvolved: 43,
+        contractsSigned: 12
+      },
+      {
+        id: "7",
+        name: "Dylan Smith",
+        email: "dylan@bluewavefest.com",
+        role: "Talent Buyer",
+        status: "Active",
+        avatarBg: "bg-indigo-500",
+        avatarChar: "D",
+        memberSince: "Jan 15, 2024",
+        lastActive: "2 hours ago",
+        offersInvolved: 88,
+        contractsSigned: 30
+      },
+      {
+        id: "8",
+        name: "Mia Garcia",
+        email: "mia@bluewavefest.com",
+        role: "Production Director",
+        status: "Pending",
+        avatarBg: "bg-emerald-500",
+        avatarChar: "M",
+        memberSince: "Invite pending",
+        lastActive: "Never",
+        offersInvolved: 0,
+        contractsSigned: 0
+      }
+    ]
+  });
+
+  // Derived Active Members List
+  const members = useMemo(() => {
+    return teamMembers[selectedTeamId] || [];
+  }, [teamMembers, selectedTeamId]);
 
   // Selected Team
   const activeTeam = useMemo(() => {
@@ -186,7 +260,11 @@ export default function TeamManagementPage() {
       contractsSigned: 0
     };
 
-    setMembers([...members, newMember]);
+    setTeamMembers((prev) => ({
+      ...prev,
+      [selectedTeamId]: [...(prev[selectedTeamId] || []), newMember]
+    }));
+
     setSuccessInviteEmail(inviteEmail.toLowerCase());
     setSuccessInviteRole(inviteRole);
     const randomUuid = Math.random().toString(36).substring(2, 15) + "-" + Math.random().toString(36).substring(2, 15);
@@ -203,8 +281,9 @@ export default function TeamManagementPage() {
   const handleCreateTeam = (name: string) => {
     const colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-sky-500"];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const newTeamId = Date.now().toString();
     const newTeam: Team = {
-      id: Date.now().toString(),
+      id: newTeamId,
       name: name.trim(),
       type: "Team",
       avatarBg: randomColor,
@@ -212,22 +291,45 @@ export default function TeamManagementPage() {
     };
 
     setTeams([...teams, newTeam]);
-    setSelectedTeamId(newTeam.id);
+    setTeamMembers((prev) => ({
+      ...prev,
+      [newTeamId]: [
+        {
+          id: "1",
+          name: "Ghost Reyes",
+          email: "ghost@apexagency.com",
+          role: "CEO / GM",
+          status: "Active",
+          avatarBg: "bg-purple-600",
+          avatarChar: "G",
+          memberSince: "Jan 12, 2024",
+          lastActive: "2 min ago",
+          offersInvolved: 142,
+          contractsSigned: 38
+        }
+      ]
+    }));
+
+    setSelectedTeamId(newTeamId);
     setIsCreateTeamOpen(false);
     setIsTeamDropdownOpen(false);
   };
 
   // Remove Member
   const handleDeleteMember = (id: string) => {
-    setMembers(members.filter((m) => m.id !== id));
+    setTeamMembers((prev) => ({
+      ...prev,
+      [selectedTeamId]: (prev[selectedTeamId] || []).filter((m) => m.id !== id)
+    }));
     setActiveMenuId(null);
     setSelectedMember(null);
   };
 
   // Change Member Status (for demonstration toggle)
   const handleToggleStatus = (id: string) => {
-    setMembers(
-      members.map((m) => {
+    setTeamMembers((prev) => ({
+      ...prev,
+      [selectedTeamId]: (prev[selectedTeamId] || []).map((m) => {
         if (m.id === id) {
           const nextStatusMap: Record<string, "Active" | "Pending" | "Declined"> = {
             Active: "Pending",
@@ -238,20 +340,21 @@ export default function TeamManagementPage() {
         }
         return m;
       })
-    );
+    }));
     setActiveMenuId(null);
   };
 
   // Change Role inside Drawer
   const handleRoleChange = (memberId: string, nextRole: string) => {
-    setMembers(
-      members.map((m) => {
+    setTeamMembers((prev) => ({
+      ...prev,
+      [selectedTeamId]: (prev[selectedTeamId] || []).map((m) => {
         if (m.id === memberId) {
           return { ...m, role: nextRole };
         }
         return m;
       })
-    );
+    }));
     // Sync currently viewed drawer details
     if (selectedMember && selectedMember.id === memberId) {
       setSelectedMember({ ...selectedMember, role: nextRole });
@@ -294,7 +397,7 @@ export default function TeamManagementPage() {
         </div>
 
         {/* Header Actions */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5 w-full md:w-auto justify-between md:justify-start z-20">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full md:w-auto justify-between md:justify-start z-20">
           {/* Team Switcher dropdown */}
           <TeamSwitcher
             activeTeam={activeTeam}
@@ -308,23 +411,23 @@ export default function TeamManagementPage() {
             onCreateTeamClick={() => setIsCreateTeamOpen(true)}
           />
 
-          <div className="flex items-center gap-2.5 sm:gap-3.5">
+          <div className="flex items-center gap-3.5 w-full sm:w-auto">
             {/* Notification Bell */}
             <button
               onClick={() => window.dispatchEvent(new Event("open-notifications"))}
-              className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center bg-[#0E0E10] border border-white/5 text-gray-400 hover:text-white hover:border-white/10 transition-all relative cursor-pointer"
+              className="w-12 h-12 rounded-[18px] flex items-center justify-center bg-[#0E0E10] border border-white/5 text-gray-400 hover:text-white hover:border-white/10 transition-all relative cursor-pointer shrink-0"
             >
-              <Bell size={16} />
-              <span className="absolute top-2 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full ring-2 ring-black" />
+              <Bell size={18} />
+              <span className="absolute top-3.5 right-4 w-1.5 h-1.5 bg-red-500 rounded-full ring-2 ring-black" />
             </button>
 
             {/* Invite Button */}
             <button
               onClick={() => setIsInviteModalOpen(true)}
-              className="bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white font-bold rounded-full p-2.5 sm:px-5 sm:py-2.5 flex items-center justify-center gap-2 text-xs md:text-sm shadow-[0_4px_20px_rgba(0,165,229,0.25)] transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              className="bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white font-bold rounded-[18px] h-12 px-5 flex items-center justify-center gap-2 text-sm shadow-[0_4px_20px_rgba(0,165,229,0.25)] transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex-1 sm:flex-initial"
             >
               <Plus size={16} strokeWidth={2.5} />
-              <span className="hidden sm:inline">Invite Member</span>
+              <span>Invite Member</span>
             </button>
           </div>
         </div>

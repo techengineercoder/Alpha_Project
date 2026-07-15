@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Menu } from "lucide-react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { ReviewInvitationModal } from "@/components/layout/review-invitation-modal";
+import { SignOutModal } from "@/components/layout/sign-out-modal";
 
 import mockData from "@/data/mock-data.json";
 
@@ -26,13 +27,21 @@ interface NotificationItem {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 
   // Invitation flow states
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewStep, setReviewStep] = useState<"details" | "success">("details");
   const [loadingProgress, setLoadingProgress] = useState(0);
+
+  const handleSignOutConfirm = () => {
+    setIsSignOutModalOpen(false);
+    toast.success("Successfully signed out.");
+    router.push("/login");
+  };
 
   // Notifications State matching the reference design
   const [notifications, setNotifications] = useState<NotificationItem[]>(
@@ -110,12 +119,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         setIsMobileSidebarOpen={setIsMobileSidebarOpen}
         unreadCount={unreadCount}
         onNotificationsClick={() => setIsNotificationsOpen(true)}
+        onSignOutClick={() => setIsSignOutModalOpen(true)}
       />
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-screen overflow-y-auto no-scrollbar lg:pl-72 bg-[#050505] relative">
         {/* Mobile Top Header Bar */}
-        <header className="lg:hidden flex items-center justify-between p-4 bg-[#09090b] border-b border-white/5 shrink-0 sticky top-0 z-20">
+        <header className="lg:hidden flex items-center justify-between p-4 bg-[#09090b] border-b border-white/5 shrink-0 sticky top-0 z-[40]">
           <button
             onClick={() => setIsMobileSidebarOpen(true)}
             className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white"
@@ -123,14 +133,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Menu size={20} />
           </button>
           <div className="flex items-center gap-2">
-            <svg width="24" height="26" viewBox="0 0 46 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#00A5E5]">
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M32.9569 21.7233L20.0412 21.7003L17.8361 26.1268L29.5818 26.1158L31.8116 30.1778L13.6943 30.1943L22.5078 13.3497L26.3062 20.1239H32.0697L22.6059 3.53371L4.59839 35.047L40.5691 35.0429L32.9569 21.7233Z"
-                fill="currentColor"
-              />
+            <svg width="37" height="32" viewBox="0 0 37 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M33.3049 26.1478L9.16267 26.3806L18.2056 9.56264L23.1901 18.2399L15.4541 18.0862L13.05 22.6026L31.3047 22.6654L18.2867 0L0 31.6981L36.4528 31.6286L33.3049 26.1478Z" fill="#FEFEFE" />
             </svg>
+
             <span className="font-bold text-sm tracking-tight text-white">Artist Portal</span>
           </div>
           <button
@@ -172,6 +178,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         step={reviewStep}
         loadingProgress={loadingProgress}
         onAccept={handleAcceptInvitation}
+      />
+
+      {/* Sign Out Confirmation Modal */}
+      <SignOutModal
+        isOpen={isSignOutModalOpen}
+        onClose={() => setIsSignOutModalOpen(false)}
+        onConfirm={handleSignOutConfirm}
       />
     </div>
   );

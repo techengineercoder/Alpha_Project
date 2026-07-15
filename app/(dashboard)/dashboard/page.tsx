@@ -8,6 +8,7 @@ import { UpcomingEventsList } from "@/components/dashboard/home/UpcomingEventsLi
 import { RecentActivityList } from "@/components/dashboard/home/RecentActivityList";
 import { RecommendedArtists } from "@/components/dashboard/home/RecommendedArtists";
 import { OfferPipeline } from "@/components/dashboard/home/OfferPipeline";
+import { LogoLoader } from "@/components/ui/logo-loader";
 
 import dashboardData from "@/data/dashboard-mock-data.json";
 
@@ -19,11 +20,7 @@ export default function CentralDashboard() {
   }, []);
 
   if (!mounted) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-[#0B0B0F]">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#00A5E5]"></div>
-      </div>
-    );
+    return <LogoLoader fullScreen={true} text="Loading Dashboard..." />;
   }
 
   // Cast mock data structures

@@ -98,7 +98,7 @@ export default function ChatWidget() {
         }
     }, [isOpen, isMinimized]);
 
-    if (AUTH_PATHS.has(pathname)) return null;
+    if (AUTH_PATHS.has(pathname) || pathname.startsWith("/dashboard")) return null;
 
     // ── Handlers ──────────────────────────────────────────────────────────────
 

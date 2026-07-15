@@ -41,6 +41,7 @@ interface SidebarProps {
   setIsMobileSidebarOpen: (open: boolean) => void;
   unreadCount: number;
   onNotificationsClick: () => void;
+  onSignOutClick: () => void;
 }
 
 export function Sidebar({
@@ -49,6 +50,7 @@ export function Sidebar({
   setIsMobileSidebarOpen,
   unreadCount,
   onNotificationsClick,
+  onSignOutClick,
 }: SidebarProps) {
   // Check if a menu item is active
   const isLinkActive = (href: string) => {
@@ -71,11 +73,10 @@ export function Sidebar({
           onClick={() => {
             if (closeMobile) setIsMobileSidebarOpen(false);
           }}
-          className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all group
-            ${
-              active
-                ? "text-[#00A5E5] bg-white/[0.03] border border-white/5"
-                : "text-gray-400 hover:text-white hover:bg-white/[0.02] border border-transparent"
+          className={`w-full flex items-center justify-between px-[14px] py-[10px] rounded-lg text-sm font-medium transition-all group h-12 gap-3
+            ${active
+              ? "text-[#00A5E5] bg-[#00A5E5]/[0.09]"
+              : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
             }
           `}
         >
@@ -105,7 +106,7 @@ export function Sidebar({
               onNotificationsClick();
               if (closeMobile) setIsMobileSidebarOpen(false);
             }}
-            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/[0.02] transition-all group"
+            className="w-full flex items-center justify-between px-[14px] py-[10px] rounded-lg h-12 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/[0.02] transition-all group"
           >
             <div className="flex items-center gap-3">
               <Bell size={18} className="text-gray-500 group-hover:text-white" />
@@ -117,7 +118,13 @@ export function Sidebar({
               </span>
             )}
           </button>
-          <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-500/[0.03] transition-all group">
+          <button
+            onClick={() => {
+              onSignOutClick();
+              if (closeMobile) setIsMobileSidebarOpen(false);
+            }}
+            className="w-full flex items-center gap-3 px-[14px] py-[10px] rounded-lg h-12 text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-500/[0.03] transition-all group"
+          >
             <LogOut size={18} className="text-gray-500 group-hover:text-red-400" />
             <span>Sign Out</span>
           </button>
@@ -143,15 +150,11 @@ export function Sidebar({
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden lg:flex flex-col w-72 bg-[#09090b] border-r border-white/5 h-screen fixed top-0 left-0 z-30 shrink-0">
         <div className="p-6 flex items-center gap-3 border-b border-white/5">
-          <Link href="/" className="text-[#00A5E5] hover:opacity-85 transition-opacity flex items-center gap-3">
-            <svg width="32" height="34" viewBox="0 0 46 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M32.9569 21.7233L20.0412 21.7003L17.8361 26.1268L29.5818 26.1158L31.8116 30.1778L13.6943 30.1943L22.5078 13.3497L26.3062 20.1239H32.0697L22.6059 3.53371L4.59839 35.047L40.5691 35.0429L32.9569 21.7233Z"
-                fill="currentColor"
-              />
+          <Link href="/" className=" hover:opacity-85 transition-opacity flex items-center gap-3">
+            <svg width="37" height="32" viewBox="0 0 37 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M33.3049 26.1478L9.16267 26.3806L18.2056 9.56264L23.1901 18.2399L15.4541 18.0862L13.05 22.6026L31.3047 22.6654L18.2867 0L0 31.6981L36.4528 31.6286L33.3049 26.1478Z" fill="#FEFEFE" />
             </svg>
+
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight leading-tight">GetAvails</h1>
               <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Artist Portal</p>
@@ -167,7 +170,7 @@ export function Sidebar({
       {/* MOBILE DRAWER */}
       <AnimatePresence>
         {isMobileSidebarOpen && (
-          <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div className="lg:hidden fixed inset-0 z-[1000] flex">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.6 }}
@@ -184,14 +187,10 @@ export function Sidebar({
             >
               <div className="p-6 flex items-center justify-between border-b border-white/5">
                 <div className="flex items-center gap-3">
-                  <svg width="28" height="30" viewBox="0 0 46 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#00A5E5]">
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M32.9569 21.7233L20.0412 21.7003L17.8361 26.1268L29.5818 26.1158L31.8116 30.1778L13.6943 30.1943L22.5078 13.3497L26.3062 20.1239H32.0697L22.6059 3.53371L4.59839 35.047L40.5691 35.0429L32.9569 21.7233Z"
-                      fill="currentColor"
-                    />
+                  <svg width="37" height="32" viewBox="0 0 37 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M33.3049 26.1478L9.16267 26.3806L18.2056 9.56264L23.1901 18.2399L15.4541 18.0862L13.05 22.6026L31.3047 22.6654L18.2867 0L0 31.6981L36.4528 31.6286L33.3049 26.1478Z" fill="#FEFEFE" />
                   </svg>
+
                   <div>
                     <h1 className="text-base font-bold text-white tracking-tight leading-tight">GetAvails</h1>
                     <p className="text-[9px] text-gray-500 uppercase tracking-widest font-semibold">Artist Portal</p>
