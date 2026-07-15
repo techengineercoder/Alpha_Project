@@ -52,6 +52,9 @@ export function Sidebar({
 }: SidebarProps) {
   // Check if a menu item is active
   const isLinkActive = (href: string) => {
+    if (href === "/dashboard") {
+      return pathname === "/dashboard";
+    }
     if (href === "/dashboard/team-management") {
       return pathname.startsWith("/dashboard/team-management");
     }

@@ -1,0 +1,214 @@
+{
+  "stats": [
+    {
+      "label": "TOTAL BUDGET YTD",
+      "value": "$2.84M",
+      "change": "+14% vs last year",
+      "trend": "up",
+      "color": "text-[#00A5E5]",
+      "iconBg": "bg-[#00A5E5]/10 border-[#00A5E5]/20",
+      "iconName": "DollarSign"
+    },
+    {
+      "label": "CONFIRMED SHOWS",
+      "value": "38",
+      "change": "+8% this quarter",
+      "trend": "up",
+      "color": "text-[#10B981]",
+      "iconBg": "bg-[#10B981]/10 border-[#10B981]/20",
+      "iconName": "Calendar"
+    },
+    {
+      "label": "ACTIVE OFFERS",
+      "value": "18",
+      "change": "-2% in pipeline",
+      "trend": "down",
+      "color": "text-[#F59E0B]",
+      "iconBg": "bg-[#F59E0B]/10 border-[#F59E0B]/20",
+      "iconName": "FileText"
+    },
+    {
+      "label": "SAVED ARTISTS",
+      "value": "24",
+      "change": "+6% on shortlist",
+      "trend": "up",
+      "color": "text-[#7C5CFF]",
+      "iconBg": "bg-[#7C5CFF]/10 border-[#7C5CFF]/20",
+      "iconName": "Star"
+    }
+  ],
+  "upcomingEvents": [
+    {
+      "id": "1",
+      "dateDay": "14",
+      "dateMonth": "Aug",
+      "title": "The Midnight",
+      "venue": "Brooklyn Steel",
+      "amount": "$45K",
+      "status": "Confirmed"
+    },
+    {
+      "id": "2",
+      "dateDay": "18",
+      "dateMonth": "Oct",
+      "title": "Chappell Roan",
+      "venue": "Stubb's",
+      "amount": "$120K",
+      "status": "Signed"
+    },
+    {
+      "id": "3",
+      "dateDay": "2",
+      "dateMonth": "Sep",
+      "title": "Jungle",
+      "venue": "The Wiltern",
+      "amount": "$85K",
+      "status": "Offer Sent"
+    },
+    {
+      "id": "4",
+      "dateDay": "30",
+      "dateMonth": "Jul",
+      "title": "Waxahatchee",
+      "venue": "9:30 Club",
+      "amount": "$28.5K",
+      "status": "Contract"
+    }
+  ],
+  "recentActivities": [
+    {
+      "id": "1",
+      "text": "Sarah Chen countered The Midnight offer at $45K",
+      "time": "2h ago",
+      "type": "chat"
+    },
+    {
+      "id": "2",
+      "text": "Chappell Roan contract fully signed",
+      "time": "1d ago",
+      "type": "check"
+    },
+    {
+      "id": "3",
+      "text": "New inquiry from CAA for Caroline Polachek",
+      "time": "3h ago",
+      "type": "inquiry"
+    },
+    {
+      "id": "4",
+      "text": "Waxahatchee deposit payment processed",
+      "time": "2d ago",
+      "type": "payment"
+    },
+    {
+      "id": "5",
+      "text": "Jungle contract sent for signature",
+      "time": "4h ago",
+      "type": "signature"
+    }
+  ],
+  "recommendedArtists": [
+    {
+      "id": "1",
+      "name": "Lana Del Rey",
+      "genre": "Dark Folk",
+      "priceRange": "$35K-$55K",
+      "status": "Available",
+      "image": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80"
+    },
+    {
+      "id": "2",
+      "name": "Taylor Swift",
+      "genre": "Synth-pop",
+      "priceRange": "$50K-$80K",
+      "status": "Available",
+      "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80"
+    },
+    {
+      "id": "3",
+      "name": "Rihanna",
+      "genre": "Art Pop",
+      "priceRange": "$65K-$95K",
+      "status": "Touring",
+      "image": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80"
+    },
+    {
+      "id": "4",
+      "name": "Billie Eilish",
+      "genre": "Indie Rock",
+      "priceRange": "$30K-$45K",
+      "status": "Available",
+      "image": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80"
+    }
+  ],
+  "pipelineOffers": [
+    {
+      "id": "1",
+      "artist": "The Midnight",
+      "venue": "Brooklyn Steel",
+      "city": "New York, NY",
+      "date": "Aug 14, 2025",
+      "amount": "$42,000",
+      "stage": "Negotiation",
+      "time": "2h ago",
+      "initials": "TM",
+      "initialsBg": "bg-[#00A5E5]/20 text-[#00A5E5] border-[#00A5E5]/30"
+    },
+    {
+      "id": "2",
+      "artist": "Jungle",
+      "venue": "The Wiltern",
+      "city": "Los Angeles, CA",
+      "date": "Sep 2, 2025",
+      "amount": "$85,000",
+      "stage": "Offer Sent",
+      "time": "5h ago",
+      "initials": "JG",
+      "initialsBg": "bg-[#10B981]/20 text-[#10B981] border-[#10B981]/30"
+    },
+    {
+      "id": "3",
+      "artist": "Chappell Roan",
+      "venue": "Stubb's Amphitheater",
+      "city": "Austin, TX",
+      "date": "Oct 18, 2025",
+      "amount": "$120,000",
+      "stage": "Confirmed",
+      "time": "1d ago",
+      "initials": "CR",
+      "initialsBg": "bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30"
+    },
+    {
+      "id": "4",
+      "artist": "Waxahatchee",
+      "venue": "9:30 Club",
+      "city": "Washington D.C.",
+      "date": "Jul 30, 2025",
+      "amount": "$28,500",
+      "stage": "Signed",
+      "time": "3h ago",
+      "initials": "WX",
+      "initialsBg": "bg-[#7C5CFF]/20 text-[#7C5CFF] border-[#7C5CFF]/30"
+    },
+    {
+      "id": "5",
+      "artist": "Men I Trust",
+      "venue": "Bottom Lounge",
+      "city": "Chicago, IL",
+      "date": "Aug 22, 2025",
+      "amount": "$18,000",
+      "stage": "Inquiry",
+      "time": "Just now",
+      "initials": "MT",
+      "initialsBg": "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/30"
+    }
+  ],
+  "pipelineCounts": {
+    "Inquiry": 8,
+    "Offer Sent": 5,
+    "Negotiation": 3,
+    "Contract": 2,
+    "Signed": 4,
+    "Confirmed": 6
+  }
+}
