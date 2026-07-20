@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Plus, Bell } from "lucide-react";
 import { TeamSwitcher } from "@/components/dashboard/team/team-switcher";
 import { CreateTeamModal } from "@/components/dashboard/team/create-team-modal";
@@ -11,6 +11,8 @@ import { StatsCards } from "@/components/dashboard/team/stats-cards";
 import { MembersTable } from "@/components/dashboard/team/members-table";
 
 import mockData from "@/data/mock-data.json";
+import { useMyTeamQuery, useCreateTeamMutation, useGetTeamRolesQuery, useTeamMembersQuery } from "@/redux/feature/team-managementSlice";
+import { toast } from "sonner";
 
 // Types
 interface Member {
@@ -18,7 +20,8 @@ interface Member {
   name: string;
   email: string;
   role: string;
-  status: "Active" | "Pending" | "Declined";
+  role_label?: string;
+  status: "Active" | "Approved" | "Pending" | "Declined";
   avatarBg: string;
   avatarChar: string;
   memberSince?: string;
@@ -33,6 +36,7 @@ interface Team {
   type: "Personal" | "Team";
   avatarBg: string;
   avatarChar: string;
+  domain?: string;
 }
 
 // Role Descriptions & Permissions Map
@@ -98,89 +102,70 @@ const ROLE_DETAILS: Record<string, { desc: string; permissions: { sendOffers: bo
 const ROLES_LIST = Object.keys(ROLE_DETAILS);
 
 export default function TeamManagementPage() {
-  // Teams State
-  const [teams, setTeams] = useState<Team[]>(
-    mockData.teams as Team[]
-  );
-
+  // Teams & Selection States
+  const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeamId, setSelectedTeamId] = useState("2");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isTeamDropdownOpen, setIsTeamDropdownOpen] = useState(false);
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
   const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
+  // Queries & Mutations
+  const { data } = useMyTeamQuery(undefined);
+  const [createTeam] = useCreateTeamMutation();
+  const { data: rolesData } = useGetTeamRolesQuery(undefined);
+  const { data: teamMembersApiData } = useTeamMembersQuery(
+    { id: selectedTeamId, search: searchQuery },
+    { skip: !selectedTeamId }
+  );
+  console.log("Team data:", data);
+  console.log("Team members API data:", teamMembersApiData);
+
+  // Load local storage active team selection on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const activeTeamId = localStorage.getItem("active_team_id");
+      if (activeTeamId) {
+        setSelectedTeamId(activeTeamId);
+      }
+    }
+  }, []);
+
+  // Sync API teams with local state dynamically
+  useEffect(() => {
+    if (data?.results) {
+      const apiTeams = data.results.map((t: any) => ({
+        id: String(t.id),
+        name: t.name,
+        type: "Team" as const,
+        avatarBg: t.domain === "artist" ? "bg-sky-500" : "bg-[#F59E0B]",
+        avatarChar: t.name.charAt(0).toUpperCase(),
+        domain: t.domain
+      }));
+
+      setTeams((prev) => {
+        const filteredPrev = prev.filter(p => !apiTeams.some((a: any) => a.id === p.id));
+        const merged = [...filteredPrev, ...apiTeams];
+        
+        // Auto-select first team if current selection is invalid
+        if (merged.length > 0) {
+          const selectionExists = merged.some(t => t.id === selectedTeamId);
+          if (!selectionExists) {
+            const activeTeamId = localStorage.getItem("active_team_id");
+            const selectId = activeTeamId && merged.some(t => t.id === activeTeamId) ? activeTeamId : merged[0].id;
+            setSelectedTeamId(selectId);
+          }
+        }
+        return merged;
+      });
+    }
+  }, [data]);
 
   // Team-specific Members Map State
-  const [teamMembers, setTeamMembers] = useState<Record<string, Member[]>>({
-    "1": [
-      {
-        id: "1",
-        name: "Ghost Reyes",
-        email: "ghost@apexagency.com",
-        role: "CEO / GM",
-        status: "Active",
-        avatarBg: "bg-purple-600",
-        avatarChar: "G",
-        memberSince: "Jan 12, 2024",
-        lastActive: "2 min ago",
-        offersInvolved: 142,
-        contractsSigned: 38
-      }
-    ],
-    "2": mockData.members as Member[],
-    "3": [
-      {
-        id: "5",
-        name: "Lucas Vance",
-        email: "lucas@bluewavefest.com",
-        role: "CEO / GM",
-        status: "Active",
-        avatarBg: "bg-teal-500",
-        avatarChar: "L",
-        memberSince: "Nov 10, 2023",
-        lastActive: "Just now",
-        offersInvolved: 210,
-        contractsSigned: 65
-      },
-      {
-        id: "6",
-        name: "Chloe Bennett",
-        email: "chloe@bluewavefest.com",
-        role: "Marketing Director",
-        status: "Active",
-        avatarBg: "bg-pink-500",
-        avatarChar: "C",
-        memberSince: "Dec 01, 2023",
-        lastActive: "8 min ago",
-        offersInvolved: 43,
-        contractsSigned: 12
-      },
-      {
-        id: "7",
-        name: "Dylan Smith",
-        email: "dylan@bluewavefest.com",
-        role: "Talent Buyer",
-        status: "Active",
-        avatarBg: "bg-indigo-500",
-        avatarChar: "D",
-        memberSince: "Jan 15, 2024",
-        lastActive: "2 hours ago",
-        offersInvolved: 88,
-        contractsSigned: 30
-      },
-      {
-        id: "8",
-        name: "Mia Garcia",
-        email: "mia@bluewavefest.com",
-        role: "Production Director",
-        status: "Pending",
-        avatarBg: "bg-emerald-500",
-        avatarChar: "M",
-        memberSince: "Invite pending",
-        lastActive: "Never",
-        offersInvolved: 0,
-        contractsSigned: 0
-      }
-    ]
-  });
+  const [teamMembers, setTeamMembers] = useState<Record<string, Member[]>>({});
 
   // Derived Active Members List
   const members = useMemo(() => {
@@ -189,18 +174,20 @@ export default function TeamManagementPage() {
 
   // Selected Team
   const activeTeam = useMemo(() => {
-    return teams.find((t) => t.id === selectedTeamId) || teams[0];
+    return (
+      teams.find((t) => t.id === selectedTeamId) ||
+      teams[0] || {
+        id: "",
+        name: "No Team Selected",
+        type: "Team" as const,
+        avatarBg: "bg-gray-500",
+        avatarChar: "?",
+      }
+    );
   }, [teams, selectedTeamId]);
-
-  // States
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   // Invite Form States
   const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteName, setInviteName] = useState("");
   const [inviteRole, setInviteRole] = useState("Talent Buyer");
   const [inviteError, setInviteError] = useState("");
 
@@ -212,107 +199,63 @@ export default function TeamManagementPage() {
 
   // Dynamic metric calculations
   const stats = useMemo(() => {
+    const apiCounts = teamMembersApiData?.counts;
+    if (apiCounts) {
+      return {
+        total: Number(apiCounts.total ?? 0),
+        active: Number(apiCounts.active ?? 0),
+        pending: Number(apiCounts.pending ?? 0),
+        declined: Number(apiCounts.declined ?? 0),
+      };
+    }
+
     return {
       total: members.length,
-      active: members.filter((m) => m.status === "Active").length,
+      active: members.filter((m) => m.status === "Active" || m.status === "Approved").length,
       pending: members.filter((m) => m.status === "Pending").length,
       declined: members.filter((m) => m.status === "Declined").length,
     };
-  }, [members]);
+  }, [teamMembersApiData, members]);
 
-  // Handle Invitation Submit
-  const handleInviteSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inviteEmail.trim()) {
-      setInviteError("Email is required");
-      return;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(inviteEmail)) {
-      setInviteError("Please enter a valid email address");
-      return;
-    }
-
-    const emailExists = members.some(
-      (m) => m.email.toLowerCase() === inviteEmail.toLowerCase()
-    );
-    if (emailExists) {
-      setInviteError("Member with this email already exists");
-      return;
-    }
-
-    const nameToUse = inviteName.trim() || inviteEmail.split("@")[0];
-    const initial = nameToUse.charAt(0).toUpperCase();
-    const colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-pink-500"];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-    const newMember: Member = {
-      id: Date.now().toString(),
-      name: nameToUse,
-      email: inviteEmail.toLowerCase(),
-      role: inviteRole,
-      status: "Pending",
-      avatarBg: randomColor,
-      avatarChar: initial,
-      memberSince: "Invite pending",
-      lastActive: "Never",
-      offersInvolved: 0,
-      contractsSigned: 0
-    };
-
-    setTeamMembers((prev) => ({
-      ...prev,
-      [selectedTeamId]: [...(prev[selectedTeamId] || []), newMember]
-    }));
-
-    setSuccessInviteEmail(inviteEmail.toLowerCase());
-    setSuccessInviteRole(inviteRole);
-    const randomUuid = Math.random().toString(36).substring(2, 15) + "-" + Math.random().toString(36).substring(2, 15);
-    setSuccessInviteLink(`https://getavails.com/invites/${randomUuid}`);
+  // Invite success callback handler
+  const handleInviteSuccess = (email: string, role: string, link: string) => {
+    setSuccessInviteEmail(email);
+    setSuccessInviteRole(role);
+    setSuccessInviteLink(link);
     setInviteEmail("");
-    setInviteName("");
     setInviteRole("Talent Buyer");
     setInviteError("");
     setIsInviteModalOpen(false);
     setIsInviteSuccessOpen(true);
   };
 
-  // Create Team Submit
-  const handleCreateTeam = (name: string) => {
-    const colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-sky-500"];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    const newTeamId = Date.now().toString();
-    const newTeam: Team = {
-      id: newTeamId,
-      name: name.trim(),
-      type: "Team",
-      avatarBg: randomColor,
-      avatarChar: name.trim().charAt(0).toUpperCase(),
-    };
+  // Create Team Submit via API
+  const handleCreateTeam = async (name: string, domain: "artist" | "venue", role: string) => {
+    try {
+      const payload = {
+        domain,
+        name: name.trim(),
+        role
+      };
 
-    setTeams([...teams, newTeam]);
-    setTeamMembers((prev) => ({
-      ...prev,
-      [newTeamId]: [
-        {
-          id: "1",
-          name: "Ghost Reyes",
-          email: "ghost@apexagency.com",
-          role: "CEO / GM",
-          status: "Active",
-          avatarBg: "bg-purple-600",
-          avatarChar: "G",
-          memberSince: "Jan 12, 2024",
-          lastActive: "2 min ago",
-          offersInvolved: 142,
-          contractsSigned: 38
-        }
-      ]
-    }));
+      const result = await createTeam(payload).unwrap();
 
-    setSelectedTeamId(newTeamId);
-    setIsCreateTeamOpen(false);
-    setIsTeamDropdownOpen(false);
+      if (result.success || result.id || result.data?.id) {
+        const teamId = String(result.id || result.data?.id || "team-" + Date.now());
+        localStorage.setItem("active_team_id", teamId);
+        localStorage.setItem("active_team_name", name.trim());
+        setSelectedTeamId(teamId);
+        setIsCreateTeamOpen(false);
+        setIsTeamDropdownOpen(false);
+        toast.success("Team created successfully!");
+      } else {
+        toast.error("Failed to create team. Please try again.");
+      }
+    } catch (err: any) {
+      console.error("Error creating team:", err);
+      const msg = err?.data?.error?.message || err?.data?.message || err?.message || "Failed to create team. Please try again.";
+      toast.error(msg);
+    }
   };
 
   // Remove Member
@@ -331,12 +274,13 @@ export default function TeamManagementPage() {
       ...prev,
       [selectedTeamId]: (prev[selectedTeamId] || []).map((m) => {
         if (m.id === id) {
-          const nextStatusMap: Record<string, "Active" | "Pending" | "Declined"> = {
+          const nextStatusMap: Record<string, "Active" | "Approved" | "Pending" | "Declined"> = {
             Active: "Pending",
+            Approved: "Pending",
             Pending: "Declined",
             Declined: "Active",
           };
-          return { ...m, status: nextStatusMap[m.status] };
+          return { ...m, status: nextStatusMap[m.status] || "Active" };
         }
         return m;
       })
@@ -384,7 +328,7 @@ export default function TeamManagementPage() {
         {/* Title / Description */}
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-2xl md:text-3xl lg:text-[37.07px] lg:leading-[44.48px] font-bold text-white tracking-[0px] animate-fade-in">
+            <h2 className="text-2xl md:text-[28px] font-bold text-white tracking-tight  animate-fade-in">
               Team Management
             </h2>
           </div>
@@ -439,6 +383,7 @@ export default function TeamManagementPage() {
       {/* ─── MEMBERS CONTAINER CARD ─── */}
       <MembersTable
         members={members}
+        selectedTeamId={activeTeam.id}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         activeMenuId={activeMenuId}
@@ -460,14 +405,15 @@ export default function TeamManagementPage() {
       <InviteMemberModal
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
+        selectedTeamId={activeTeam.id}
+        selectedTeamDomain={activeTeam.domain || "artist"}
+        onInviteSuccess={handleInviteSuccess}
         inviteEmail={inviteEmail}
         setInviteEmail={setInviteEmail}
-        inviteName={inviteName}
-        setInviteName={setInviteName}
         inviteRole={inviteRole}
         setInviteRole={setInviteRole}
         inviteError={inviteError}
-        onSubmit={handleInviteSubmit}
+        setInviteError={setInviteError}
         roleDetails={ROLE_DETAILS}
         rolesList={ROLES_LIST}
       />
@@ -475,6 +421,7 @@ export default function TeamManagementPage() {
       {/* ─── MEMBER DETAILS RIGHT SLIDE DRAWER ─── */}
       <MemberDetailsDrawer
         selectedMember={selectedMember}
+        selectedTeamId={activeTeam.id}
         onClose={() => setSelectedMember(null)}
         rolesList={ROLES_LIST}
         roleDetails={ROLE_DETAILS}

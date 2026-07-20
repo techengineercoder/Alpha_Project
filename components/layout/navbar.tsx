@@ -13,12 +13,11 @@ import { Logo } from '../icon/logo';
 import { useGetArtistsQuery } from '@/redux/feature/artistApi/artistSlice';
 import { useFavoritesByAllQuery } from '@/redux/feature/artistApi/bookingSlice';
 
-const IMAGE = 'https://backend.getavails.com';
-
 const getImageUrl = (imagePath: string) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  return `${IMAGE}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+  const baseUrl = process.env.NEXT_PUBLIC_IMAGE_URL || 'https://backend.getavails.com';
+  return `${baseUrl}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
 };
 
 const NAV_LINKS = [
@@ -257,6 +256,16 @@ function MarketingNavbarContent() {
                           <Heart size={16} className="text-white/40" />
                           Favorites
                         </Link>
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 rounded-[14px]
+                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
+                                   transition-all duration-150"
+                        >
+                          <LayoutDashboard size={16} className="text-white/40" />
+                          Dashboard
+                        </Link>
 
                         <div className="h-px bg-white/[0.05] mx-2 my-1.5" />
 
@@ -397,6 +406,16 @@ function MarketingNavbarContent() {
                   >
                     <Heart size={16} className="text-white/40" />
                     Favorites
+                  </Link>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] border border-white/[0.06] rounded-[14px]
+                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
+                                   transition-all duration-150"
+                  >
+                    <LayoutDashboard size={16} className="text-white/40" />
+                    Dashboard
                   </Link>
                   <button
                     onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }}

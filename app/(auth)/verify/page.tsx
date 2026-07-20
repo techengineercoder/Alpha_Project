@@ -67,7 +67,7 @@ function VerifyCode() {
           refresh: res.refresh
         }));
 
-        router.push("/");
+        router.push("/onboarding");
       }
     } catch (error) {
       handleError(error);

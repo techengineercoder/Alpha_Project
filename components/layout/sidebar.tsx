@@ -20,20 +20,34 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface MenuItem {
+  name: string;
+  icon: React.ComponentType<any>;
+  href: string;
+  badge?: number;
+}
+
 // Sidebar Menu Array
-const menuItems = [
+const menuItems: MenuItem[] = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { name: "Profile", icon: User, href: "/artist/profile" },
-  { name: "Inquiries", icon: FileText, href: "/artist/inquiries" },
-  { name: "Offers", icon: Tag, href: "/artist/offers", badge: 5 },
-  { name: "Messages", icon: MessageSquare, href: "/artist/messages" },
-  { name: "Availability", icon: Calendar, href: "/artist/availability" },
-  { name: "Contracts", icon: Briefcase, href: "/artist/contracts" },
-  { name: "Payments", icon: CreditCard, href: "/artist/payments" },
-  { name: "Tour Schedule", icon: MapPin, href: "/artist/tour-schedule" },
+  // { name: "Profile", icon: User, href: "/artist/profile" },
+  // { name: "Inquiries", icon: FileText, href: "/artist/inquiries" },
+  // { name: "Offers", icon: Tag, href: "/artist/offers", badge: 5 },
+  // { name: "Messages", icon: MessageSquare, href: "/artist/messages" },
+  // { name: "Availability", icon: Calendar, href: "/artist/availability" },
+  // { name: "Contracts", icon: Briefcase, href: "/artist/contracts" },
+  // { name: "Payments", icon: CreditCard, href: "/artist/payments" },
+  // { name: "Tour Schedule", icon: MapPin, href: "/artist/tour-schedule" },
   { name: "Team Management", icon: Users, href: "/dashboard/team-management" },
-  { name: "Settings", icon: Settings, href: "/artist/settings" },
+  // { name: "Settings", icon: Settings, href: "/artist/settings" },
 ];
+
+const getImageUrl = (imagePath?: string | null) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith("http")) return imagePath;
+  const baseUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "https://backend.getavails.com";
+  return `${baseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+};
 
 interface SidebarProps {
   pathname: string;
@@ -52,6 +66,27 @@ export function Sidebar({
   onNotificationsClick,
   onSignOutClick,
 }: SidebarProps) {
+  const [user, setUser] = React.useState<{ name: string; role: string; initials: string; image?: string | null } | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      const storedRole = localStorage.getItem("user_role");
+      if (storedUser) {
+        try {
+          const parsed = JSON.parse(storedUser);
+          const name = parsed.name || "Nova Collins";
+          const role = storedRole || parsed.role || "Artist";
+          const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+          const image = parsed.image || null;
+          setUser({ name, role, initials, image });
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+  }, []);
+
   // Check if a menu item is active
   const isLinkActive = (href: string) => {
     if (href === "/dashboard") {
@@ -133,12 +168,16 @@ export function Sidebar({
         <div className="h-px bg-white/5" />
 
         <div className="flex items-center gap-3 px-2 py-1">
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-bold text-sm border border-white/10 shrink-0">
-            NC
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-bold text-sm border border-white/10 shrink-0 uppercase">
+            {user && user.image && getImageUrl(user.image) ? (
+              <img src={getImageUrl(user.image)!} alt={user.name} className="w-full h-full object-cover" />
+            ) : (
+              user ? user.initials : "NC"
+            )}
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold text-white truncate leading-snug">Nova Collins</span>
-            <span className="text-[11px] text-gray-500 font-medium">Artist</span>
+            <span className="text-sm font-bold text-white truncate leading-snug">{user ? user.name : "Nova Collins"}</span>
+            <span className="text-[11px] text-gray-500 font-medium">{user ? user.role : "Artist"}</span>
           </div>
         </div>
       </div>

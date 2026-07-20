@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
 import { useRegisterMutation, useGoogleLoginMutation } from "@/redux/feature/authApi";
 import { toast } from "sonner";
@@ -52,8 +52,10 @@ const roles = [
   },
 ];
 
-export default function Register() {
+function RegisterContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get("next") || "/";
   const [step, setStep] = useState<1 | 2>(1);
   const [showPassword, setShowPassword] = useState(false);
   const [selectedRole, setSelectedRole] = useState("agent");
@@ -90,7 +92,7 @@ export default function Register() {
       }));
 
       toast.success("Google signup successful!");
-      router.push("/");
+      router.push("/onboarding");
     } catch (error: unknown) {
       console.error("Google signup error:", error);
       handleError(error);
@@ -125,7 +127,7 @@ export default function Register() {
 
       if (res.success) {
         toast.success(res.message || "Account created successfully. Please verify your email.");
-        router.push(`/verify?email=${encodeURIComponent(formData.email)}`);
+        router.push(`/verify?email=${encodeURIComponent(formData.email)}&next=${encodeURIComponent(nextParam)}`);
       }
     } catch (error) {
       handleError(error);
@@ -223,7 +225,7 @@ export default function Register() {
                   <p className="text-gray-400 text-[13px]">
                     Already have an account?{" "}
                     <Link
-                      href="/login"
+                      href={nextParam !== "/" ? `/login?next=${encodeURIComponent(nextParam)}` : "/login"}
                       className="text-white font-medium hover:underline ml-1"
                     >
                       Sign in
@@ -346,7 +348,7 @@ export default function Register() {
                   <p className="text-gray-400 text-[13px]">
                     Already have an account?{" "}
                     <Link
-                      href="/login"
+                      href={nextParam !== "/" ? `/login?next=${encodeURIComponent(nextParam)}` : "/login"}
                       className="text-white font-medium hover:underline ml-1"
                     >
                       Sign in
@@ -359,5 +361,13 @@ export default function Register() {
         </div>
       </div>
     </GoogleOAuthProvider>
+  );
+}
+
+export default function Register() {
+  return (
+    <Suspense fallback={<div className="text-center text-gray-500 py-10">Loading registration...</div>}>
+      <RegisterContent />
+    </Suspense>
   );
 }

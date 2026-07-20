@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Bell, Plus, X, User, Music, ArrowRight } from "lucide-react";
+import { useMyTeamQuery } from "@/redux/feature/team-managementSlice";
 
 interface SearchResultItem {
   id: string;
@@ -28,6 +29,48 @@ export function DashboardHeader() {
   const [isFocused, setIsFocused] = useState(false);
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { data } = useMyTeamQuery(undefined);
+  console.log("Team data:", data);
+
+  const [headerInfo, setHeaderInfo] = useState({
+    title: "Talent Buyer Dashboard",
+    subtitle: "Marcus Reid - Live Nation West"
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      const onboardingCompleted = localStorage.getItem("onboarding_completed");
+      const role = localStorage.getItem("user_role");
+      const team = localStorage.getItem("active_team_name") || "My Team";
+
+      if (storedUser && onboardingCompleted === "true") {
+        try {
+          const u = JSON.parse(storedUser);
+          const displayRole = role || "Talent Buyer";
+          setHeaderInfo({
+            title: `${displayRole} Dashboard`,
+            subtitle: `${u.name} - ${team}`
+          });
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+  }, []);
+
+  // Sync API team name with header subtitle dynamically
+  useEffect(() => {
+    if (data?.results?.[0]?.name) {
+      setHeaderInfo((prev) => {
+        const namePart = prev.subtitle.split(" - ")[0];
+        return {
+          ...prev,
+          subtitle: `${namePart} - ${data.results[0].name}`
+        };
+      });
+    }
+  }, [data]);
 
   // Filter items based on search query
   useEffect(() => {
@@ -57,8 +100,8 @@ export function DashboardHeader() {
   return (
     <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 relative z-30">
       <div>
-        <h1 className="text-2xl md:text-[28px] font-bold text-white tracking-tight">Talent Buyer Dashboard</h1>
-        <p className="text-sm text-gray-500 font-medium mt-1">Marcus Reid - Live Nation West</p>
+        <h1 className="text-2xl md:text-[28px] font-bold text-white tracking-tight">{headerInfo.title}</h1>
+        <p className="text-[#A1A1AA] text-sm mt-2 font-normal">{headerInfo.subtitle}</p>
       </div>
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto relative" ref={dropdownRef}>

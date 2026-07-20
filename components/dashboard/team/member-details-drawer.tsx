@@ -3,13 +3,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Shield, ChevronDown, Check, Activity, AlertTriangle, Trash2, Clock } from "lucide-react";
+import { useDeleteTeamMemberMutation } from "@/redux/feature/team-managementSlice";
+import { toast } from "sonner";
 
 interface Member {
   id: string;
   name: string;
   email: string;
   role: string;
-  status: "Active" | "Pending" | "Declined";
+  role_label?: string;
+  status: "Active" | "Approved" | "Pending" | "Declined";
   avatarBg: string;
   avatarChar: string;
   memberSince?: string;
@@ -20,6 +23,7 @@ interface Member {
 
 interface MemberDetailsDrawerProps {
   selectedMember: Member | null;
+  selectedTeamId?: string;
   onClose: () => void;
   rolesList: string[];
   roleDetails: Record<string, { desc: string; permissions: { sendOffers: boolean; viewBookings: boolean; financial: boolean; invite: boolean } }>;
@@ -30,6 +34,7 @@ interface MemberDetailsDrawerProps {
 
 export function MemberDetailsDrawer({
   selectedMember,
+  selectedTeamId,
   onClose,
   rolesList,
   roleDetails,
@@ -38,7 +43,28 @@ export function MemberDetailsDrawer({
   getRoleBadgeStyle,
 }: MemberDetailsDrawerProps) {
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const roleDropdownRef = useRef<HTMLDivElement>(null);
+
+  const [deleteTeamMember, { isLoading: isDeleting }] = useDeleteTeamMemberMutation();
+
+  const handleRemoveTeamMember = async () => {
+    if (!selectedMember) return;
+    try {
+      const res = await deleteTeamMember(
+        selectedTeamId
+          ? { id: selectedTeamId, memberId: selectedMember.id }
+          : selectedMember.id
+      ).unwrap();
+      toast.success(res?.message || "Member removed successfully");
+      setIsDeleteModalOpen(false);
+      onDeleteMember(selectedMember.id);
+      onClose();
+    } catch (error: any) {
+      console.error("Failed to remove member:", error);
+      toast.error(error?.data?.message || error?.message || "Failed to remove member");
+    }
+  };
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -86,18 +112,18 @@ export function MemberDetailsDrawer({
                     {selectedMember.email}
                   </p>
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${getRoleBadgeStyle(selectedMember.role)}`}>
-                      {selectedMember.role}
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${getRoleBadgeStyle(selectedMember.role_label || selectedMember.role)}`}>
+                      {selectedMember.role_label || selectedMember.role}
                     </span>
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border
-                      ${selectedMember.status === "Active"
+                      ${selectedMember.status === "Active" || selectedMember.status === "Approved"
                         ? "text-[#22C55E] bg-[#22C55E]/10 border-[#22C55E]/20"
                         : selectedMember.status === "Pending"
                           ? "text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/20"
                           : "text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/20"
                       }
                     `}>
-                      {selectedMember.status === "Active" && <span className="w-1 h-1 rounded-full bg-[#22C55E]" />}
+                      {(selectedMember.status === "Active" || selectedMember.status === "Approved") && <span className="w-1 h-1 rounded-full bg-[#22C55E]" />}
                       {selectedMember.status === "Pending" && <Clock size={10} className="text-[#F59E0B] shrink-0" />}
                       {selectedMember.status === "Declined" && <span className="w-1 h-1 rounded-full bg-[#EF4444]" />}
                       <span>{selectedMember.status}</span>
@@ -128,7 +154,7 @@ export function MemberDetailsDrawer({
                   onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
                   className="w-full bg-[#131316] border border-white/10 hover:border-white/20 transition-all rounded-xl py-3 px-4 pr-10 text-sm font-semibold text-white cursor-pointer flex items-center justify-between select-none relative"
                 >
-                  <span>{selectedMember.role}</span>
+                  <span>{selectedMember.role_label || selectedMember.role}</span>
                   <ChevronDown size={14} className={`text-gray-400 transition-transform ${isRoleDropdownOpen ? "rotate-180" : ""}`} />
                 </div>
 
@@ -141,7 +167,7 @@ export function MemberDetailsDrawer({
                       className="absolute left-0 right-0 mt-2 bg-[#0F0F12] border border-white/10 rounded-xl shadow-2xl p-1.5 z-20 max-h-72 overflow-y-auto no-scrollbar"
                     >
                       {rolesList.map((role) => {
-                        const isSelected = role === selectedMember.role;
+                        const isSelected = role === (selectedMember.role_label || selectedMember.role);
                         return (
                           <div
                             key={role}
@@ -171,7 +197,7 @@ export function MemberDetailsDrawer({
                   { key: "financial", label: "Can access financial data" },
                   { key: "invite", label: "Can invite members" },
                 ].map((perm) => {
-                  const isGranted = roleDetails[selectedMember.role]?.permissions[perm.key as keyof typeof roleDetails[string]["permissions"]] || false;
+                  const isGranted = roleDetails[selectedMember.role_label || selectedMember.role]?.permissions[perm.key as keyof typeof roleDetails[string]["permissions"]] || false;
                   return (
                     <div key={perm.key} className="flex items-center gap-3.5 select-none">
                       {isGranted ? (
@@ -246,13 +272,84 @@ export function MemberDetailsDrawer({
                 This will revoke their access immediately.
               </p>
               <button
-                onClick={() => onDeleteMember(selectedMember.id)}
+                onClick={() => setIsDeleteModalOpen(true)}
                 className="px-5 py-2.5 rounded-xl border border-[#FF6B6B]/30 hover:border-[#FF6B6B]/60 text-[#FF6B6B] font-semibold text-xs transition-all bg-transparent hover:bg-[#FF6B6B]/5 cursor-pointer active:scale-[0.98] w-fit block mt-3"
               >
                 Remove Member
               </button>
             </div>
           </motion.aside>
+
+          {/* ─── REMOVE MEMBER CONFIRMATION MODAL ─── */}
+          <AnimatePresence>
+            {isDeleteModalOpen && selectedMember && (
+              <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                {/* Backdrop */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.6 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => !isDeleting && setIsDeleteModalOpen(false)}
+                  className="fixed inset-0 bg-black backdrop-blur-sm"
+                />
+
+                {/* Modal Card */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="relative w-full max-w-md bg-[#0D0D10] border border-white/10 rounded-2xl p-6 shadow-2xl z-10 space-y-5"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+                      <Trash2 size={22} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white leading-tight">
+                        Remove Member?
+                      </h3>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Are you sure you want to remove <span className="text-white font-semibold">{selectedMember.name}</span>?
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gray-400 bg-white/[0.03] border border-white/5 rounded-xl p-3 leading-relaxed">
+                    This will immediately revoke their access to this team and all associated permissions. This action cannot be undone.
+                  </p>
+
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => setIsDeleteModalOpen(false)}
+                      className="px-4 py-2.5 rounded-xl border border-white/10 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/5 transition-all disabled:opacity-50 cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={handleRemoveTeamMember}
+                      className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-lg shadow-red-600/20 transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                    >
+                      {isDeleting ? (
+                        <>
+                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Removing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 size={14} />
+                          <span>Yes, Remove Member</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </AnimatePresence>

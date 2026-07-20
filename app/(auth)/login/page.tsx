@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { useGoogleLoginMutation, useLoginMutation } from "@/redux/feature/authApi";
 import { toast } from "sonner";
@@ -12,8 +12,11 @@ import { setUser } from "@/redux/feature/authSlice";
 import { Logo } from "@/components/icon/logo";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
-export default function Login() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get("next") || "/";
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -50,7 +53,7 @@ export default function Login() {
       }));
 
       toast.success("Google login successful!");
-      router.push("/");
+      router.push(nextParam);
     } catch (error: unknown) {
       console.error("Google login error:", error);
       handleError(error);
@@ -111,7 +114,7 @@ export default function Login() {
           refresh: res.refresh
         }));
 
-        router.push("/");
+        router.push(nextParam);
       }
     } catch (error) {
       handleError(error);
@@ -214,7 +217,7 @@ export default function Login() {
           <p className="text-gray-400 text-[13px]">
             Don't have an account?{" "}
             <Link
-              href="/register"
+              href={nextParam !== "/" ? `/register?next=${encodeURIComponent(nextParam)}` : "/register"}
               className="text-white font-medium hover:underline ml-1"
             >
               Sign up now
@@ -223,5 +226,13 @@ export default function Login() {
         </div>
       </div>
     </GoogleOAuthProvider>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={<div className="text-center text-gray-500 py-10">Loading login...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

@@ -69,6 +69,7 @@ export const baseApi = createApi({
     "Session",
     "Favorites",
     "RecentSearches",
+    "Team",
   ],
   endpoints: () => ({}),
 });

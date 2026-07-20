@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { ReviewInvitationModal } from "@/components/layout/review-invitation-modal";
 import { SignOutModal } from "@/components/layout/sign-out-modal";
+import { useMyTeamQuery } from "@/redux/feature/team-managementSlice";
 
 import mockData from "@/data/mock-data.json";
 
@@ -36,6 +37,46 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewStep, setReviewStep] = useState<"details" | "success">("details");
   const [loadingProgress, setLoadingProgress] = useState(0);
+
+  const [userInitials, setUserInitials] = useState("NC");
+
+  const { data: myTeamData, isLoading: isTeamLoading, isSuccess: isTeamSuccess } = useMyTeamQuery(undefined);
+
+  // Redirect to onboarding if teams results is empty or user role is missing
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userRole = localStorage.getItem("user_role");
+      if (!userRole) {
+        router.push("/onboarding");
+        return;
+      }
+    }
+
+    if (!isTeamLoading && isTeamSuccess && myTeamData) {
+      const results = myTeamData?.results || (Array.isArray(myTeamData) ? myTeamData : []);
+      if (results.length === 0) {
+        router.push("/onboarding");
+      }
+    }
+  }, [pathname, router, myTeamData, isTeamLoading, isTeamSuccess]);
+
+  // Load user details for initials
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          const parsed = JSON.parse(storedUser);
+          if (parsed.name) {
+            const initials = parsed.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+            setUserInitials(initials);
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+  }, []);
 
   const handleSignOutConfirm = () => {
     setIsSignOutModalOpen(false);
@@ -141,9 +182,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
           <button
             onClick={() => setIsNotificationsOpen(true)}
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white text-xs font-bold border border-white/10 relative"
+            className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white text-xs font-bold border border-white/10 relative text-center uppercase"
           >
-            NC
+            {userInitials}
             {unreadCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full ring-1 ring-black" />
             )}

@@ -1,20 +1,27 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Search, X, Users, Clock, MoreHorizontal, User, UserCheck, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTeamMembersQuery, useDeleteTeamMemberMutation } from "@/redux/feature/team-managementSlice";
+import { toast } from "sonner";
 
 interface Member {
   id: string;
   name: string;
   email: string;
   role: string;
-  status: "Active" | "Pending" | "Declined";
+  role_label?: string;
+  status: "Active" | "Approved" | "Pending" | "Declined";
   avatarBg: string;
   avatarChar: string;
+  memberSince?: string;
+  lastActive?: string;
 }
 
 interface MembersTableProps {
   members: Member[];
+  selectedTeamId: string;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   activeMenuId: string | null;
@@ -27,6 +34,7 @@ interface MembersTableProps {
 
 export function MembersTable({
   members,
+  selectedTeamId,
   searchQuery,
   setSearchQuery,
   activeMenuId,
@@ -36,16 +44,70 @@ export function MembersTable({
   onDeleteMember,
   getRoleBadgeStyle,
 }: MembersTableProps) {
-  // Filter members list based on query
-  const filteredMembers = useMemo(() => {
-    if (!searchQuery.trim()) return members;
-    const query = searchQuery.toLowerCase();
-    return members.filter(
-      (m) =>
-        m.name.toLowerCase().includes(query) ||
-        m.email.toLowerCase().includes(query)
-    );
-  }, [members, searchQuery]);
+
+  const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
+  const [deleteTeamMember, { isLoading: isDeleting }] = useDeleteTeamMemberMutation();
+
+  const { data: teamMembers } = useTeamMembersQuery(
+    { id: selectedTeamId, search: searchQuery },
+    { skip: !selectedTeamId }
+  );
+  console.log("teamMembers", teamMembers);
+
+  const handleConfirmDelete = async () => {
+    if (!memberToDelete) return;
+    try {
+      const res = await deleteTeamMember({ id: selectedTeamId, memberId: memberToDelete.id }).unwrap();
+      toast.success(res?.message || "Member removed successfully");
+      onDeleteMember(memberToDelete.id);
+      setMemberToDelete(null);
+    } catch (error: any) {
+      console.error("Failed to remove member:", error);
+      toast.error(error?.data?.message || error?.message || "Failed to remove member");
+    }
+  };
+
+  // Normalize API results to Member structure
+  const apiMembers = teamMembers?.results || (Array.isArray(teamMembers) ? teamMembers : []);
+
+  const displayMembers = useMemo<Member[]>(() => {
+    if (apiMembers.length > 0) {
+      return apiMembers.map((m: any) => ({
+        id: String(m.id || m.user?.id),
+        name: m.user?.name || m.name || m.user?.email?.split("@")[0] || "User",
+        email: m.user?.email || m.email || "",
+        role: m.role || "Member",
+        role_label: m.role_label || m.role || "Member",
+        status: m.status 
+          ? (m.status.charAt(0).toUpperCase() + m.status.slice(1).toLowerCase()) as Member["status"] 
+          : "Active",
+        avatarBg: m.avatarBg || "bg-indigo-500",
+        avatarChar: (m.user?.name || m.name || "U").charAt(0).toUpperCase(),
+        memberSince: m.created_at ? new Date(m.created_at).toLocaleDateString() : "Just now",
+        lastActive: m.last_active || "Just now"
+      }));
+    }
+    return members;
+  }, [apiMembers, members]);
+
+
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Filter members list based on query (Bypassed as search is handled by the API)
+  const filteredMembers = displayMembers;
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage) || 1;
+  const activePage = Math.min(currentPage, totalPages);
+
+  // Paginated visible members list
+  const paginatedMembers = useMemo(() => {
+    const start = (activePage - 1) * itemsPerPage;
+    return filteredMembers.slice(start, start + itemsPerPage);
+  }, [filteredMembers, activePage, itemsPerPage]);
 
   return (
     <section className="bg-[#0A0A0C] border border-white/5 rounded-[24px] overflow-hidden">
@@ -79,7 +141,8 @@ export function MembersTable({
       <div className="h-px bg-white/5 w-full" />
 
       {/* Table Area */}
-      <div className="overflow-x-auto w-full no-scrollbar">
+      {/* Table Area with min-height to prevent absolute menus from clipping */}
+      <div className="overflow-x-auto w-full no-scrollbar min-h-[290px]">
         <table className="w-full border-collapse text-left min-w-[768px]">
           <thead>
             <tr className="border-b border-white/5 text-xs font-semibold text-[#71717A] uppercase tracking-wider select-none bg-transparent">
@@ -90,8 +153,8 @@ export function MembersTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {filteredMembers.length > 0 ? (
-              filteredMembers.map((member) => (
+            {paginatedMembers.length > 0 ? (
+              paginatedMembers.map((member) => (
                 <tr
                   key={member.id}
                   className="group hover:bg-white/[0.01] transition-colors"
@@ -116,8 +179,8 @@ export function MembersTable({
 
                   <td className="py-5 px-6 text-center">
                     <div className="inline-block">
-                      <span className={`px-3.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getRoleBadgeStyle(member.role)}`}>
-                        {member.role}
+                      <span className={`px-3.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getRoleBadgeStyle(member.role_label || member.role)}`}>
+                        {member.role_label || member.role}
                       </span>
                     </div>
                   </td>
@@ -127,7 +190,7 @@ export function MembersTable({
                       onClick={() => onToggleStatus(member.id)}
                       title="Click to toggle status (Demo)"
                       className={`cursor-pointer select-none justify-center inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition-all border whitespace-nowrap
-                        ${member.status === "Active"
+                        ${member.status === "Active" || member.status === "Approved"
                           ? "text-[#22C55E] bg-[#22C55E]/10 border-transparent"
                           : member.status === "Pending"
                             ? "text-[#F59E0B] bg-[#F59E0B]/10 border-transparent"
@@ -135,7 +198,7 @@ export function MembersTable({
                         }
                       `}
                     >
-                      {member.status === "Active" ? (
+                      {member.status === "Active" || member.status === "Approved" ? (
                         <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
                       ) : member.status === "Pending" ? (
                         <Clock size={12} className="text-[#F59E0B] shrink-0" />
@@ -196,7 +259,10 @@ export function MembersTable({
                               </button>
                               <div className="h-px bg-white/5 my-1" />
                               <button
-                                onClick={() => onDeleteMember(member.id)}
+                                onClick={() => {
+                                  setActiveMenuId(null);
+                                  setMemberToDelete(member);
+                                }}
                                 className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all text-left"
                               >
                                 <Trash2 size={14} />
@@ -220,6 +286,101 @@ export function MembersTable({
           </tbody>
         </table>
       </div>
+
+      {/* Pagination controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-6 py-4 border-t border-white/5 bg-transparent select-none">
+          <div className="text-xs text-[#71717A] font-semibold">
+            Showing {((activePage - 1) * itemsPerPage) + 1} to {Math.min(activePage * itemsPerPage, filteredMembers.length)} of {filteredMembers.length} members
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={activePage === 1}
+              className="px-3.5 py-1.5 rounded-lg border border-white/5 text-xs font-semibold text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/5 transition-all cursor-pointer"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={activePage === totalPages}
+              className="px-3.5 py-1.5 rounded-lg border border-white/5 text-xs font-semibold text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/5 transition-all cursor-pointer"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+      {/* ─── REMOVE MEMBER CONFIRMATION MODAL ─── */}
+      <AnimatePresence>
+        {memberToDelete && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !isDeleting && setMemberToDelete(null)}
+              className="fixed inset-0 bg-black backdrop-blur-sm"
+            />
+
+            {/* Modal Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-md bg-[#0D0D10] border border-white/10 rounded-2xl p-6 shadow-2xl z-10 space-y-5"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+                  <Trash2 size={22} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white leading-tight">
+                    Remove Member?
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Are you sure you want to remove <span className="text-white font-semibold">{memberToDelete.name}</span>?
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-400 bg-white/[0.03] border border-white/5 rounded-xl p-3 leading-relaxed">
+                This will immediately revoke their access to this team and all associated permissions. This action cannot be undone.
+              </p>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={() => setMemberToDelete(null)}
+                  className="px-4 py-2.5 rounded-xl border border-white/10 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/5 transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={handleConfirmDelete}
+                  className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-lg shadow-red-600/20 transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                >
+                  {isDeleting ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Removing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 size={14} />
+                      <span>Yes, Remove Member</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

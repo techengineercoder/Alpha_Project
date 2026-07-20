@@ -50,6 +50,7 @@ const AUTH_PATHS = new Set([
     "/auth/signup",
     "/auth/login",
     "/auth/verify-email",
+    "/onboarding"
 ]);
 
 // ─── Default suggested questions ─────────────────────────────────────────────
@@ -97,8 +98,6 @@ export default function ChatWidget() {
             setTimeout(() => inputRef.current?.focus(), 100);
         }
     }, [isOpen, isMinimized]);
-
-    if (AUTH_PATHS.has(pathname) || pathname.startsWith("/dashboard")) return null;
 
     // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -183,6 +182,8 @@ export default function ChatWidget() {
     );
 
     // ── Render ────────────────────────────────────────────────────────────────
+
+    if (AUTH_PATHS.has(pathname) || pathname.startsWith("/dashboard")) return null;
 
     return (
         <>
