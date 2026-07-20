@@ -42,23 +42,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const { data: myTeamData, isLoading: isTeamLoading, isSuccess: isTeamSuccess } = useMyTeamQuery(undefined);
 
-  // Redirect to onboarding if teams results is empty or user role is missing
+  // Redirect to onboarding if teams API results array is empty
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userRole = localStorage.getItem("user_role");
-      if (!userRole) {
-        router.push("/onboarding");
-        return;
-      }
-    }
-
     if (!isTeamLoading && isTeamSuccess && myTeamData) {
       const results = myTeamData?.results || (Array.isArray(myTeamData) ? myTeamData : []);
       if (results.length === 0) {
         router.push("/onboarding");
       }
     }
-  }, [pathname, router, myTeamData, isTeamLoading, isTeamSuccess]);
+  }, [myTeamData, isTeamLoading, isTeamSuccess, router]);
 
   // Load user details for initials
   useEffect(() => {

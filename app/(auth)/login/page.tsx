@@ -108,6 +108,10 @@ function LoginContent() {
           localStorage.removeItem("rememberedEmail");
         }
 
+        if (res.user?.role && typeof window !== "undefined") {
+          localStorage.setItem("user_role", res.user.role);
+        }
+
         dispatch(setUser({
           user: res.user,
           access: res.access,
