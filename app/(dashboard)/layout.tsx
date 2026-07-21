@@ -9,6 +9,7 @@ import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { ReviewInvitationModal } from "@/components/layout/review-invitation-modal";
 import { SignOutModal } from "@/components/layout/sign-out-modal";
 import { useMyTeamQuery } from "@/redux/feature/team-managementSlice";
+import { LogoLoader } from "@/components/ui/logo-loader";
 
 import mockData from "@/data/mock-data.json";
 
@@ -40,17 +41,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const [userInitials, setUserInitials] = useState("NC");
 
+  // Notifications State matching the reference design
+  const [notifications, setNotifications] = useState<NotificationItem[]>(
+    mockData.notifications as NotificationItem[]
+  );
+
   const { data: myTeamData, isLoading: isTeamLoading, isSuccess: isTeamSuccess } = useMyTeamQuery(undefined);
+
+  const teamResults = myTeamData?.results || (Array.isArray(myTeamData) ? myTeamData : []);
+  const hasNoTeam = isTeamSuccess && teamResults.length === 0;
 
   // Redirect to onboarding if teams API results array is empty
   useEffect(() => {
-    if (!isTeamLoading && isTeamSuccess && myTeamData) {
-      const results = myTeamData?.results || (Array.isArray(myTeamData) ? myTeamData : []);
-      if (results.length === 0) {
-        router.push("/onboarding");
-      }
+    if (!isTeamLoading && isTeamSuccess && teamResults.length === 0) {
+      router.push("/onboarding");
     }
-  }, [myTeamData, isTeamLoading, isTeamSuccess, router]);
+  }, [teamResults.length, isTeamLoading, isTeamSuccess, router]);
 
   // Load user details for initials
   useEffect(() => {
@@ -70,20 +76,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, []);
 
-  const handleSignOutConfirm = () => {
-    setIsSignOutModalOpen(false);
-    toast.success("Successfully signed out.");
-    router.push("/login");
-  };
-
-  // Notifications State matching the reference design
-  const [notifications, setNotifications] = useState<NotificationItem[]>(
-    mockData.notifications as NotificationItem[]
-  );
-
-  // Derived State: Unread Count
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
   // Listen to child page dispatch events to open notifications
   useEffect(() => {
     const handleOpenNotifications = () => {
@@ -94,26 +86,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       window.removeEventListener("open-notifications", handleOpenNotifications);
     };
   }, []);
-
-  // Mark all notifications as read
-  const handleMarkAllRead = () => {
-    setNotifications(
-      notifications.map((n) => ({ ...n, isRead: true }))
-    );
-  };
-
-  // Click single notification to mark as read
-  const handleNotificationClick = (id: string) => {
-    setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
-  };
-
-  // Accept Invitation Flow Trigger
-  const handleAcceptInvitation = () => {
-    setReviewStep("success");
-    setLoadingProgress(0);
-  };
 
   // Simulate dashboard setup loading progress bar
   useEffect(() => {
@@ -126,8 +98,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             // Completed load flow
             setTimeout(() => {
               // Mark the invitation read
-              setNotifications(
-                notifications.map((n) => (n.id === "1" ? { ...n, isRead: true } : n))
+              setNotifications((prevNotes) =>
+                prevNotes.map((n) => (n.id === "1" ? { ...n, isRead: true } : n))
               );
               setIsReviewModalOpen(false);
               setReviewStep("details");
@@ -141,7 +113,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       }, 100);
     }
     return () => clearInterval(timer);
-  }, [isReviewModalOpen, reviewStep, notifications]);
+  }, [isReviewModalOpen, reviewStep]);
+
+  // Derived State: Unread Count
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const handleSignOutConfirm = () => {
+    setIsSignOutModalOpen(false);
+    toast.success("Successfully signed out.");
+    router.push("/login");
+  };
+
+  const handleMarkAllRead = () => {
+    setNotifications(
+      notifications.map((n) => ({ ...n, isRead: true }))
+    );
+  };
+
+  const handleNotificationClick = (id: string) => {
+    setNotifications(
+      notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+    );
+  };
+
+  const handleAcceptInvitation = () => {
+    setReviewStep("success");
+    setLoadingProgress(0);
+  };
+
+  // Prevent dashboard UI flickering/flashing while checking team status or redirecting (placed AFTER all hooks!)
+  if (isTeamLoading || !isTeamSuccess || hasNoTeam) {
+    return <LogoLoader fullScreen={true} text="Loading Workspace..." />;
+  }
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans flex overflow-hidden">

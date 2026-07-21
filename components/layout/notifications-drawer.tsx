@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Check, X, Tag, MessageSquare, DollarSign, Briefcase, ArrowRight } from "lucide-react";
+import { useGetNotificationQuery } from "@/redux/feature/dashboardApi/notificationSlice";
 
 interface NotificationItem {
   id: string;
@@ -39,6 +40,9 @@ export function NotificationsDrawer({
 }: NotificationsDrawerProps) {
   // State to track which card is active/expanded
   const [activeCardId, setActiveCardId] = useState<string>("1");
+
+  const { data: notification } = useGetNotificationQuery(undefined);
+  console.log(notification, '=============notifiatnion=========')
 
   // Render Custom Icons
   const getNotificationIcon = (type: NotificationItem["type"]) => {
@@ -94,10 +98,9 @@ export function NotificationsDrawer({
           setActiveCardId(n.id);
         }}
         className={`relative transition-all flex items-start gap-3.5 cursor-pointer select-none
-          ${
-            isActive
-              ? "bg-[#0E0E11] border-[1.6px] border-l-[4.8px] border-[#00A5E5] rounded-[25.62px] p-[22.42px] mx-6 my-2.5 shadow-[0_0_24px_rgba(0,165,229,0.08)] z-10"
-              : "bg-transparent border-b border-white/5 hover:bg-white/[0.01] py-5 px-6"
+          ${isActive
+            ? "bg-[#0E0E11] border-[1.6px] border-l-[4.8px] border-[#00A5E5] rounded-[25.62px] p-[22.42px] mx-6 my-2.5 shadow-[0_0_24px_rgba(0,165,229,0.08)] z-10"
+            : "bg-transparent border-b border-white/5 hover:bg-white/[0.01] py-5 px-6"
           }
         `}
       >
@@ -127,7 +130,7 @@ export function NotificationsDrawer({
               <p className="text-sm text-gray-400 font-medium leading-relaxed">
                 You've been invited to join <span className="text-white font-bold">{n.invitationData.agency}</span> as <span className="text-white font-bold">{n.invitationData.role}</span>
               </p>
-              
+
               <div className="flex items-center gap-2 mt-2 select-none">
                 <div className="w-5 h-5 rounded-full bg-[#1E3E62] flex items-center justify-center text-white font-bold text-[10px] shrink-0">
                   {n.invitationData.invitedBy.charAt(0)}

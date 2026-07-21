@@ -165,7 +165,7 @@ export function InviteMemberModal({
                 />
                 <p className="text-xs text-gray-500 flex items-center gap-1.5 pl-1 font-normal select-none">
                   <span className="shrink-0">💡</span>
-                  <span>The invited user must already have a NexaHub account.</span>
+                  <span>The invited user must already have a GetAvails account.</span>
                 </p>
               </div>
 

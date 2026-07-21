@@ -36,7 +36,9 @@ export function OnboardingHeader({ userName, userImage }: OnboardingHeaderProps)
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-bold text-xs border border-white/10 shrink-0">
+        <div className={`w-9 h-9 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-xs border border-white/10 shrink-0 ${
+          avatarSrc ? "bg-transparent" : "bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF]"
+        }`}>
           {avatarSrc ? (
             <img src={avatarSrc} alt={userName} className="w-full h-full object-cover" />
           ) : (

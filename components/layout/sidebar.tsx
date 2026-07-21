@@ -19,6 +19,7 @@ import {
   X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Logo } from "../icon/logo";
 
 interface MenuItem {
   name: string;
@@ -168,7 +169,9 @@ export function Sidebar({
         <div className="h-px bg-white/5" />
 
         <div className="flex items-center gap-3 px-2 py-1">
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-bold text-sm border border-white/10 shrink-0 uppercase">
+          <div className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-sm border border-white/10 shrink-0 uppercase ${
+            user && user.image && getImageUrl(user.image) ? "bg-transparent" : "bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF]"
+          }`}>
             {user && user.image && getImageUrl(user.image) ? (
               <img src={getImageUrl(user.image)!} alt={user.name} className="w-full h-full object-cover" />
             ) : (
@@ -190,10 +193,7 @@ export function Sidebar({
       <aside className="hidden lg:flex flex-col w-72 bg-[#09090b] border-r border-white/5 h-screen fixed top-0 left-0 z-30 shrink-0">
         <div className="p-6 flex items-center gap-3 border-b border-white/5">
           <Link href="/" className=" hover:opacity-85 transition-opacity flex items-center gap-3">
-            <svg width="37" height="32" viewBox="0 0 37 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M33.3049 26.1478L9.16267 26.3806L18.2056 9.56264L23.1901 18.2399L15.4541 18.0862L13.05 22.6026L31.3047 22.6654L18.2867 0L0 31.6981L36.4528 31.6286L33.3049 26.1478Z" fill="#FEFEFE" />
-            </svg>
-
+            <Logo />
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight leading-tight">GetAvails</h1>
               <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Artist Portal</p>
