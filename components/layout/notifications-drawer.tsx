@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Check, X, Tag, MessageSquare, DollarSign, Briefcase, ArrowRight } from "lucide-react";
-import { useGetNotificationQuery } from "@/redux/feature/dashboardApi/notificationSlice";
 
 interface NotificationItem {
   id: string;
@@ -16,6 +15,7 @@ interface NotificationItem {
     agency: string;
     role: string;
     invitedBy: string;
+    token?: string;
   };
 }
 
@@ -26,7 +26,10 @@ interface NotificationsDrawerProps {
   unreadCount: number;
   onMarkAllRead: () => void;
   onNotificationClick: (id: string) => void;
-  onReviewInvitationClick: () => void;
+  onReviewInvitationClick: (id: string) => void;
+  onLoadMore: () => void;
+  hasMore: boolean;
+  isLoadingMore: boolean;
 }
 
 export function NotificationsDrawer({
@@ -37,12 +40,23 @@ export function NotificationsDrawer({
   onMarkAllRead,
   onNotificationClick,
   onReviewInvitationClick,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
 }: NotificationsDrawerProps) {
   // State to track which card is active/expanded
-  const [activeCardId, setActiveCardId] = useState<string>("1");
+  const [activeCardId, setActiveCardId] = useState<string>("");
 
-  const { data: notification } = useGetNotificationQuery(undefined);
-  console.log(notification, '=============notifiatnion=========')
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    if (
+      hasMore &&
+      !isLoadingMore &&
+      container.scrollHeight - container.scrollTop <= container.clientHeight + 50
+    ) {
+      onLoadMore();
+    }
+  };
 
   // Render Custom Icons
   const getNotificationIcon = (type: NotificationItem["type"]) => {
@@ -82,8 +96,6 @@ export function NotificationsDrawer({
     }
   };
 
-  const newNotifications = notifications.filter((n) => n.id !== "5");
-  const earlierNotifications = notifications.filter((n) => n.id === "5");
 
   const renderNotificationCard = (n: NotificationItem) => {
     const isInv = n.type === "invitation";
@@ -95,7 +107,7 @@ export function NotificationsDrawer({
         key={n.id}
         onClick={() => {
           onNotificationClick(n.id);
-          setActiveCardId(n.id);
+          setActiveCardId((prev) => (prev === n.id ? "" : n.id));
         }}
         className={`relative transition-all flex items-start gap-3.5 cursor-pointer select-none
           ${isActive
@@ -150,7 +162,7 @@ export function NotificationsDrawer({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onReviewInvitationClick();
+                        onReviewInvitationClick(n.id);
                       }}
                       className="bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white font-semibold w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-1.5 transition-all shadow-[0_4px_16px_rgba(0,165,229,0.15)] cursor-pointer"
                     >
@@ -178,7 +190,7 @@ export function NotificationsDrawer({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onReviewInvitationClick();
+                        onReviewInvitationClick(n.id);
                       }}
                       className="bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white font-semibold w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-1.5 transition-all shadow-[0_4px_16px_rgba(0,165,229,0.15)] cursor-pointer"
                     >
@@ -252,22 +264,17 @@ export function NotificationsDrawer({
             <div className="h-px bg-white/5 shrink-0" />
 
             {/* Scroll list */}
-            <div className="flex-1 overflow-y-auto no-scrollbar">
-              {/* New Notifications */}
-              <div className="space-y-0">
-                <p className="text-[10px] text-[#71717A] font-bold uppercase tracking-wider px-6 pt-5 pb-2 select-none">
-                  New
-                </p>
-                {newNotifications.map((n) => renderNotificationCard(n))}
-              </div>
+            <div 
+              className="flex-1 overflow-y-auto no-scrollbar"
+              onScroll={handleScroll}
+            >
+              {notifications.map((n) => renderNotificationCard(n))}
 
-              {/* Earlier Notifications */}
-              <div className="space-y-0 mt-2">
-                <p className="text-[10px] text-[#71717A] font-bold uppercase tracking-wider px-6 pt-5 pb-2 select-none">
-                  Earlier
-                </p>
-                {earlierNotifications.map((n) => renderNotificationCard(n))}
-              </div>
+              {isLoadingMore && (
+                <div className="py-4 flex justify-center items-center select-none shrink-0">
+                  <div className="w-5 h-5 border-2 border-t-transparent border-[#00A5E5] rounded-full animate-spin" />
+                </div>
+              )}
             </div>
 
             <div className="h-px bg-white/5 shrink-0" />

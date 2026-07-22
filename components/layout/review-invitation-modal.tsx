@@ -10,7 +10,55 @@ interface ReviewInvitationModalProps {
   step: "details" | "success";
   loadingProgress: number;
   onAccept: () => void;
+  invitationData?: {
+    agency: string;
+    role: string;
+    invitedBy: string;
+  };
 }
+
+function formatRoleName(role: string): string {
+  if (!role) return "Member";
+  return role
+    .split(/[_-]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
+
+const getPermissionsForRole = (role: string): string[] => {
+  const normalized = (role || "").toLowerCase().replace(/_/g, " ");
+  
+  if (normalized.includes("artist")) {
+    return [
+      "Manage your profile and catalogue",
+      "View booking offers and details",
+      "Access contracts and calendar",
+      "Communicate with agents and buyers"
+    ];
+  }
+  if (normalized.includes("legal")) {
+    return [
+      "Review and sign booking contracts",
+      "Access contract legal documents",
+      "Communicate with legal teams",
+      "Oversee compliance and negotiations"
+    ];
+  }
+  if (normalized.includes("agent")) {
+    return [
+      "Manage specific rosters or segments",
+      "Draft and issue booking offers",
+      "Track negotiations and contracts",
+      "Access agent calendar and reports"
+    ];
+  }
+  return [
+    "Search and discover artists",
+    "Send and manage booking offers",
+    "Access contracts and negotiations",
+    "View your bookings calendar"
+  ];
+};
 
 export function ReviewInvitationModal({
   isOpen,
@@ -18,7 +66,20 @@ export function ReviewInvitationModal({
   step,
   loadingProgress,
   onAccept,
+  invitationData = {
+    agency: "Apex Agency",
+    role: "Talent Buyer",
+    invitedBy: "Ghost Reyes",
+  },
 }: ReviewInvitationModalProps) {
+  const agencyName = invitationData.agency || "Apex Agency";
+  const roleName = invitationData.role || "Talent Buyer";
+  const invitedByName = invitationData.invitedBy || "Team Admin";
+
+  const agencyLetter = agencyName.charAt(0).toUpperCase();
+  const formattedRole = formatRoleName(roleName);
+  const permissions = getPermissionsForRole(roleName);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -40,7 +101,7 @@ export function ReviewInvitationModal({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-lg bg-[#09090b] border border-white/10 rounded-[28px] shadow-2xl p-8 md:p-10 z-10 space-y-6 text-center max-h-[95vh] overflow-y-auto no-scrollbar"
+              className="relative w-full max-w-lg bg-[#09090b] border border-white/10 rounded-[28px] shadow-2xl p-8 md:p-10 z-10 space-y-4 text-center max-h-[95vh] overflow-y-auto no-scrollbar"
             >
               {/* Close Icon Button */}
               <button
@@ -51,12 +112,12 @@ export function ReviewInvitationModal({
               </button>
 
               {/* Agency Logo visual */}
-              <div className="pt-4 flex flex-col items-center">
+              <div className="pt-1 flex flex-col items-center">
                 <div className="w-[72px] h-[72px] rounded-2xl bg-[#162742] border border-[#00A5E5]/20 flex items-center justify-center text-white font-bold text-3xl select-none">
-                  A
+                  {agencyLetter}
                 </div>
                 <p className="text-sm text-gray-400 font-medium mt-1.5">
-                  Apex Agency
+                  {agencyName}
                 </p>
               </div>
 
@@ -68,14 +129,14 @@ export function ReviewInvitationModal({
                   You've been invited to join
                 </p>
                 <h3 className="text-white text-[28px] font-bold tracking-tight leading-tight mt-1.5">
-                  Apex Agency
+                  {agencyName}
                 </h3>
-                <div className="flex flex-col items-center pt-3.5">
+                <div className="flex flex-col items-center pt-1">
                   <span className="text-gray-500 text-sm font-medium select-none">
                     Your role:
                   </span>
                   <span className="px-5 py-1.5 rounded-full text-sm font-bold text-[#00A5E5] bg-[#00A5E5]/5 border border-[#00A5E5]/20 mt-1 select-none">
-                    Talent Buyer
+                    {formattedRole}
                   </span>
                 </div>
               </div>
@@ -86,32 +147,27 @@ export function ReviewInvitationModal({
               <div className="bg-[#131316] border border-white/10 rounded-2xl p-5 text-left space-y-3.5">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-500 font-medium">Invited by</span>
-                  <span className="text-white font-bold">Name Example</span>
+                  <span className="text-white font-bold">{invitedByName}</span>
                 </div>
                 <div className="h-px bg-white/5" />
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-500 font-medium">Team</span>
-                  <span className="text-white font-bold">Apex Agency</span>
+                  <span className="text-white font-bold">{agencyName}</span>
                 </div>
                 <div className="h-px bg-white/5" />
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-500 font-medium">Role assigned</span>
-                  <span className="text-white font-bold">Talent Buyer</span>
+                  <span className="text-white font-bold">{formattedRole}</span>
                 </div>
               </div>
 
               {/* Permissions Checklist */}
               <div className="text-left space-y-3">
                 <p className="text-gray-400 text-sm font-medium tracking-tight">
-                  As a Talent Buyer, you'll be able to:
+                  As a {formattedRole}, you'll be able to:
                 </p>
                 <div className="space-y-3 pl-1">
-                  {[
-                    "Search and discover artists",
-                    "Send and manage booking offers",
-                    "Access contracts and negotiations",
-                    "View your bookings calendar",
-                  ].map((perm) => (
+                  {permissions.map((perm) => (
                     <div key={perm} className="flex items-center gap-3 text-sm text-gray-300 font-medium">
                       <Check size={16} className="text-[#00A5E5] shrink-0" strokeWidth={2.5} />
                       <span>{perm}</span>
@@ -161,7 +217,7 @@ export function ReviewInvitationModal({
                   You're in!
                 </h3>
                 <p className="text-gray-400 text-sm font-semibold">
-                  Welcome to Apex Agency
+                  Welcome to {agencyName}
                 </p>
               </div>
 
@@ -170,7 +226,7 @@ export function ReviewInvitationModal({
                   You've joined as
                 </span>
                 <span className="px-4 py-1.5 rounded-full text-xs font-bold text-[#00A5E5] bg-[#00A5E5]/10 border border-[#00A5E5]/20 uppercase tracking-wider">
-                  Talent Buyer
+                  {formattedRole}
                 </span>
               </div>
 

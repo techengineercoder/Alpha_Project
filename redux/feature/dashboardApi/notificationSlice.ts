@@ -6,9 +6,10 @@ export const notificationApi = baseApi.injectEndpoints({
 
         // /notifications/
         getNotification: builder.query({
-            query: () => ({
+            query: (params?: { limit?: number; offset?: number }) => ({
                 url: "/notifications/",
                 method: "GET",
+                params,
             }),
             providesTags: ["Notification"],
         }),
@@ -17,7 +18,7 @@ export const notificationApi = baseApi.injectEndpoints({
         readSingleNotification: builder.mutation({
             query: (id) => ({
                 url: `/notifications/${id}/read/`,
-                method: "PATCH",
+                method: "POST",
             }),
             invalidatesTags: ["Notification"],
         }),

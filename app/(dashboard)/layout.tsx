@@ -8,8 +8,14 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { ReviewInvitationModal } from "@/components/layout/review-invitation-modal";
 import { SignOutModal } from "@/components/layout/sign-out-modal";
-import { useMyTeamQuery } from "@/redux/feature/team-managementSlice";
+import { useMyTeamQuery, useAcceptTeamMemberInvitationMutation } from "@/redux/feature/team-managementSlice";
 import { LogoLoader } from "@/components/ui/logo-loader";
+
+import {
+  useGetNotificationQuery,
+  useReadSingleNotificationMutation,
+  useReadAllNotificationMutation,
+} from "@/redux/feature/dashboardApi/notificationSlice";
 
 import mockData from "@/data/mock-data.json";
 
@@ -24,6 +30,7 @@ interface NotificationItem {
     agency: string;
     role: string;
     invitedBy: string;
+    token?: string;
   };
 }
 
@@ -41,10 +48,111 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const [userInitials, setUserInitials] = useState("NC");
 
-  // Notifications State matching the reference design
-  const [notifications, setNotifications] = useState<NotificationItem[]>(
-    mockData.notifications as NotificationItem[]
+  // Notifications State & Pagination
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [selectedInvitationNotificationId, setSelectedInvitationNotificationId] = useState<string | null>(null);
+
+  const limit = 20;
+
+  // RTK Query for fetching notifications
+  const { data: notificationData, isFetching: isNotificationsFetching } = useGetNotificationQuery(
+    { limit, offset },
+    { skip: false }
   );
+
+  // Mutations
+  const [readSingleNotification] = useReadSingleNotificationMutation();
+  const [readAllNotification] = useReadAllNotificationMutation();
+  const [acceptTeamMemberInvitation] = useAcceptTeamMemberInvitationMutation();
+
+  // Reset offset to 0 when notifications drawer is opened to load page 1 fresh
+  useEffect(() => {
+    if (isNotificationsOpen) {
+      setOffset(0);
+    }
+  }, [isNotificationsOpen]);
+
+  // Sync API notifications to local state
+  useEffect(() => {
+    if (notificationData?.results) {
+      const mapped = notificationData.results.map((item: any) => {
+        let type: NotificationItem["type"] = "message";
+        if (item.notification_type) {
+          if (item.notification_type.includes("invitation")) {
+            type = "invitation";
+          } else if (item.notification_type.includes("offer")) {
+            type = "offer_accepted";
+          } else if (item.notification_type.includes("message")) {
+            type = "message";
+          } else if (item.notification_type.includes("deposit")) {
+            type = "deposit";
+          } else if (item.notification_type.includes("contract")) {
+            type = "contract";
+          }
+        }
+
+        let timestamp = "";
+        if (item.created_at) {
+          try {
+            const now = new Date();
+            const date = new Date(item.created_at);
+            const diffMs = now.getTime() - date.getTime();
+            if (!isNaN(diffMs)) {
+              const diffMins = Math.floor(diffMs / 60000);
+              const diffHours = Math.floor(diffMins / 60);
+              const diffDays = Math.floor(diffHours / 24);
+
+              if (diffMins < 1) timestamp = "Just now";
+              else if (diffMins < 60) timestamp = `${diffMins}m ago`;
+              else if (diffHours < 24) timestamp = `${diffHours}h ago`;
+              else if (diffDays < 7) timestamp = `${diffDays}d ago`;
+              else timestamp = date.toLocaleDateString();
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+
+        const mappedItem: NotificationItem = {
+          id: item.id.toString(),
+          type,
+          title: item.title || "Notification",
+          timestamp,
+          isRead: !!item.is_read,
+          description: item.message || "",
+        };
+
+        if (type === "invitation") {
+          mappedItem.invitationData = {
+            agency: item.data?.team_name || "Team",
+            role: item.data?.role || "Member",
+            invitedBy: item.data?.invited_by || "Team Admin",
+            token: item.data?.token || item.data?.invitation_id?.toString() || "",
+          };
+        }
+
+        return mappedItem;
+      });
+
+      if (offset === 0) {
+        setNotifications(mapped);
+      } else {
+        setNotifications((prev) => {
+          const updatedPrev = prev.map((item) => {
+            const newItem = mapped.find((n: NotificationItem) => n.id === item.id);
+            return newItem ? newItem : item;
+          });
+          const existingIds = new Set(prev.map((n: NotificationItem) => n.id));
+          const newItems = mapped.filter((n: NotificationItem) => !existingIds.has(n.id));
+          return [...updatedPrev, ...newItems];
+        });
+      }
+
+      setHasMore(!!notificationData.next);
+    }
+  }, [notificationData, offset]);
 
   const { data: myTeamData, isLoading: isTeamLoading, isSuccess: isTeamSuccess } = useMyTeamQuery(undefined);
 
@@ -98,9 +206,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             // Completed load flow
             setTimeout(() => {
               // Mark the invitation read
-              setNotifications((prevNotes) =>
-                prevNotes.map((n) => (n.id === "1" ? { ...n, isRead: true } : n))
-              );
+              if (selectedInvitationNotificationId) {
+                handleNotificationClick(selectedInvitationNotificationId);
+              }
               setIsReviewModalOpen(false);
               setReviewStep("details");
               setLoadingProgress(0);
@@ -113,7 +221,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       }, 100);
     }
     return () => clearInterval(timer);
-  }, [isReviewModalOpen, reviewStep]);
+  }, [isReviewModalOpen, reviewStep, selectedInvitationNotificationId]);
 
   // Derived State: Unread Count
   const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -124,21 +232,63 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push("/login");
   };
 
-  const handleMarkAllRead = () => {
-    setNotifications(
-      notifications.map((n) => ({ ...n, isRead: true }))
+  const handleMarkAllRead = async () => {
+    const hasUnread = notifications.some((n) => !n.isRead);
+    if (!hasUnread) return;
+
+    // 1. Optimistic update
+    setNotifications((prev) =>
+      prev.map((n) => ({ ...n, isRead: true }))
     );
+    // 2. Call mutation
+    try {
+      await readAllNotification(undefined).unwrap();
+    } catch (err) {
+      console.error("Failed to mark all notifications read:", err);
+    }
   };
 
-  const handleNotificationClick = (id: string) => {
-    setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+  const handleNotificationClick = async (id: string) => {
+    const notification = notifications.find((n) => n.id === id);
+    if (notification?.isRead) return;
+
+    // 1. Optimistic update
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
     );
+    // 2. Call mutation
+    try {
+      await readSingleNotification(id).unwrap();
+    } catch (err) {
+      console.error("Failed to mark notification read:", err);
+    }
   };
 
-  const handleAcceptInvitation = () => {
-    setReviewStep("success");
-    setLoadingProgress(0);
+  const handleLoadMore = () => {
+    if (hasMore && !isNotificationsFetching) {
+      setOffset((prev) => prev + limit);
+    }
+  };
+
+  const selectedNotification = notifications.find((n) => n.id === selectedInvitationNotificationId);
+  const selectedInvitationData = selectedNotification?.invitationData;
+
+  const handleAcceptInvitation = async () => {
+    const token = selectedInvitationData?.token;
+    if (!token) {
+      toast.error("Invitation token not found.");
+      return;
+    }
+
+    try {
+      await acceptTeamMemberInvitation({ token }).unwrap();
+      setReviewStep("success");
+      setLoadingProgress(0);
+    } catch (err: any) {
+      console.error("Failed to accept team invitation:", err);
+      const msg = err?.data?.error?.message || err?.data?.message || "Failed to accept team invitation.";
+      toast.error(msg);
+    }
   };
 
   // Prevent dashboard UI flickering/flashing while checking team status or redirecting (placed AFTER all hooks!)
@@ -200,11 +350,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         unreadCount={unreadCount}
         onMarkAllRead={handleMarkAllRead}
         onNotificationClick={handleNotificationClick}
-        onReviewInvitationClick={() => {
+        onReviewInvitationClick={(notificationId) => {
           setIsNotificationsOpen(false);
           setIsReviewModalOpen(true);
           setReviewStep("details");
+          setSelectedInvitationNotificationId(notificationId);
         }}
+        onLoadMore={handleLoadMore}
+        hasMore={hasMore}
+        isLoadingMore={isNotificationsFetching}
       />
 
       {/* Review Invitation Centered Modals */}
@@ -214,6 +368,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         step={reviewStep}
         loadingProgress={loadingProgress}
         onAccept={handleAcceptInvitation}
+        invitationData={selectedInvitationData}
       />
 
       {/* Sign Out Confirmation Modal */}
