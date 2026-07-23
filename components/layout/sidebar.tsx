@@ -278,7 +278,7 @@ export function Sidebar({
             )}
           </Link>
         </div>
-        <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
+        <nav className={`flex-1 px-4 py-6 space-y-1.5 no-scrollbar ${isCollapsed ? "overflow-visible" : "overflow-y-auto"}`}>
           {renderNavLinks(false)}
         </nav>
         {renderFooter(false)}
