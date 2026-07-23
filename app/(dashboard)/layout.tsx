@@ -40,6 +40,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("sidebar_collapsed");
+      if (stored === "true") {
+        setIsSidebarCollapsed(true);
+      }
+    }
+  }, []);
+
+  const handleToggleSidebar = (collapsed: boolean) => {
+    setIsSidebarCollapsed(collapsed);
+    localStorage.setItem("sidebar_collapsed", collapsed.toString());
+  };
 
   // Invitation flow states
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -306,10 +322,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         unreadCount={unreadCount}
         onNotificationsClick={() => setIsNotificationsOpen(true)}
         onSignOutClick={() => setIsSignOutModalOpen(true)}
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={handleToggleSidebar}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-screen overflow-y-auto no-scrollbar lg:pl-72 bg-[#050505] relative">
+      <main className={`flex-1 flex flex-col h-screen overflow-y-auto no-scrollbar bg-[#050505] relative transition-all duration-300 ease-in-out ${isSidebarCollapsed ? "lg:pl-[76px]" : "lg:pl-72"}`}>
         {/* Mobile Top Header Bar */}
         <header className="lg:hidden flex items-center justify-between p-4 bg-[#09090b] border-b border-white/5 shrink-0 sticky top-0 z-[40]">
           <button

@@ -16,7 +16,9 @@ import {
   Settings,
   Bell,
   LogOut,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "../icon/logo";
@@ -57,6 +59,8 @@ interface SidebarProps {
   unreadCount: number;
   onNotificationsClick: () => void;
   onSignOutClick: () => void;
+  isCollapsed?: boolean;
+  setIsCollapsed?: (collapsed: boolean) => void;
 }
 
 export function Sidebar({
@@ -66,6 +70,8 @@ export function Sidebar({
   unreadCount,
   onNotificationsClick,
   onSignOutClick,
+  isCollapsed = false,
+  setIsCollapsed,
 }: SidebarProps) {
   const [user, setUser] = React.useState<{ name: string; role: string; initials: string; image?: string | null } | null>(null);
 
@@ -100,6 +106,7 @@ export function Sidebar({
   };
 
   const renderNavLinks = (closeMobile = false) => {
+    const collapsed = isCollapsed && !closeMobile;
     return menuItems.map((item) => {
       const active = isLinkActive(item.href);
       return (
@@ -109,24 +116,42 @@ export function Sidebar({
           onClick={() => {
             if (closeMobile) setIsMobileSidebarOpen(false);
           }}
-          className={`w-full flex items-center justify-between px-[14px] py-[10px] rounded-lg text-sm font-medium transition-all group h-12 gap-3
+          className={`w-full flex items-center rounded-lg text-sm font-medium transition-all group h-12 relative
+            ${collapsed ? "justify-center px-0" : "justify-between px-[14px] py-[10px] gap-3"}
             ${active
               ? "text-[#00A5E5] bg-[#00A5E5]/[0.09]"
               : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
             }
           `}
         >
-          <div className="flex items-center gap-3">
-            <item.icon
-              size={18}
-              className={active ? "text-[#00A5E5]" : "text-gray-500 group-hover:text-white transition-colors"}
-            />
-            <span>{item.name}</span>
+          <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3"}`}>
+            <div className="relative flex items-center justify-center shrink-0">
+              <item.icon
+                size={18}
+                className={active ? "text-[#00A5E5]" : "text-gray-500 group-hover:text-white transition-colors"}
+              />
+              {collapsed && item.badge && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#00A5E5] shadow-[0_0_6px_rgba(0,165,229,0.5)]" />
+              )}
+            </div>
+            {!collapsed && <span>{item.name}</span>}
           </div>
-          {item.badge && (
+          {!collapsed && item.badge && (
             <span className="w-5 h-5 rounded-full bg-[#00A5E5] text-white text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(0,165,229,0.3)]">
               {item.badge}
             </span>
+          )}
+
+          {/* Tooltip when collapsed */}
+          {collapsed && (
+            <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#18181b] border border-white/10 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-2 group-hover:translate-x-0 shadow-lg z-50">
+              {item.name}
+              {item.badge && (
+                <span className="ml-2 inline-flex w-4 h-4 rounded-full bg-[#00A5E5] text-white text-[9px] font-bold items-center justify-center">
+                  {item.badge}
+                </span>
+              )}
+            </div>
           )}
         </Link>
       );
@@ -134,6 +159,7 @@ export function Sidebar({
   };
 
   const renderFooter = (closeMobile = false) => {
+    const collapsed = isCollapsed && !closeMobile;
     return (
       <div className="p-4 border-t border-white/5 space-y-4">
         <div className="space-y-1.5">
@@ -142,16 +168,30 @@ export function Sidebar({
               onNotificationsClick();
               if (closeMobile) setIsMobileSidebarOpen(false);
             }}
-            className="w-full flex items-center justify-between px-[14px] py-[10px] rounded-lg h-12 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/[0.02] transition-all group"
+            className={`w-full flex items-center rounded-lg h-12 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/[0.02] transition-all group relative
+              ${collapsed ? "justify-center px-0" : "justify-between px-[14px] py-[10px] gap-3"}
+            `}
           >
-            <div className="flex items-center gap-3">
-              <Bell size={18} className="text-gray-500 group-hover:text-white" />
-              <span>Notifications</span>
+            <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3"}`}>
+              <div className="relative flex items-center justify-center shrink-0">
+                <Bell size={18} className="text-gray-500 group-hover:text-white" />
+                {collapsed && unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.5)]" />
+                )}
+              </div>
+              {!collapsed && <span>Notifications</span>}
             </div>
-            {unreadCount > 0 && (
+            {!collapsed && unreadCount > 0 && (
               <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-[0_0_8px_rgba(239,68,68,0.4)]">
                 {unreadCount}
               </span>
+            )}
+            
+            {/* Tooltip when collapsed */}
+            {collapsed && (
+              <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#18181b] border border-white/10 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-2 group-hover:translate-x-0 shadow-lg z-50">
+                Notifications {unreadCount > 0 && `(${unreadCount})`}
+              </div>
             )}
           </button>
           <button
@@ -159,16 +199,27 @@ export function Sidebar({
               onSignOutClick();
               if (closeMobile) setIsMobileSidebarOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-[14px] py-[10px] rounded-lg h-12 text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-500/[0.03] transition-all group"
+            className={`w-full flex items-center rounded-lg h-12 text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-500/[0.03] transition-all group relative
+              ${collapsed ? "justify-center px-0" : "gap-3 px-[14px] py-[10px]"}
+            `}
           >
-            <LogOut size={18} className="text-gray-500 group-hover:text-red-400" />
-            <span>Sign Out</span>
+            <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3"}`}>
+              <LogOut size={18} className="text-gray-500 group-hover:text-red-400" />
+              {!collapsed && <span>Sign Out</span>}
+            </div>
+            
+            {/* Tooltip when collapsed */}
+            {collapsed && (
+              <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#18181b] border border-white/10 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-2 group-hover:translate-x-0 shadow-lg z-50">
+                Sign Out
+              </div>
+            )}
           </button>
         </div>
 
         <div className="h-px bg-white/5" />
 
-        <div className="flex items-center gap-3 px-2 py-1">
+        <div className={`flex items-center relative group ${collapsed ? "justify-center py-1" : "gap-3 px-2 py-1"}`}>
           <div className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-sm border border-white/10 shrink-0 uppercase ${
             user && user.image && getImageUrl(user.image) ? "bg-transparent" : "bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF]"
           }`}>
@@ -178,10 +229,20 @@ export function Sidebar({
               user ? user.initials : "NC"
             )}
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold text-white truncate leading-snug">{user ? user.name : "Nova Collins"}</span>
-            <span className="text-[11px] text-gray-500 font-medium">{user ? user.role : "Artist"}</span>
-          </div>
+          {!collapsed && (
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-white truncate leading-snug">{user ? user.name : "Nova Collins"}</span>
+              <span className="text-[11px] text-gray-500 font-medium">{user ? user.role : "Artist"}</span>
+            </div>
+          )}
+          
+          {/* Avatar Tooltip when collapsed */}
+          {collapsed && (
+            <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#18181b] border border-white/10 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-2 group-hover:translate-x-0 shadow-lg z-50">
+              <div className="font-bold">{user ? user.name : "Nova Collins"}</div>
+              <div className="text-[10px] text-gray-400">{user ? user.role : "Artist"}</div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -190,14 +251,31 @@ export function Sidebar({
   return (
     <>
       {/* DESKTOP SIDEBAR */}
-      <aside className="hidden lg:flex flex-col w-72 bg-[#09090b] border-r border-white/5 h-screen fixed top-0 left-0 z-30 shrink-0">
-        <div className="p-6 flex items-center gap-3 border-b border-white/5">
-          <Link href="/" className=" hover:opacity-85 transition-opacity flex items-center gap-3">
+      <aside className={`hidden lg:flex flex-col bg-[#09090b] border-r border-white/5 h-screen fixed top-0 left-0 z-30 shrink-0 transition-all duration-300 ease-in-out ${isCollapsed ? "w-[76px]" : "w-72"}`}>
+        {/* Floating Toggle Button */}
+        <button
+          onClick={() => setIsCollapsed?.(!isCollapsed)}
+          className="absolute top-[28px] -right-3 z-40 hidden lg:flex items-center justify-center w-6 h-6 rounded-full bg-[#18181b] border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-all shadow-md cursor-pointer hover:scale-105"
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          {isCollapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
+        </button>
+
+        <div className={`p-6 flex items-center border-b border-white/5 h-[81px] shrink-0 ${isCollapsed ? "justify-center" : "gap-3"}`}>
+          <Link href="/" className="hover:opacity-85 transition-opacity flex items-center gap-3 shrink-0">
             <Logo />
-            <div>
-              <h1 className="text-lg font-bold text-white tracking-tight leading-tight">GetAvails</h1>
-              <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Artist Portal</p>
-            </div>
+            {!isCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col"
+              >
+                <h1 className="text-lg font-bold text-white tracking-tight leading-tight">GetAvails</h1>
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Artist Portal</p>
+              </motion.div>
+            )}
           </Link>
         </div>
         <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
