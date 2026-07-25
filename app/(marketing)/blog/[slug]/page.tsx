@@ -1,9 +1,10 @@
-import { Metadata } from "next";
-import { getPostBySlug, blogPosts } from "@/lib/blog-data";
+"use client";
+
+import { use } from "react";
 import { notFound } from "next/navigation";
 import { CalendarDays, Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { useGetBlogByIdQuery } from "@/redux/feature/blogApi/blogSlice";
 
 interface Props {
   params: Promise<{
@@ -11,33 +12,69 @@ interface Props {
   }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const post = getPostBySlug(slug);
+export default function BlogPostPage({ params }: Props) {
+  const { slug } = use(params);
 
-  if (!post) {
-    return {
-      title: "Post Not Found",
-    };
+  const { data, isLoading, error } = useGetBlogByIdQuery(slug);
+
+
+  const getImageUrl = (imagePath?: string | null) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200&h=800";
+    if (imagePath.startsWith("http")) return imagePath;
+    const baseUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "https://backend.getavails.com";
+    return `${baseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+  };
+
+
+
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch {
+      return "Unknown Date";
+    }
+  };
+
+  const getAuthorDisplay = (email: string) => {
+    if (!email) return "Anonymous";
+    const part = email.split('@')[0];
+    return part.charAt(0).toUpperCase() + part.slice(1);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen pt-32 pb-24 px-4 md:px-8 lg:px-12 relative bg-[#050505] animate-pulse">
+        {/* Background Elements */}
+        <div className="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-[#7C5CFF]/10 to-transparent pointer-events-none" />
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="h-6 w-24 bg-white/10 rounded mb-10" />
+          <div className="mb-12 text-center flex flex-col items-center">
+            <div className="h-6 w-20 bg-white/10 rounded-full mb-6" />
+            <div className="h-12 w-3/4 bg-white/10 rounded mb-8" />
+            <div className="flex gap-4">
+              <div className="h-10 w-24 bg-white/10 rounded-full" />
+              <div className="h-6 w-20 bg-white/10 rounded" />
+              <div className="h-6 w-20 bg-white/10 rounded" />
+            </div>
+          </div>
+          <div className="w-full h-[400px] bg-white/5 rounded-[32px] mb-16" />
+          <div className="space-y-4">
+            <div className="h-4 w-full bg-white/10 rounded" />
+            <div className="h-4 w-5/6 bg-white/10 rounded" />
+            <div className="h-4 w-4/5 bg-white/10 rounded" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  return {
-    title: `${post.title} | GetAvails Blog`,
-    description: post.excerpt,
-  };
-}
+  const post = data?.post;
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
-export default async function BlogPostPage({ params }: Props) {
-  const { slug } = await params;
-  const post = getPostBySlug(slug);
-
-  if (!post) {
+  if (error || !post) {
     notFound();
   }
 
@@ -57,7 +94,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         <div className="mb-12 text-center">
           <div className="inline-block bg-[#00A5E5]/10 text-[#7C5CFF] border border-[#7C5CFF]/20 px-4 py-1.5 rounded-full text-sm font-semibold uppercase tracking-wider mb-6">
-            {post.category}
+            {post.category_detail?.name || "General"}
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight leading-tight">
             {post.title}
@@ -66,26 +103,30 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="flex flex-wrap items-center justify-center gap-6 text-[#A1A1AA]">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20">
-                <img src={post.authorImage} alt={post.author} className="w-full h-full object-cover" />
+                <img
+                  src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(post.author)}`}
+                  alt={post.author}
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <span className="text-white font-medium">{post.author}</span>
+              <span className="text-white font-medium">{getAuthorDisplay(post.author)}</span>
             </div>
             <div className="w-1 h-1 rounded-full bg-white/20" />
             <div className="flex items-center gap-2 text-sm">
               <CalendarDays size={16} />
-              <span>{post.date}</span>
+              <span>{formatDate(post.created_at)}</span>
             </div>
-            <div className="w-1 h-1 rounded-full bg-white/20" />
-            <div className="flex items-center gap-2 text-sm">
+            {/* <div className="w-1 h-1 rounded-full bg-white/20" /> */}
+            {/* <div className="flex items-center gap-2 text-sm">
               <Clock size={16} />
-              <span>{post.readTime}</span>
-            </div>
+              <span>{getReadTime(post.content)}</span>
+            </div> */}
           </div>
         </div>
 
         <div className="relative w-full h-[400px] md:h-[500px] rounded-[32px] overflow-hidden mb-16 border border-white/10 shadow-2xl">
           <img
-            src={post.image}
+            src={getImageUrl(post.image)}
             alt={post.title}
             className="w-full h-full object-cover"
           />

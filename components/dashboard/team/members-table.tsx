@@ -78,8 +78,8 @@ export function MembersTable({
         email: m.user?.email || m.email || "",
         role: m.role || "Member",
         role_label: m.role_label || m.role || "Member",
-        status: m.status 
-          ? (m.status.charAt(0).toUpperCase() + m.status.slice(1).toLowerCase()) as Member["status"] 
+        status: m.status
+          ? (m.status.charAt(0).toUpperCase() + m.status.slice(1).toLowerCase()) as Member["status"]
           : "Active",
         avatarBg: m.avatarBg || "bg-indigo-500",
         avatarChar: (m.user?.name || m.name || "U").charAt(0).toUpperCase(),
@@ -250,13 +250,13 @@ export function MembersTable({
                                 <User size={14} className="text-gray-400" />
                                 <span>Profile details</span>
                               </button>
-                              <button
+                              {/* <button
                                 onClick={() => onToggleStatus(member.id)}
                                 className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all text-left"
                               >
                                 <UserCheck size={14} className="text-gray-400" />
                                 <span>Cycle Status</span>
-                              </button>
+                              </button> */}
                               <div className="h-px bg-white/5 my-1" />
                               <button
                                 onClick={() => {

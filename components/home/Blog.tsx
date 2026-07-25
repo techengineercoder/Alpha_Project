@@ -1,24 +1,59 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
-import { blogPosts } from '@/lib/blog-data';
-
+import { useGetAllBlogQuery } from '@/redux/feature/blogApi/blogSlice';
 
 export function Blog() {
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+
+  const { data, isLoading, error } = useGetAllBlogQuery({ limit: 10, offset: 0 });
+  const blogs = data?.results || [];
 
   // Auto-scroll carousel every 4 seconds unless hovered
   useEffect(() => {
-    if (isHovered) return;
+    if (isHovered || blogs.length <= 1) return;
     const interval = setInterval(() => {
-      setActiveIndex((current) => (current + 1) % blogPosts.length);
+      setActiveIndex((current) => (current + 1) % blogs.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, [isHovered]);
+  }, [isHovered, blogs.length]);
+
+  const getImageUrl = (imagePath?: string | null) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200&h=800";
+    if (imagePath.startsWith("http")) return imagePath;
+    const baseUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "https://backend.getavails.com";
+    return `${baseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+  };
+
+  const getExcerpt = (content: string) => {
+    if (!content) return "";
+    const text = content.replace(/<[^>]*>/g, '');
+    if (text.length <= 120) return text;
+    return text.substring(0, 120).trim() + "...";
+  };
+
+  if (isLoading) {
+    return (
+      <section className="py-24 bg-[#0B0B0F] relative overflow-hidden animate-pulse">
+        <div className="max-w-[1200px] mx-auto px-4 md:px-8">
+          <div className="text-center mb-16 flex flex-col items-center">
+            <div className="h-10 w-64 bg-white/10 rounded mb-4" />
+            <div className="h-5 w-48 bg-white/10 rounded" />
+          </div>
+          <div className="relative h-[550px] w-full flex items-center justify-center mb-16">
+            <div className="absolute w-[85%] md:w-full max-w-[340px] md:max-w-[420px] h-[480px] md:h-[520px] rounded-[24px] bg-white/5 border border-white/10" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || blogs.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-24 bg-[#0B0B0F] relative overflow-hidden">
@@ -49,14 +84,14 @@ export function Blog() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {blogPosts.map((post, index) => {
+          {blogs.map((post, index) => {
             // Calculate distance from active index
             let diff = index - activeIndex;
 
             // Handle wrap around perfectly for endless loop
-            const halfLength = Math.floor(blogPosts.length / 2);
-            if (diff < -halfLength) diff += blogPosts.length;
-            if (diff > halfLength) diff -= blogPosts.length;
+            const halfLength = Math.floor(blogs.length / 2);
+            if (diff < -halfLength) diff += blogs.length;
+            if (diff > halfLength) diff -= blogs.length;
 
             const isCenter = diff === 0;
 
@@ -82,13 +117,10 @@ export function Blog() {
               >
                 {/* Image Container with Brightness Filter */}
                 <div className="absolute inset-0 transition-all duration-700" style={{ filter: isCenter ? 'brightness(1)' : 'brightness(0.3)' }}>
-                  <Image
-                    src={post.image}
+                  <img
+                    src={getImageUrl(post.image)}
                     alt={post.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 400px"
-                    className="object-cover"
-                    priority={isCenter}
+                    className="w-full h-full object-cover"
                   />
                 </div>
 
@@ -101,7 +133,7 @@ export function Blog() {
                     {post.title}
                   </h3>
                   <p className={`mb-6 transition-colors duration-700 ${isCenter ? 'text-[#A1A1AA] text-[15px]' : 'text-[#71717A] text-sm'}`}>
-                    {post.excerpt}
+                    {getExcerpt(post.content)}
                   </p>
 
                   <div className="mt-auto">

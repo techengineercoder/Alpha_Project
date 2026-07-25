@@ -70,7 +70,8 @@ export const baseApi = createApi({
     "Favorites",
     "RecentSearches",
     "Team",
-    "Notification"
+    "Notification",
+    "Blog"
   ],
   endpoints: () => ({}),
 });
