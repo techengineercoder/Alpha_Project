@@ -139,7 +139,7 @@ export function Blog() {
                   <div className="mt-auto">
                     {isCenter ? (
                       <Link href={`/blog/${post.slug}`} onClick={(e) => e.stopPropagation()}>
-                        <button className="w-full py-3 md:py-3.5 bg-[#00A5E5] text-white text-sm font-bold rounded-full hover:bg-[#0090C9] transition-colors">
+                        <button className="w-full cursor-pointer py-3 md:py-3.5 bg-[#00A5E5] text-white text-sm font-bold rounded-full hover:bg-[#0090C9] transition-colors">
                           Read More
                         </button>
                       </Link>
