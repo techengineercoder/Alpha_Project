@@ -144,7 +144,7 @@ export function Blog() {
                         </button>
                       </Link>
                     ) : (
-                      <button className="w-full py-3 md:py-3.5 border border-white/20 border-dashed text-[#71717A] text-sm font-bold rounded-full transition-colors">
+                      <button className="w-full cursor-pointer py-3 md:py-3.5 border border-white/20 border-dashed text-[#71717A] text-sm font-bold rounded-full transition-colors">
                         Read More
                       </button>
                     )}
@@ -158,7 +158,7 @@ export function Blog() {
         {/* View All Button */}
         <div className="flex justify-center mt-4">
           <Link href="/blog">
-            <button className="px-10 py-3.5 bg-[#00A5E5] text-white text-sm font-bold rounded-full hover:bg-[#0090C9] transition-colors shadow-lg shadow-[#00A5E5]/20">
+            <button className="px-10 cursor-pointer py-3.5 bg-[#00A5E5] text-white text-sm font-bold rounded-full hover:bg-[#0090C9] transition-colors shadow-lg shadow-[#00A5E5]/20">
               View All Blog Posts
             </button>
           </Link>
