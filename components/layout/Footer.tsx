@@ -13,6 +13,9 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 );
 
 export function Footer() {
+
+
+
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     if (typeof window !== 'undefined' && window.location.pathname === '/') {
       e.preventDefault();

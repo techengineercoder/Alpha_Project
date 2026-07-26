@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Plus, Bell } from "lucide-react";
+import { Plus, Bell, Trash2, Loader2 } from "lucide-react";
 import { TeamSwitcher } from "@/components/dashboard/team/team-switcher";
 import { CreateTeamModal } from "@/components/dashboard/team/create-team-modal";
 import { InviteMemberModal } from "@/components/dashboard/team/invite-member-modal";
@@ -9,9 +9,10 @@ import { InviteSuccessModal } from "@/components/dashboard/team/invite-success-m
 import { MemberDetailsDrawer } from "@/components/dashboard/team/member-details-drawer";
 import { StatsCards } from "@/components/dashboard/team/stats-cards";
 import { MembersTable } from "@/components/dashboard/team/members-table";
+import { DeleteTeamModal } from "@/components/dashboard/team/delete-team-modal";
 
 import mockData from "@/data/mock-data.json";
-import { useMyTeamQuery, useCreateTeamMutation, useGetTeamRolesQuery, useTeamMembersQuery } from "@/redux/feature/team-managementSlice";
+import { useMyTeamQuery, useCreateTeamMutation, useGetTeamRolesQuery, useTeamMembersQuery, useDeleteTeamMutation } from "@/redux/feature/team-managementSlice";
 import { toast } from "sonner";
 
 // Types
@@ -110,12 +111,14 @@ export default function TeamManagementPage() {
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
   const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isDeleteTeamOpen, setIsDeleteTeamOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   // Queries & Mutations
-  const { data } = useMyTeamQuery(undefined);
+  const { data, isFetching } = useMyTeamQuery(undefined);
   const [createTeam] = useCreateTeamMutation();
+  const [deleteTeam, { isLoading: isDeletingTeam }] = useDeleteTeamMutation();
   const { data: rolesData } = useGetTeamRolesQuery(undefined);
   const { data: teamMembersApiData } = useTeamMembersQuery(
     { id: selectedTeamId, search: searchQuery },
@@ -137,7 +140,7 @@ export default function TeamManagementPage() {
   // Sync API teams with local state dynamically
   useEffect(() => {
     if (data?.results) {
-      const apiTeams = data.results.map((t: any) => ({
+      const apiTeams: Team[] = data.results.map((t: any) => ({
         id: String(t.id),
         name: t.name,
         type: "Team" as const,
@@ -146,26 +149,57 @@ export default function TeamManagementPage() {
         domain: t.domain
       }));
 
-      setTeams((prev) => {
-        const filteredPrev = prev.filter(p => !apiTeams.some((a: any) => a.id === p.id));
-        const merged = [...filteredPrev, ...apiTeams];
-        
-        // Auto-select first team if current selection is invalid
-        if (merged.length > 0) {
-          const selectionExists = merged.some(t => t.id === selectedTeamId);
-          if (!selectionExists) {
-            const activeTeamId = localStorage.getItem("active_team_id");
-            const selectId = activeTeamId && merged.some(t => t.id === activeTeamId) ? activeTeamId : merged[0].id;
-            setSelectedTeamId(selectId);
-          }
+      // Auto-detect and select a newly created team (which is in apiTeams but not in current teams state)
+      if (teams.length > 0 && apiTeams.length > teams.length) {
+        const newTeam = apiTeams.find(at => !teams.some(t => t.id === at.id));
+        if (newTeam) {
+          setSelectedTeamId(newTeam.id);
+          localStorage.setItem("active_team_id", newTeam.id);
         }
-        return merged;
-      });
+      }
+
+      setTeams(apiTeams);
+      
+      // Auto-select first team if current selection is invalid
+      if (apiTeams.length > 0 && !isFetching) {
+        const selectionExists = apiTeams.some(t => t.id === selectedTeamId);
+        if (!selectionExists) {
+          const activeTeamId = localStorage.getItem("active_team_id");
+          const selectId = activeTeamId && apiTeams.some(t => t.id === activeTeamId) ? activeTeamId : apiTeams[0].id;
+          setSelectedTeamId(selectId);
+          localStorage.setItem("active_team_id", selectId);
+        }
+      }
     }
-  }, [data]);
+  }, [data, selectedTeamId, isFetching, teams]);
 
   // Team-specific Members Map State
   const [teamMembers, setTeamMembers] = useState<Record<string, Member[]>>({});
+
+  // Sync API members into local teamMembers state
+  useEffect(() => {
+    if (teamMembersApiData?.results) {
+      const apiMembers: Member[] = teamMembersApiData.results.map((m: any) => ({
+        id: String(m.id || m.user?.id),
+        name: m.user?.name || m.name || m.user?.email?.split("@")[0] || "User",
+        email: m.user?.email || m.email || "",
+        role: m.role || "Member",
+        role_label: m.role_label || m.role || "Member",
+        status: m.status
+          ? ((m.status.charAt(0).toUpperCase() + m.status.slice(1).toLowerCase()) as Member["status"])
+          : "Active",
+        avatarBg: m.avatarBg || "bg-indigo-500",
+        avatarChar: (m.user?.name || m.name || "U").charAt(0).toUpperCase(),
+        memberSince: m.created_at ? new Date(m.created_at).toLocaleDateString() : "Just now",
+        lastActive: m.last_active || "Just now",
+      }));
+
+      setTeamMembers((prev) => ({
+        ...prev,
+        [selectedTeamId]: apiMembers
+      }));
+    }
+  }, [teamMembersApiData, selectedTeamId]);
 
   // Derived Active Members List
   const members = useMemo(() => {
@@ -238,22 +272,43 @@ export default function TeamManagementPage() {
         role
       };
 
-      const result = await createTeam(payload).unwrap();
+      const res = await createTeam(payload).unwrap();
+      toast.success("Team created successfully!");
+      setIsCreateTeamOpen(false);
+      setIsTeamDropdownOpen(false);
 
-      if (result.success || result.id || result.data?.id) {
-        const teamId = String(result.id || result.data?.id || "team-" + Date.now());
-        localStorage.setItem("active_team_id", teamId);
-        localStorage.setItem("active_team_name", name.trim());
+      const targetId = res?.id || res?.data?.id;
+      if (targetId) {
+        const teamId = String(targetId);
         setSelectedTeamId(teamId);
-        setIsCreateTeamOpen(false);
-        setIsTeamDropdownOpen(false);
-        toast.success("Team created successfully!");
-      } else {
-        toast.error("Failed to create team. Please try again.");
+        localStorage.setItem("active_team_id", teamId);
       }
     } catch (err: any) {
       console.error("Error creating team:", err);
       const msg = err?.data?.error?.message || err?.data?.message || err?.message || "Failed to create team. Please try again.";
+      toast.error(msg);
+    }
+  };
+
+  // Delete Team Action
+  const handleDeleteTeamConfirm = async () => {
+    try {
+      await deleteTeam({ id: selectedTeamId }).unwrap();
+      toast.success("Team deleted successfully!");
+      setIsDeleteTeamOpen(false);
+      
+      // Select another team if the currently active one was deleted
+      const remainingTeams = teams.filter((t) => t.id !== selectedTeamId);
+      if (remainingTeams.length > 0) {
+        setSelectedTeamId(remainingTeams[0].id);
+        localStorage.setItem("active_team_id", remainingTeams[0].id);
+      } else {
+        setSelectedTeamId("");
+        localStorage.removeItem("active_team_id");
+      }
+    } catch (err: any) {
+      console.error("Error deleting team:", err);
+      const msg = err?.data?.error?.message || err?.data?.message || err?.message || "Failed to delete team. Please try again.";
       toast.error(msg);
     }
   };
@@ -365,6 +420,18 @@ export default function TeamManagementPage() {
               <span className="absolute top-3.5 right-4 w-1.5 h-1.5 bg-red-500 rounded-full ring-2 ring-black" />
             </button>
 
+            {/* Delete Team Button */}
+            {activeTeam && activeTeam.id && (
+              <button
+                onClick={() => setIsDeleteTeamOpen(true)}
+                disabled={isDeletingTeam}
+                title="Delete Active Team"
+                className="w-12 h-12 rounded-[18px] flex items-center justify-center bg-[#0E0E10] border border-white/5 text-red-500 hover:text-red-400 hover:border-red-500/20 transition-all cursor-pointer shrink-0 disabled:opacity-50"
+              >
+                {isDeletingTeam ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+              </button>
+            )}
+
             {/* Invite Button */}
             <button
               onClick={() => setIsInviteModalOpen(true)}
@@ -437,6 +504,15 @@ export default function TeamManagementPage() {
         email={successInviteEmail}
         role={successInviteRole}
         inviteLink={successInviteLink}
+      />
+
+      {/* ─── DELETE TEAM MODAL ─── */}
+      <DeleteTeamModal
+        isOpen={isDeleteTeamOpen}
+        onClose={() => setIsDeleteTeamOpen(false)}
+        onConfirm={handleDeleteTeamConfirm}
+        teamName={activeTeam.name}
+        isLoading={isDeletingTeam}
       />
     </div>
   );

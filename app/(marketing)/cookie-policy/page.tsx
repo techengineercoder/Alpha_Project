@@ -1,7 +1,62 @@
+"use client";
+
 import React from "react";
-import { Cookie, Settings, Info } from "lucide-react";
+import { Cookie, Settings, Info, Loader2 } from "lucide-react";
+import { useGetAllTermsQuery } from "@/redux/feature/termsSlice";
 
 export default function CookiePolicyPage() {
+  const { data: termsData, isLoading } = useGetAllTermsQuery(undefined);
+  const matchedTerm = termsData?.results?.find((item: any) => item.slug === "cookie-policy");
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#0E0E13] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#00A5E5]" />
+      </div>
+    );
+  }
+
+  if (matchedTerm && matchedTerm.is_published) {
+    return (
+      <div className="min-h-screen bg-[#0E0E13] text-white pt-32 pb-24 px-4 md:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#00A5E5]/10 text-[#7C5CFF] mb-6">
+              <Cookie className="w-8 h-8" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+              {matchedTerm.title}
+            </h1>
+            <p className="text-[#A1A1AA] text-lg">
+              Last updated: {new Date(matchedTerm.updated_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+            </p>
+          </div>
+
+          <div className="bg-[#111116] border border-white/5 rounded-3xl p-8 md:p-12 shadow-2xl">
+            <style dangerouslySetInnerHTML={{ __html: `
+              .html-content h1 { font-size: 2.25rem !important; font-weight: 800 !important; margin-top: 2rem !important; margin-bottom: 1rem !important; color: #ffffff !important; line-height: 1.2 !important; }
+              .html-content h2 { font-size: 1.75rem !important; font-weight: 700 !important; margin-top: 1.75rem !important; margin-bottom: 0.875rem !important; color: #ffffff !important; line-height: 1.3 !important; }
+              .html-content h3 { font-size: 1.375rem !important; font-weight: 600 !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; color: #ffffff !important; }
+              .html-content p { margin-top: 1rem !important; margin-bottom: 1rem !important; line-height: 1.75 !important; color: #A1A1AA !important; }
+              .html-content ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin-top: 1rem !important; margin-bottom: 1rem !important; color: #A1A1AA !important; }
+              .html-content ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin-top: 1rem !important; margin-bottom: 1rem !important; color: #A1A1AA !important; }
+              .html-content li { margin-top: 0.5rem !important; margin-bottom: 0.5rem !important; line-height: 1.625 !important; }
+              .html-content a { color: #00A5E5 !important; text-decoration: underline !important; transition: color 0.2s !important; }
+              .html-content a:hover { color: #00E5FF !important; }
+              .html-content blockquote { border-left: 4px solid #7C5CFF !important; padding-left: 1.25rem !important; font-style: italic !important; color: #71717A !important; margin: 1.5rem 0 !important; }
+              .html-content strong { color: #ffffff !important; font-weight: 600 !important; }
+              .html-content hr { border-color: rgba(255, 255, 255, 0.1) !important; margin: 2rem 0 !important; }
+            `}} />
+            <div 
+              className="html-content max-w-none" 
+              dangerouslySetInnerHTML={{ __html: matchedTerm.content }} 
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0E0E13] text-white pt-32 pb-24 px-4 md:px-8">
       <div className="max-w-4xl mx-auto">

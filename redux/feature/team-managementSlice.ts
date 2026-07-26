@@ -141,6 +141,16 @@ export const teamManagementApi = baseApi.injectEndpoints({
             invalidatesTags: ["Team"],
         }),
 
+        //         DELETE
+        // /api/v1/teams/{team_id}/
+        deleteTeam: builder.mutation({
+            query: ({ id }: { id: string }) => ({
+                url: `/teams/${id}/`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Team"],
+        }),
+
 
 
 
@@ -163,5 +173,6 @@ export const {
     useAcceptTeamMemberInvitationMutation,
     usePendingTeamReviewsQuery,
     useSubmitTeamMembershipReviewMutation,
+    useDeleteTeamMutation,
 
 } = teamManagementApi;
