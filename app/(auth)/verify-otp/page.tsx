@@ -4,14 +4,12 @@ import { useState, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-import { useVerifyEmailMutation, useResendOTPMutation } from "@/redux/feature/authApi";
+import { useVerifyOTPMutation, useForgotPasswordMutation } from "@/redux/feature/authApi";
 import { toast } from "sonner";
 import { handleError } from "@/lib/handleError";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/feature/authSlice";
 import { Logo } from "@/components/icon/logo";
 
-function VerifyCode() {
+function VerifyOTPContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
@@ -20,9 +18,8 @@ function VerifyCode() {
   const [countdown, setCountdown] = useState(59);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const [verifyEmail, { isLoading: isVerifying }] = useVerifyEmailMutation();
-  const [resendOTP, { isLoading: isResending }] = useResendOTPMutation();
-  const dispatch = useDispatch();
+  const [verifyOTP, { isLoading: isVerifying }] = useVerifyOTPMutation();
+  const [forgotPassword, { isLoading: isResending }] = useForgotPasswordMutation();
 
   useEffect(() => {
     if (countdown > 0) {
@@ -51,6 +48,7 @@ function VerifyCode() {
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").trim();
+    // Extract up to 6 digits from the pasted text
     const digitsOnly = pastedData.replace(/\D/g, "").slice(0, 6);
 
     if (digitsOnly.length > 0) {
@@ -60,6 +58,7 @@ function VerifyCode() {
       }
       setCode(newCode);
 
+      // Focus the last filled input
       const focusIndex = Math.min(digitsOnly.length - 1, 5);
       inputs.current[focusIndex]?.focus();
     }
@@ -73,21 +72,25 @@ function VerifyCode() {
     }
 
     try {
-      const res = await verifyEmail({ email, otp }).unwrap();
+      const res = await verifyOTP({ email, otp }).unwrap();
       if (res.success) {
-        toast.success(res.message || "Email verified successfully!");
-
-        // Save to Redux (and localStorage via slice)
-        dispatch(setUser({
-          user: res.user,
-          access: res.access,
-          refresh: res.refresh
-        }));
-
-        router.push("/onboarding");
+        toast.success("OTP verified successfully!");
+        
+        // Pass reset_token and email to reset-password page
+        router.push(
+          `/reset-password?reset_token=${encodeURIComponent(
+            res.reset_token
+          )}&email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`
+        );
       }
-    } catch (error) {
-      handleError(error);
+    } catch (error: any) {
+      // Handle details validation error if any
+      const errorMsg = error?.data?.error?.details?.otp || error?.data?.error?.message;
+      if (errorMsg) {
+        toast.error(errorMsg);
+      } else {
+        handleError(error);
+      }
     }
   };
 
@@ -95,7 +98,7 @@ function VerifyCode() {
     if (countdown > 0) return;
 
     try {
-      const res = await resendOTP({ email }).unwrap();
+      const res = await forgotPassword({ email }).unwrap();
       if (res.success) {
         toast.success(res.message || "Verification code resent successfully!");
         setCountdown(59);
@@ -107,14 +110,14 @@ function VerifyCode() {
 
   return (
     <div className="w-full max-w-[400px]">
-      <Link 
-        href="/register"
+      <Link
+        href="/forgot-password"
         className="mb-8 flex items-center text-[13px] font-medium text-gray-400 hover:text-white transition-colors"
       >
         <ChevronDown size={16} className="rotate-90 mr-1" />
         Back
       </Link>
-      
+
       {/* Header Section */}
       <div className="mb-10 text-center">
         <div className="mb-8 flex justify-center">
@@ -130,7 +133,9 @@ function VerifyCode() {
         {code.map((digit, index) => (
           <input
             key={index}
-            ref={(el: HTMLInputElement | null) => { inputs.current[index] = el; }}
+            ref={(el: HTMLInputElement | null) => {
+              inputs.current[index] = el;
+            }}
             type="text"
             maxLength={1}
             value={digit}
@@ -145,12 +150,17 @@ function VerifyCode() {
       <div className="text-center mb-8">
         <p className="text-[13px] text-gray-400 font-medium">
           {countdown > 0 ? (
-            <>Resend Code in <span className="text-[#00A5E5]">00:{countdown.toString().padStart(2, "0")}</span></>
+            <>
+              Resend Code in{" "}
+              <span className="text-[#00A5E5]">
+                00:{countdown.toString().padStart(2, "0")}
+              </span>
+            </>
           ) : (
             <button
               onClick={handleResend}
               disabled={isResending}
-              className="text-[#00A5E5] hover:underline font-medium"
+              className="text-[#00A5E5] hover:underline font-medium disabled:opacity-50"
             >
               {isResending ? "Resending..." : "Resend Code Now"}
             </button>
@@ -171,7 +181,7 @@ function VerifyCode() {
       <div className="mt-8 text-center">
         <p className="text-gray-400 text-[13px] font-medium leading-relaxed">
           Didn't get the code? Check your spam folder or{" "}
-          <Link href="/register" className="text-white hover:underline block mx-auto mt-1">
+          <Link href="/forgot-password" className="text-white hover:underline block mx-auto mt-1">
             try a different email
           </Link>
         </p>
@@ -180,10 +190,10 @@ function VerifyCode() {
   );
 }
 
-export default function page() {
+export default function Page() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <VerifyCode />
+      <VerifyOTPContent />
     </Suspense>
-  )
+  );
 }
