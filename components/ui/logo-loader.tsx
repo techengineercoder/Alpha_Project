@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { Logo } from "../icon/logo";
 
 interface LogoLoaderProps {
   fullScreen?: boolean;
@@ -33,14 +34,7 @@ export function LogoLoader({ fullScreen = false, text = "Loading GetAvails..." }
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
           className="relative z-10 flex items-center justify-center filter drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]"
         >
-          <svg width="44" height="38" viewBox="0 0 37 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M33.3049 26.1478L9.16267 26.3806L18.2056 9.56264L23.1901 18.2399L15.4541 18.0862L13.05 22.6026L31.3047 22.6654L18.2867 0L0 31.6981L36.4528 31.6286L33.3049 26.1478Z"
-              fill="#FEFEFE"
-            />
-          </svg>
+          <Logo />
         </motion.div>
       </div>
 

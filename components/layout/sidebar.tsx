@@ -186,7 +186,7 @@ export function Sidebar({
                 {unreadCount}
               </span>
             )}
-            
+
             {/* Tooltip when collapsed */}
             {collapsed && (
               <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#18181b] border border-white/10 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-2 group-hover:translate-x-0 shadow-lg z-50">
@@ -207,7 +207,7 @@ export function Sidebar({
               <LogOut size={18} className="text-gray-500 group-hover:text-red-400" />
               {!collapsed && <span>Sign Out</span>}
             </div>
-            
+
             {/* Tooltip when collapsed */}
             {collapsed && (
               <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#18181b] border border-white/10 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-2 group-hover:translate-x-0 shadow-lg z-50">
@@ -220,9 +220,8 @@ export function Sidebar({
         <div className="h-px bg-white/5" />
 
         <div className={`flex items-center relative group ${collapsed ? "justify-center py-1" : "gap-3 px-2 py-1"}`}>
-          <div className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-sm border border-white/10 shrink-0 uppercase ${
-            user && user.image && getImageUrl(user.image) ? "bg-transparent" : "bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF]"
-          }`}>
+          <div className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-sm border border-white/10 shrink-0 uppercase ${user && user.image && getImageUrl(user.image) ? "bg-transparent" : "bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF]"
+            }`}>
             {user && user.image && getImageUrl(user.image) ? (
               <img src={getImageUrl(user.image)!} alt={user.name} className="w-full h-full object-cover" />
             ) : (
@@ -235,7 +234,7 @@ export function Sidebar({
               <span className="text-[11px] text-gray-500 font-medium">{user ? user.role : "Artist"}</span>
             </div>
           )}
-          
+
           {/* Avatar Tooltip when collapsed */}
           {collapsed && (
             <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#18181b] border border-white/10 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-2 group-hover:translate-x-0 shadow-lg z-50">
@@ -304,9 +303,7 @@ export function Sidebar({
             >
               <div className="p-6 flex items-center justify-between border-b border-white/5">
                 <div className="flex items-center gap-3">
-                  <svg width="37" height="32" viewBox="0 0 37 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M33.3049 26.1478L9.16267 26.3806L18.2056 9.56264L23.1901 18.2399L15.4541 18.0862L13.05 22.6026L31.3047 22.6654L18.2867 0L0 31.6981L36.4528 31.6286L33.3049 26.1478Z" fill="#FEFEFE" />
-                  </svg>
+                  <Logo />
 
                   <div>
                     <h1 className="text-base font-bold text-white tracking-tight leading-tight">GetAvails</h1>
