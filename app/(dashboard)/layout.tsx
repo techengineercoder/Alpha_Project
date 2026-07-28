@@ -8,7 +8,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { ReviewInvitationModal } from "@/components/layout/review-invitation-modal";
 import { SignOutModal } from "@/components/layout/sign-out-modal";
-import { useMyTeamQuery, useAcceptTeamMemberInvitationMutation } from "@/redux/feature/team-managementSlice";
+import { useMyTeamQuery, useAcceptTeamMemberInvitationMutation, useDeclineTeamMemberInvitationMutation } from "@/redux/feature/team-managementSlice";
 import { LogoLoader } from "@/components/ui/logo-loader";
 
 import {
@@ -82,7 +82,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Mutations
   const [readSingleNotification] = useReadSingleNotificationMutation();
   const [readAllNotification] = useReadAllNotificationMutation();
-  const [acceptTeamMemberInvitation] = useAcceptTeamMemberInvitationMutation();
+  const [acceptTeamMemberInvitation, { isLoading: isAccepting }] = useAcceptTeamMemberInvitationMutation();
+  const [declineTeamMemberInvitation, { isLoading: isDeclining }] = useDeclineTeamMemberInvitationMutation();
 
   // Reset offset to 0 when notifications drawer is opened to load page 1 fresh
   useEffect(() => {
@@ -308,6 +309,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   };
 
+  const handleDeclineInvitation = async () => {
+    const token = selectedInvitationData?.token;
+    if (!token) {
+      toast.error("Invitation token not found.");
+      return;
+    }
+
+    try {
+      await declineTeamMemberInvitation({ token }).unwrap();
+      setIsReviewModalOpen(false);
+      if (selectedInvitationNotificationId) {
+        handleNotificationClick(selectedInvitationNotificationId);
+      }
+      toast.success("Declined team invitation successfully.");
+    } catch (err: any) {
+      console.error("Failed to decline team invitation:", err);
+      const msg = err?.data?.error?.message || err?.data?.message || "Failed to decline team invitation.";
+      toast.error(msg);
+    }
+  };
+
   // Prevent dashboard UI flickering/flashing while checking team status or redirecting (placed AFTER all hooks!)
   if (isTeamLoading || !isTeamSuccess || hasNoTeam) {
     return <LogoLoader fullScreen={true} text="Loading Workspace..." />;
@@ -385,6 +407,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         step={reviewStep}
         loadingProgress={loadingProgress}
         onAccept={handleAcceptInvitation}
+        onDecline={handleDeclineInvitation}
+        isAccepting={isAccepting}
+        isDeclining={isDeclining}
         invitationData={selectedInvitationData}
       />
 

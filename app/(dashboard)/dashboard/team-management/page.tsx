@@ -158,7 +158,12 @@ export default function TeamManagementPage() {
         }
       }
 
-      setTeams(apiTeams);
+      // Break infinite loop by comparing content before setting state
+      const hasChanged = teams.length !== apiTeams.length || 
+                         apiTeams.some((at, idx) => teams[idx]?.id !== at.id || teams[idx]?.name !== at.name);
+      if (hasChanged) {
+        setTeams(apiTeams);
+      }
       
       // Auto-select first team if current selection is invalid
       if (apiTeams.length > 0 && !isFetching) {

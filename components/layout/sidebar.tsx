@@ -18,7 +18,8 @@ import {
   LogOut,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  BookOpenText
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "../icon/logo";
@@ -42,6 +43,9 @@ const menuItems: MenuItem[] = [
   // { name: "Payments", icon: CreditCard, href: "/artist/payments" },
   // { name: "Tour Schedule", icon: MapPin, href: "/artist/tour-schedule" },
   { name: "Team Management", icon: Users, href: "/dashboard/team-management" },
+  { name: "Inquiries", icon: BookOpenText, href: "/dashboard/inquiries" },
+  { name: "Offers", icon: Tag, href: "/dashboard/offers" },
+  { name: "Messages", icon: MessageSquare, href: "/dashboard/messages" },
   // { name: "Settings", icon: Settings, href: "/artist/settings" },
 ];
 

@@ -112,10 +112,22 @@ export const teamManagementApi = baseApi.injectEndpoints({
             invalidatesTags: ["Team"],
         }),
 
-        // /teams/33/invitations/33/accept/ method post
+        // POST
+        // /api/v1/teams/invitations/accept/
         acceptTeamMemberInvitation: builder.mutation({
             query: (data: { token: string }) => ({
                 url: `/teams/invitations/accept/`,
+                method: "POST",
+                body: data,
+            }),
+            invalidatesTags: ["Team"],
+        }),
+
+        // POST
+        // /api/v1/teams/invitations/decline/
+        declineTeamMemberInvitation: builder.mutation({
+            query: (data: { token: string }) => ({
+                url: `/teams/invitations/decline/`,
                 method: "POST",
                 body: data,
             }),
@@ -171,6 +183,7 @@ export const {
     useSendTeamMemberInvitationMutation,
     useRevokeTeamMemberInvitationMutation,
     useAcceptTeamMemberInvitationMutation,
+    useDeclineTeamMemberInvitationMutation,
     usePendingTeamReviewsQuery,
     useSubmitTeamMembershipReviewMutation,
     useDeleteTeamMutation,

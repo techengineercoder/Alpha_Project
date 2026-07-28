@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Check } from "lucide-react";
+import { X, Check, Loader2 } from "lucide-react";
 
 interface ReviewInvitationModalProps {
   isOpen: boolean;
@@ -10,6 +10,9 @@ interface ReviewInvitationModalProps {
   step: "details" | "success";
   loadingProgress: number;
   onAccept: () => void;
+  onDecline?: () => void;
+  isAccepting?: boolean;
+  isDeclining?: boolean;
   invitationData?: {
     agency: string;
     role: string;
@@ -66,6 +69,9 @@ export function ReviewInvitationModal({
   step,
   loadingProgress,
   onAccept,
+  onDecline,
+  isAccepting = false,
+  isDeclining = false,
   invitationData = {
     agency: "Apex Agency",
     role: "Talent Buyer",
@@ -182,16 +188,23 @@ export function ReviewInvitationModal({
               <div className="space-y-3 pt-2">
                 <button
                   onClick={onAccept}
-                  className="w-full bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white font-semibold py-3.5 rounded-xl text-sm flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(0,165,229,0.15)] transition-all cursor-pointer select-none"
+                  disabled={isAccepting || isDeclining}
+                  className="w-full bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white font-semibold py-3.5 rounded-xl text-sm flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(0,165,229,0.15)] transition-all cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Check size={16} strokeWidth={2.5} />
-                  <span>Accept Invitation</span>
+                  {isAccepting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Check size={16} strokeWidth={2.5} />
+                  )}
+                  <span>{isAccepting ? "Accepting..." : "Accept Invitation"}</span>
                 </button>
                 <button
-                  onClick={onClose}
-                  className="w-full border border-[#EF4444]/30 hover:border-[#EF4444]/50 text-[#EF4444] hover:bg-[#EF4444]/5 font-semibold py-3.5 rounded-xl text-sm flex items-center justify-center transition-all cursor-pointer select-none"
+                  onClick={onDecline || onClose}
+                  disabled={isAccepting || isDeclining}
+                  className="w-full border border-[#EF4444]/30 hover:border-[#EF4444]/50 text-[#EF4444] hover:bg-[#EF4444]/5 font-semibold py-3.5 rounded-xl text-sm flex items-center justify-center transition-all cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span>Decline</span>
+                  {isDeclining && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
+                  <span>{isDeclining ? "Declining..." : "Decline"}</span>
                 </button>
               </div>
 
