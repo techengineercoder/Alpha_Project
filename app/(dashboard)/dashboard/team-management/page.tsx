@@ -12,6 +12,7 @@ import { MembersTable } from "@/components/dashboard/team/members-table";
 import { DeleteTeamModal } from "@/components/dashboard/team/delete-team-modal";
 
 import mockData from "@/data/mock-data.json";
+import { CommonHeader } from "@/components/dashboard/page-header";
 import { useMyTeamQuery, useCreateTeamMutation, useGetTeamRolesQuery, useTeamMembersQuery, useDeleteTeamMutation } from "@/redux/feature/team-managementSlice";
 import { toast } from "sonner";
 
@@ -383,71 +384,60 @@ export default function TeamManagementPage() {
 
   return (
     <div className="p-4 md:p-8 lg:p-10 w-full space-y-8 pb-16 relative">
-      {/* ─── HEADER BAR ─── */}
-      <section className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        {/* Title / Description */}
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-2xl md:text-[28px] font-bold text-white tracking-tight  animate-fade-in">
-              Team Management
-            </h2>
-          </div>
-          <p className="text-[#A1A1AA] text-sm mt-2 font-normal">
+      {/* Common Page Header */}
+      <CommonHeader
+        title="Team Management"
+        subtitle={
+          <>
             Manage members, roles, and permissions for{" "}
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#421515] text-[#FF6B6B] border border-[#FF6B6B]/15">
               {activeTeam.name}
             </span>
-          </p>
-        </div>
+          </>
+        }
+        showSearch={false}
+        actionButton={
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto z-20">
+            {/* Group Switcher and Delete together on mobile */}
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="flex-1 sm:flex-initial">
+                <TeamSwitcher
+                  activeTeam={activeTeam}
+                  teams={teams}
+                  isTeamDropdownOpen={isTeamDropdownOpen}
+                  setIsTeamDropdownOpen={setIsTeamDropdownOpen}
+                  teamSearchQuery={teamSearchQuery}
+                  setTeamSearchQuery={setTeamSearchQuery}
+                  selectedTeamId={selectedTeamId}
+                  setSelectedTeamId={setSelectedTeamId}
+                  onCreateTeamClick={() => setIsCreateTeamOpen(true)}
+                />
+              </div>
 
-        {/* Header Actions */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full md:w-auto justify-between md:justify-start z-20">
-          {/* Team Switcher dropdown */}
-          <TeamSwitcher
-            activeTeam={activeTeam}
-            teams={teams}
-            isTeamDropdownOpen={isTeamDropdownOpen}
-            setIsTeamDropdownOpen={setIsTeamDropdownOpen}
-            teamSearchQuery={teamSearchQuery}
-            setTeamSearchQuery={setTeamSearchQuery}
-            selectedTeamId={selectedTeamId}
-            setSelectedTeamId={setSelectedTeamId}
-            onCreateTeamClick={() => setIsCreateTeamOpen(true)}
-          />
-
-          <div className="flex items-center gap-3.5 w-full sm:w-auto">
-            {/* Notification Bell */}
-            <button
-              onClick={() => window.dispatchEvent(new Event("open-notifications"))}
-              className="w-12 h-12 rounded-[18px] flex items-center justify-center bg-[#0E0E10] border border-white/5 text-gray-400 hover:text-white hover:border-white/10 transition-all relative cursor-pointer shrink-0"
-            >
-              <Bell size={18} />
-              <span className="absolute top-3.5 right-4 w-1.5 h-1.5 bg-red-500 rounded-full ring-2 ring-black" />
-            </button>
-
-            {/* Delete Team Button */}
-            {activeTeam && activeTeam.id && (
-              <button
-                onClick={() => setIsDeleteTeamOpen(true)}
-                disabled={isDeletingTeam}
-                title="Delete Active Team"
-                className="w-12 h-12 rounded-[18px] flex items-center justify-center bg-[#0E0E10] border border-white/5 text-red-500 hover:text-red-400 hover:border-red-500/20 transition-all cursor-pointer shrink-0 disabled:opacity-50"
-              >
-                {isDeletingTeam ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
-              </button>
-            )}
+              {/* Delete Team Button */}
+              {activeTeam && activeTeam.id && (
+                <button
+                  onClick={() => setIsDeleteTeamOpen(true)}
+                  disabled={isDeletingTeam}
+                  title="Delete Active Team"
+                  className="w-11 h-11 rounded-[12px] flex items-center justify-center bg-[#121214] border border-zinc-800 text-red-500 hover:text-red-400 hover:border-red-500/20 transition-all cursor-pointer shrink-0 disabled:opacity-50"
+                >
+                  {isDeletingTeam ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+                </button>
+              )}
+            </div>
 
             {/* Invite Button */}
             <button
               onClick={() => setIsInviteModalOpen(true)}
-              className="bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white font-bold rounded-[18px] h-12 px-5 flex items-center justify-center gap-2 text-sm shadow-[0_4px_20px_rgba(0,165,229,0.25)] transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex-1 sm:flex-initial"
+              className="h-11 px-5 rounded-[12px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99] w-full sm:w-auto shrink-0"
             >
               <Plus size={16} strokeWidth={2.5} />
               <span>Invite Member</span>
             </button>
           </div>
-        </div>
-      </section>
+        }
+      />
 
       {/* ─── STATISTICS ROW ─── */}
       <StatsCards stats={stats} />

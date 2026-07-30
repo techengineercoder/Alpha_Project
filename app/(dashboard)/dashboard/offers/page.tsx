@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { OfferDetailsSidebar } from "@/components/dashboard/offer/OfferDetailsSidebar";
+import { CommonHeader } from "@/components/dashboard/page-header";
 
 interface OfferItem {
   id: string;
@@ -151,59 +152,25 @@ export default function OffersDashboardPage() {
   return (
     <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-10 w-full space-y-8 pb-32 font-sans relative">
       
-      {/* Header Row */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white font-sans">
-            Offers
-          </h1>
-          <p className="text-sm text-zinc-400 font-sans mt-1.5">
-            Manage all incoming and outgoing offers for your venue
-          </p>
-        </div>
-
-        {/* Top Bar Right: Search, Notifications & Create Button */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 rounded-full bg-[#121214] border border-zinc-800 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-700 focus:ring-1 focus:ring-zinc-700 transition-colors"
-            />
-          </div>
-          
-          <button 
-            onClick={handleNotificationsClick}
-            className="w-10 h-10 rounded-full border border-zinc-800 bg-[#121214] flex items-center justify-center relative hover:bg-zinc-800/60 hover:border-zinc-700 transition-all cursor-pointer group"
-          >
-            <Bell className="h-[18px] w-[18px] text-zinc-300 group-hover:text-white transition-colors" />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#ef4444] rounded-full ring-2 ring-[#121214]" />
-          </button>
-
+      {/* Common Page Header */}
+      <CommonHeader
+        title="Offers"
+        subtitle="Manage all incoming and outgoing offers for your venue"
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        actionButton={
           <button 
             onClick={() => router.push("/dashboard/offers/create")}
-            className="h-10 px-5 rounded-xl bg-[#00A5E5] hover:bg-[#009bde] text-white font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-lg shadow-cyan-500/10 hover:shadow-cyan-500/20"
+            className="h-11 px-5 rounded-[12px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99] shrink-0 w-full sm:w-auto"
           >
             <Plus className="h-4.5 w-4.5" />
             New Offer
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Tabs Filter Container */}
-      <div 
-        style={{
-          borderRadius: "14px",
-          borderWidth: "1.24px",
-          borderColor: "rgba(255, 255, 255, 0.08)",
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
-          padding: "4px"
-        }}
-        className="flex items-center gap-2 overflow-x-auto no-scrollbar"
-      >
+      <div className="flex items-center border-[1.24px] border-[#FFFFFF]/8 bg-[#FFFFFF]/[0.02] rounded-[14px] p-[4px] overflow-x-auto no-scrollbar w-full">
         {[
           { label: "Recent Offers", count: 24, tabKey: "Recent" },
           { label: "Sent Offers", count: 9, tabKey: "Sent" },
@@ -215,28 +182,19 @@ export default function OffersDashboardPage() {
             <button
               key={tab.tabKey}
               onClick={() => setActiveTab(tab.tabKey as any)}
-              className="flex items-center transition-all cursor-pointer font-bold text-sm shrink-0"
-              style={{
-                height: "61.9px",
-                borderRadius: "9.9px",
-                paddingTop: "9.9px",
-                paddingBottom: "9.9px",
-                paddingLeft: "29.71px",
-                paddingRight: "29.71px",
-                gap: "9.9px",
-                borderBottomWidth: "2.48px",
-                borderBottomColor: isSelected ? "#00A5E5" : "transparent",
-                backgroundColor: isSelected ? "rgba(0, 165, 229, 0.08)" : "transparent",
-                color: isSelected ? "#ffffff" : "#71717a"
-              }}
+              className={`flex items-center justify-center h-[54px] sm:h-[62px] px-4 sm:px-7 gap-2.5 border-b-[2.5px] font-bold text-sm shrink-0 transition-all cursor-pointer rounded-[10px] ${
+                isSelected 
+                  ? "border-[#00AEF0] bg-[#00AEF0]/5 text-white" 
+                  : "border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.01]"
+              }`}
             >
               <span>{tab.label}</span>
               <span 
-                className="text-[11px] px-2.5 py-0.5 rounded-full font-bold transition-colors"
-                style={{
-                  backgroundColor: isSelected ? "rgba(0, 165, 229, 0.15)" : "#1c1c21",
-                  color: isSelected ? "#00A5E5" : "#52525b"
-                }}
+                className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold transition-all ${
+                  isSelected 
+                    ? "bg-[#00AEF0] text-black" 
+                    : "bg-zinc-800 text-zinc-500"
+                }`}
               >
                 {tab.count}
               </span>

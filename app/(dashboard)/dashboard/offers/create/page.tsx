@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { 
+import {
   ArrowLeft,
   Bell,
   FileText,
@@ -21,6 +21,7 @@ import { ShareWithTeam } from "@/components/offers/create/share-with-team";
 import { DocumentsSection } from "@/components/offers/create/documents-section";
 import { LegalNotice } from "@/components/offers/create/legal-notice";
 import { SignatureSection } from "@/components/offers/create/signature-section";
+import { CommonHeader } from "@/components/dashboard/page-header";
 
 interface TeamCard {
   id: string;
@@ -61,6 +62,7 @@ const shareTeamContainerStyle = {
 
 export default function CreateOfferPage() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Form State Values starting empty so they use placeholders
   const [offerName, setOfferName] = useState("");
@@ -208,55 +210,32 @@ export default function CreateOfferPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-10 w-full space-y-6 pb-32 font-sans relative">
-      
-      {/* Search and notification row at the top */}
-      <div className="flex justify-between items-center max-w-5xl mx-auto w-full">
-        {/* Top-left Back button */}
-        <button 
+    <div className="">
+      {/* Top Header Row (All devices, responsive matches design system) */}
+      <header className="w-full px-4 md:px-8 lg:px-10 pt-4 md:pt-8 lg:pt-10 pb-5 border-b border-zinc-900/60 bg-[#050505] shrink-0">
+        <CommonHeader
+          title="Create Offer"
+          subtitle="Fill in the details to send a booking offer"
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
+      </header>
+
+      {/* Back button (Visible on all devices) */}
+      <div className="max-w-5xl mx-auto w-full mb-4">
+        <button
           type="button"
           onClick={() => router.push("/dashboard/offers")}
-          className="flex items-center gap-2 text-sm font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer group"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Back
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Back to Offers
         </button>
-
-        <div className="flex items-center gap-3">
-          <div 
-            style={{
-              width: "100%",
-              maxWidth: "450px",
-              height: "39px",
-              borderRadius: "14.83px",
-              backgroundColor: "rgba(255, 255, 255, 0.06)",
-              paddingLeft: "9.88px",
-              paddingRight: "9.88px",
-              gap: "9.88px"
-            }}
-            className="flex items-center w-48 md:w-[450px]"
-          >
-            <Search className="h-4 w-4 text-zinc-450 shrink-0" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="flex-1 h-full bg-transparent border-0 text-sm text-white placeholder-zinc-550 focus:outline-none focus:ring-0 p-0 font-sans"
-            />
-          </div>
-          
-          <button 
-            type="button"
-            onClick={handleNotificationsClick}
-            className="w-10 h-10 rounded-full border border-zinc-800 bg-[#121214] flex items-center justify-center relative hover:bg-zinc-800/60 hover:border-zinc-700 transition-all cursor-pointer group"
-          >
-            <Bell className="h-[18px] w-[18px] text-zinc-300 group-hover:text-white transition-colors" />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#ef4444] rounded-full ring-2 ring-[#121214]" />
-          </button>
-        </div>
       </div>
 
+
       {/* Main sheet wrapper */}
-      <div 
+      <div
         style={{
           backgroundColor: "#0F0F0F",
           borderWidth: "1.24px",
@@ -266,28 +245,9 @@ export default function CreateOfferPage() {
         }}
         className="max-w-5xl mx-auto p-6 md:p-10 space-y-8"
       >
-        
-        {/* Header Title section */}
-        <div className="flex items-start justify-between border-b border-white/10 pb-6">
-          <div className="space-y-1">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white font-sans">
-              Create Offer
-            </h1>
-            <p className="text-sm text-zinc-400 font-sans">
-              Fill in the offer details to send
-            </p>
-          </div>
-          <button 
-            type="button"
-            onClick={() => router.push("/dashboard/offers")}
-            className="p-1.5 text-zinc-400 hover:text-white transition-colors cursor-pointer rounded-full hover:bg-zinc-900/60"
-          >
-            <X className="h-6 w-6" />
-          </button>
-        </div>
 
         {/* Firm Offer Warning notice styled matching Figma */}
-        <div 
+        <div
           style={{
             color: "#CFCFCF",
             fontFamily: "var(--font-sans)",
@@ -309,7 +269,7 @@ export default function CreateOfferPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          
+
           <VenueInformation
             offerName={offerName}
             setOfferName={setOfferName}

@@ -98,123 +98,130 @@ export function DashboardHeader() {
   }, []);
 
   return (
-    <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 relative z-30">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full pb-2 relative z-30">
+      {/* Left: Title & Subtitle */}
       <div>
-        <h1 className="text-2xl md:text-[28px] font-bold text-white tracking-tight">{headerInfo.title}</h1>
-        <p className="text-[#A1A1AA] text-sm mt-2 font-normal">{headerInfo.subtitle}</p>
+        <h1 className="text-3xl sm:text-[32px] font-bold tracking-tight text-white font-sans">
+          {headerInfo.title}
+        </h1>
+        <p className="text-sm text-zinc-400 font-sans mt-1">
+          {headerInfo.subtitle}
+        </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto relative" ref={dropdownRef}>
-        {/* Search Input Container */}
-        <div className="relative w-full sm:flex-1 md:flex-initial md:w-[280px]">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            placeholder="Search anything..."
-            className="w-full bg-[#121218] border border-white/5 focus:border-[#00A5E5]/30 focus:outline-none rounded-full py-2.5 pl-11 pr-12 text-sm text-white placeholder-gray-500 transition-colors"
-          />
-          {searchQuery ? (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          ) : (
-            <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:inline-flex h-5 select-none items-center gap-0.5 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-[10px] font-medium text-gray-400">
-              <span>⌘</span>K
-            </kbd>
-          )}
+      {/* Right: Search, Bell, and CTA */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto" ref={dropdownRef}>
+        
+        {/* Search & Bell mobile row */}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              placeholder="Search anything..."
+              className="w-full h-10 pl-10 pr-10 rounded-full bg-[#121214] border border-zinc-800 text-sm text-white placeholder-zinc-550 focus:outline-none focus:border-zinc-700 focus:ring-1 focus:ring-zinc-700 transition-colors"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
 
-          {/* Autocomplete Search Dropdown */}
-          {isFocused && searchQuery && (
-            <div className="absolute top-full left-0 md:right-0 md:left-auto mt-2 w-full md:w-[360px] bg-[#0E0E12] border border-white/10 rounded-[20px] shadow-2xl p-4 space-y-3 z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="flex items-center justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider px-1">
-                <span>Search Results ({results.length})</span>
-                <span className="text-[10px] text-gray-600 font-semibold">Press Enter ↵</span>
-              </div>
+            {/* Autocomplete Search Dropdown */}
+            {isFocused && searchQuery && (
+              <div className="absolute top-full right-0 mt-2 w-full sm:w-[360px] bg-[#0E0E12] border border-white/10 rounded-[20px] shadow-2xl p-4 space-y-3 z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="flex items-center justify-between text-[11px] font-bold text-gray-500 uppercase tracking-wider px-1">
+                  <span>Search Results ({results.length})</span>
+                  <span className="text-[10px] text-gray-600 font-semibold">Press Enter ↵</span>
+                </div>
 
-              <div className="max-h-[280px] overflow-y-auto space-y-1.5 [&::-webkit-scrollbar]:hidden">
-                {results.length > 0 ? (
-                  results.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        {/* Image / Icon container */}
-                        {item.image ? (
-                          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-zinc-800">
-                            <img src={item.image} alt="" className="w-full h-full object-cover" />
-                          </div>
-                        ) : item.initials ? (
-                          <div className={`w-9 h-9 rounded-full border flex items-center justify-center font-bold text-xs shrink-0 ${item.bg}`}>
-                            {item.initials}
-                          </div>
-                        ) : (
-                          <div className="w-9 h-9 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-gray-400 shrink-0">
-                            <User className="w-4 h-4" />
-                          </div>
-                        )}
+                <div className="max-h-[280px] overflow-y-auto space-y-1.5 [&::-webkit-scrollbar]:hidden">
+                  {results.length > 0 ? (
+                    results.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-3">
+                          {/* Image / Icon container */}
+                          {item.image ? (
+                            <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-zinc-800">
+                              <img src={item.image} alt="" className="w-full h-full object-cover" />
+                            </div>
+                          ) : item.initials ? (
+                            <div className={`w-9 h-9 rounded-full border flex items-center justify-center font-bold text-xs shrink-0 ${item.bg}`}>
+                              {item.initials}
+                            </div>
+                          ) : (
+                            <div className="w-9 h-9 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-gray-400 shrink-0">
+                              <User className="w-4 h-4" />
+                            </div>
+                          )}
 
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-sm font-bold text-white group-hover:text-[#00A5E5] transition-colors">
-                            {item.title}
-                          </span>
-                          <span className="text-[11px] text-gray-500 font-medium">
-                            {item.subtitle}
-                          </span>
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-sm font-bold text-white group-hover:text-[#00AEF0] transition-colors">
+                              {item.title}
+                            </span>
+                            <span className="text-[11px] text-gray-500 font-medium">
+                              {item.subtitle}
+                            </span>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Type Badge */}
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${item.type === "Artist"
-                        ? "bg-[#00A5E5]/10 text-[#00A5E5] border-[#00A5E5]/20"
-                        : "bg-[#7C5CFF]/10 text-[#7C5CFF] border-[#7C5CFF]/20"
-                        }`}>
-                        {item.type}
-                      </span>
+                        {/* Type Badge */}
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${item.type === "Artist"
+                          ? "bg-[#00AEF0]/10 text-[#00AEF0] border-[#00AEF0]/20"
+                          : "bg-[#7C5CFF]/10 text-[#7C5CFF] border-[#7C5CFF]/20"
+                          }`}>
+                          {item.type}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-6 text-gray-500 text-sm font-medium">
+                      No results match &quot;{searchQuery}&quot;
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-6 text-gray-500 text-sm font-medium">
-                    No results match &quot;{searchQuery}&quot;
+                  )}
+                </div>
+
+                {results.length > 0 && (
+                  <div className="pt-2 border-t border-white/5 flex items-center justify-center text-center">
+                    <button className="text-[11px] font-bold text-[#00AEF0] hover:text-[#00AEF0]/80 hover:underline flex items-center gap-1.5 transition-colors cursor-pointer">
+                      <span>See all matches</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 )}
               </div>
+            )}
+          </div>
 
-              {results.length > 0 && (
-                <div className="pt-2 border-t border-white/5 flex items-center justify-center text-center">
-                  <button className="text-[11px] font-bold text-[#00A5E5] hover:text-[#00A5E5]/80 hover:underline flex items-center gap-1.5 transition-colors cursor-pointer">
-                    <span>See all matches</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Buttons Group Row */}
-        <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
-          {/* Notifications */}
-          <button className="w-10 h-10 rounded-full bg-[#121218] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors relative cursor-pointer shrink-0">
-            <Bell className="w-4 h-4" />
-            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-600 border border-black flex items-center justify-center text-[10px] font-bold text-white">
-              3
-            </span>
-          </button>
-
-          {/* Action Button */}
-          <button className="px-5 py-2.5 rounded-full bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_4px_16px_rgba(0,165,229,0.25)] shrink-0 flex-1 sm:flex-initial">
-            <Plus className="w-4 h-4" />
-            <span>New Offer</span>
+          {/* Bell Button (hidden on mobile) */}
+          <button 
+            onClick={() => window.dispatchEvent(new CustomEvent("open-notifications"))}
+            className="hidden sm:flex w-10 h-10 rounded-full border border-zinc-800 bg-[#121214] items-center justify-center relative hover:bg-zinc-800/60 hover:border-zinc-700 transition-all cursor-pointer group shrink-0"
+            title="Notifications"
+          >
+            <Bell className="h-[18px] w-[18px] text-zinc-300 group-hover:text-white transition-colors" />
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#ef4444] rounded-full ring-2 ring-[#121214]" />
           </button>
         </div>
+
+        {/* CTA New Offer Button */}
+        <button 
+          onClick={() => window.dispatchEvent(new CustomEvent("create-offer"))}
+          className="h-11 px-5 rounded-[12px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99] w-full sm:w-auto shrink-0"
+        >
+          <Plus className="h-4.5 w-4.5" />
+          New Offer
+        </button>
       </div>
-    </header>
+    </div>
   );
 }

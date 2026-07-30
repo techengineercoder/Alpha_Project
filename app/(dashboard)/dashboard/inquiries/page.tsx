@@ -1,21 +1,22 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { 
-  FileText, 
-  Search, 
-  Bell, 
-  Mic, 
-  Calendar, 
-  MapPin, 
-  DollarSign, 
-  Eye, 
-  Check, 
+import {
+  FileText,
+  Search,
+  Bell,
+  Mic,
+  Calendar,
+  MapPin,
+  DollarSign,
+  Eye,
+  Check,
   X
 } from "lucide-react";
 import { LogoLoader } from "@/components/ui/logo-loader";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { CommonHeader } from "@/components/dashboard/page-header";
 
 // Interface for Inquiry
 interface Inquiry {
@@ -111,7 +112,7 @@ export default function InquiriesPage() {
   const filteredInquiries = useMemo(() => {
     return inquiries.filter((inq) => {
       const matchesTab = activeTab === "All" || inq.status === activeTab;
-      const matchesSearch = 
+      const matchesSearch =
         inq.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         inq.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         inq.artistName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -130,7 +131,7 @@ export default function InquiriesPage() {
       prev.map((inq) => (inq.id === id ? { ...inq, status: "Accepted" } : inq))
     );
     toast.success(`Inquiry from ${clientName} accepted successfully!`);
-    
+
     // Update active selected inquiry in drawer if open
     if (selectedInquiry?.id === id) {
       setSelectedInquiry((prev) => prev ? { ...prev, status: "Accepted" } : null);
@@ -143,7 +144,7 @@ export default function InquiriesPage() {
       prev.map((inq) => (inq.id === id ? { ...inq, status: "Declined" } : inq))
     );
     toast.error(`Inquiry from ${clientName} declined.`);
-    
+
     // Update active selected inquiry in drawer if open
     if (selectedInquiry?.id === id) {
       setSelectedInquiry((prev) => prev ? { ...prev, status: "Declined" } : null);
@@ -168,40 +169,14 @@ export default function InquiriesPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-10 w-full space-y-8 pb-20 font-sans relative overflow-x-hidden">
-      
-      {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-white">Incoming Inquiries</h1>
-          <p className="text-zinc-400 text-sm">
-            Manage and respond to booking requests
-          </p>
-        </div>
 
-        {/* SEARCH AND NOTIFICATIONS */}
-        <div className="flex items-center gap-3">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 rounded-full bg-[#121214] border border-zinc-800 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-700 focus:ring-1 focus:ring-zinc-700 transition-colors"
-            />
-          </div>
-          
-          <button 
-            onClick={handleNotificationsClick}
-            className="w-10 h-10 rounded-full border border-zinc-800 bg-[#121214] flex items-center justify-center relative hover:bg-zinc-800/60 hover:border-zinc-700 transition-all cursor-pointer group"
-            title="Notifications"
-          >
-            <Bell className="h-[18px] w-[18px] text-zinc-300 group-hover:text-white transition-colors" />
-            {/* Red Notification Badge */}
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#ef4444] rounded-full ring-2 ring-[#121214]" />
-          </button>
-        </div>
-      </div>
+      {/* Common Page Header */}
+      <CommonHeader
+        title="Incoming Inquiries"
+        subtitle="Manage and respond to booking requests"
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
       {/* FILTER TABS */}
       <div className="flex overflow-x-auto no-scrollbar py-1">
@@ -212,11 +187,10 @@ export default function InquiriesPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
-                  isActive 
-                    ? "bg-[#00aef0] text-white font-bold shadow-md shadow-cyan-500/10" 
-                    : "text-zinc-400 hover:text-zinc-200"
-                }`}
+                className={`px-5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${isActive
+                  ? "bg-[#00aef0] text-white font-bold shadow-md shadow-cyan-500/10"
+                  : "text-zinc-400 hover:text-zinc-200"
+                  }`}
               >
                 {tab}
               </button>
@@ -253,15 +227,14 @@ export default function InquiriesPage() {
                         {inq.id}
                       </span>
                       {/* Status Badge */}
-                      <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border ${
-                        inq.status === "New" 
-                          ? "bg-zinc-800/80 border-zinc-700/50 text-zinc-300"
-                          : inq.status === "Reviewed"
+                      <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border ${inq.status === "New"
+                        ? "bg-zinc-800/80 border-zinc-700/50 text-zinc-300"
+                        : inq.status === "Reviewed"
                           ? "bg-yellow-950/40 border-yellow-800/30 text-yellow-500"
                           : inq.status === "Accepted"
-                          ? "bg-emerald-950/40 border-emerald-800/30 text-emerald-500"
-                          : "bg-red-950/40 border-red-800/30 text-red-500"
-                      }`}>
+                            ? "bg-emerald-950/40 border-emerald-800/30 text-emerald-500"
+                            : "bg-red-950/40 border-red-800/30 text-red-500"
+                        }`}>
                         {inq.status}
                       </span>
                     </div>
@@ -298,7 +271,7 @@ export default function InquiriesPage() {
                     <Eye className="h-4 w-4" />
                     Preview
                   </button>
-                  
+
                   {/* Only show Accept button if it's NOT Accepted or Declined, OR if on 'All' tab (to match screenshot exactly) */}
                   {(activeTab === "All" || (inq.status !== "Accepted" && inq.status !== "Declined")) && (
                     <button
@@ -313,7 +286,7 @@ export default function InquiriesPage() {
               </motion.div>
             ))
           ) : (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="border border-dashed border-zinc-800 rounded-2xl p-12 flex flex-col items-center justify-center min-h-[350px] text-center bg-zinc-950/20"
@@ -349,19 +322,19 @@ export default function InquiriesPage() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
-              className="fixed right-0 top-0 bottom-0 w-full sm:w-[460px] bg-[#09090b] border-l border-zinc-800 z-[100] flex flex-col justify-between shadow-2xl h-screen"
+              className="fixed right-0 top-0 bottom-0 w-full sm:w-[460px] bg-[#0A0A0A]/95 backdrop-blur-[12px] border-l-[1.24px] border-[#FFFFFF]/12 z-[100] flex flex-col justify-between shadow-2xl h-screen"
             >
               {/* Drawer Header */}
-              <div className="p-6 md:p-8 pb-5 border-b border-zinc-800 relative shrink-0">
+              <div className="p-6 md:p-8 pb-5 border-b border-[#FFFFFF]/12 relative shrink-0">
                 <button
                   onClick={handleCloseDrawer}
-                  className="absolute top-7 right-6 p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900/50 transition-colors cursor-pointer"
+                  className="absolute top-8 right-6 p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900/50 transition-colors cursor-pointer"
                   aria-label="Close details"
                 >
                   <X className="h-5 w-5" />
                 </button>
-                
-                <span className="text-zinc-500 text-xs font-mono font-medium tracking-wide">
+
+                <span className="text-zinc-500 text-xs font-mono font-medium tracking-wide uppercase mb-1 block">
                   {selectedInquiry.id}
                 </span>
                 <h2 className="font-bold text-[24.71px] leading-[37.07px] tracking-normal text-white mt-1">
@@ -371,10 +344,10 @@ export default function InquiriesPage() {
 
               {/* Drawer Content Area (Scrollable) */}
               <div className="p-6 md:p-8 flex-1 overflow-y-auto space-y-6 no-scrollbar">
-                
+
                 {/* FROM BOX */}
-                <div className="bg-[#121214] border border-zinc-800/80 rounded-2xl p-5 flex flex-col space-y-3">
-                  <span className="text-[11px] font-semibold text-zinc-500 tracking-wider uppercase block">
+                <div className="bg-[#161618] border border-[#FFFFFF]/8 rounded-[24px] p-6 flex flex-col space-y-4">
+                  <span className="text-[11px] font-bold text-[#8E8E93] tracking-wider uppercase block">
                     FROM
                   </span>
                   <div className="flex items-center gap-4">
@@ -382,10 +355,10 @@ export default function InquiriesPage() {
                       {selectedInquiry.avatarChar}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-bold text-white text-base truncate">
+                      <h4 className="font-bold text-white text-base leading-snug">
                         {selectedInquiry.clientName}
                       </h4>
-                      <p className="text-zinc-400 text-sm truncate">
+                      <p className="text-zinc-400 text-sm mt-0.5 leading-snug">
                         {selectedInquiry.companyName}
                       </p>
                     </div>
@@ -393,17 +366,17 @@ export default function InquiriesPage() {
                 </div>
 
                 {/* DETAILS LIST CONTAINER */}
-                <div className="space-y-4 px-1">
+                <div className="space-y-5 px-1">
                   {/* Artist */}
                   <div className="flex items-center gap-3.5">
-                    <div className="w-9 h-9 rounded-full bg-[#0a1b26] border border-cyan-955/20 flex items-center justify-center text-[#00aef0] shrink-0">
-                      <Mic className="h-4 w-4" />
+                    <div className="w-[38px] h-[38px] rounded-full bg-[#0A1C2A] border border-[#00AEF0]/15 flex items-center justify-center text-[#00AEF0] shrink-0">
+                      <Mic className="h-[18px] w-[18px]" />
                     </div>
                     <div className="leading-tight">
-                      <span className="text-[11px] text-zinc-500 font-medium block">
+                      <span className="text-[12px] text-[#8E8E93] font-medium block">
                         Artist
                       </span>
-                      <span className="text-white text-[15px] font-semibold block mt-0.5">
+                      <span className="text-white text-[16px] font-bold block mt-[2px]">
                         {selectedInquiry.artistName}
                       </span>
                     </div>
@@ -411,14 +384,14 @@ export default function InquiriesPage() {
 
                   {/* Event Date */}
                   <div className="flex items-center gap-3.5">
-                    <div className="w-9 h-9 rounded-full bg-[#0a1b26] border border-cyan-955/20 flex items-center justify-center text-[#00aef0] shrink-0">
-                      <Calendar className="h-4 w-4" />
+                    <div className="w-[38px] h-[38px] rounded-full bg-[#0A1C2A] border border-[#00AEF0]/15 flex items-center justify-center text-[#00AEF0] shrink-0">
+                      <Calendar className="h-[18px] w-[18px]" />
                     </div>
                     <div className="leading-tight">
-                      <span className="text-[11px] text-zinc-500 font-medium block">
+                      <span className="text-[12px] text-[#8E8E93] font-medium block">
                         Event Date
                       </span>
-                      <span className="text-white text-[15px] font-semibold block mt-0.5">
+                      <span className="text-white text-[16px] font-bold block mt-[2px]">
                         {selectedInquiry.eventDate}
                       </span>
                     </div>
@@ -426,14 +399,14 @@ export default function InquiriesPage() {
 
                   {/* Location */}
                   <div className="flex items-center gap-3.5">
-                    <div className="w-9 h-9 rounded-full bg-[#0a1b26] border border-cyan-955/20 flex items-center justify-center text-[#00aef0] shrink-0">
-                      <MapPin className="h-4 w-4" />
+                    <div className="w-[38px] h-[38px] rounded-full bg-[#0A1C2A] border border-[#00AEF0]/15 flex items-center justify-center text-[#00AEF0] shrink-0">
+                      <MapPin className="h-[18px] w-[18px]" />
                     </div>
                     <div className="leading-tight">
-                      <span className="text-[11px] text-zinc-500 font-medium block">
+                      <span className="text-[12px] text-[#8E8E93] font-medium block">
                         Location
                       </span>
-                      <span className="text-white text-[15px] font-semibold block mt-0.5">
+                      <span className="text-white text-[16px] font-bold block mt-[2px]">
                         {selectedInquiry.location}
                       </span>
                     </div>
@@ -441,14 +414,14 @@ export default function InquiriesPage() {
 
                   {/* Budget */}
                   <div className="flex items-center gap-3.5">
-                    <div className="w-9 h-9 rounded-full bg-[#0a1b26] border border-cyan-955/20 flex items-center justify-center text-[#00aef0] shrink-0">
-                      <DollarSign className="h-4 w-4" />
+                    <div className="w-[38px] h-[38px] rounded-full bg-[#0A1C2A] border border-[#00AEF0]/15 flex items-center justify-center text-[#00AEF0] shrink-0">
+                      <DollarSign className="h-[18px] w-[18px]" />
                     </div>
                     <div className="leading-tight">
-                      <span className="text-[11px] text-zinc-500 font-medium block">
+                      <span className="text-[12px] text-[#8E8E93] font-medium block">
                         Budget
                       </span>
-                      <span className="text-white text-[15px] font-semibold block mt-0.5">
+                      <span className="text-white text-[16px] font-bold block mt-[2px]">
                         {selectedInquiry.budget}
                       </span>
                     </div>
@@ -456,31 +429,31 @@ export default function InquiriesPage() {
                 </div>
 
                 {/* NOTE BOX */}
-                <div className="bg-[#121214] border border-zinc-800/80 rounded-2xl p-5 flex flex-col space-y-3">
-                  <span className="text-[11px] font-semibold text-zinc-500 tracking-wider uppercase block">
+                <div className="bg-[#161618] border border-[#FFFFFF]/8 rounded-[24px] p-6 flex flex-col space-y-4">
+                  <span className="text-[11px] font-bold text-[#8E8E93] tracking-wider uppercase block">
                     NOTE
                   </span>
-                  <div className="text-zinc-300 text-sm leading-relaxed font-normal">
+                  <div className="text-[#D1D1D6] text-[15px] leading-relaxed font-normal">
                     {selectedInquiry.note}
                   </div>
                 </div>
               </div>
 
               {/* Drawer Footer Actions */}
-              <div className="p-6 border-t border-zinc-800 bg-[#09090b] flex flex-col gap-3 shrink-0">
+              <div className="p-6 md:p-8 border-t border-[#FFFFFF]/12 bg-transparent flex flex-col gap-4 shrink-0">
                 {selectedInquiry.status !== "Accepted" ? (
                   <button
                     onClick={() => {
                       handleAccept(selectedInquiry.id, selectedInquiry.clientName);
                       handleCloseDrawer();
                     }}
-                    className="w-full py-3.5 rounded-xl bg-[#00aef0] hover:bg-[#009bde] text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-cyan-500/10 hover:shadow-cyan-500/20"
+                    className="w-full h-14 rounded-[14px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-semibold text-base flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99]"
                   >
-                    Generate Offer &rarr;
+                    Generate Offer
                   </button>
                 ) : (
-                  <div className="w-full py-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/30 text-emerald-400 font-semibold text-sm flex items-center justify-center gap-2">
-                    <Check className="h-4 w-4" />
+                  <div className="w-full h-14 rounded-[14px] bg-emerald-950/40 border border-emerald-800/30 text-emerald-400 font-semibold text-base flex items-center justify-center gap-2">
+                    <Check className="h-5 w-5" />
                     Offer Generated / Accepted
                   </div>
                 )}
@@ -491,7 +464,7 @@ export default function InquiriesPage() {
                       handleReject(selectedInquiry.id, selectedInquiry.clientName);
                       handleCloseDrawer();
                     }}
-                    className="w-full py-3.5 rounded-xl bg-[#ff3b30] hover:bg-red-700 text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    className="w-full h-14 rounded-[14px] bg-[#FF3B30] hover:bg-[#E03126] text-white font-bold text-base flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
                   >
                     Reject Inquiry
                   </button>
