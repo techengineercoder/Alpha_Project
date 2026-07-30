@@ -14,7 +14,8 @@ import {
   RefreshCw,
   Eye,
   Check,
-  XCircle
+  XCircle,
+  ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -296,6 +297,12 @@ export default function MessagesDashboardPage() {
   const [globalSearchQuery, setGlobalSearchQuery] = useState("");
   const [inputMessage, setInputMessage] = useState("");
   const [showMobileChat, setShowMobileChat] = useState(false);
+  const [offerExpanded, setOfferExpanded] = useState(false);
+
+  // Collapse offer card by default when switching conversations
+  useEffect(() => {
+    setOfferExpanded(false);
+  }, [selectedId]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -573,51 +580,75 @@ export default function MessagesDashboardPage() {
               {OFFERS_DATA[activeConversation.id] && (
                 <div className="bg-[#00A5E5]/[0.05] border-[1.24px] border-[#00A5E5]/[0.18] mx-6 mb-4 p-4 rounded-[20px] flex flex-col gap-3 relative shrink-0">
                   {/* Banner Row */}
-                  <div className="flex justify-between items-center pb-2 border-b border-white/[0.06]">
+                  <div 
+                    onClick={() => setOfferExpanded(!offerExpanded)}
+                    className={`flex justify-between items-center cursor-pointer select-none transition-all hover:bg-white/[0.01] -m-4 p-4 rounded-[20px] ${
+                      offerExpanded ? "border-b border-white/[0.06] rounded-b-none pb-3" : ""
+                    }`}
+                  >
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-[#00AEF0]" />
                       <span className="text-[10px] font-bold text-[#00AEF0] tracking-wider uppercase">Offer Attached</span>
                       <span className="text-[10px] font-mono text-zinc-500 bg-white/[0.04] px-2 py-0.5 rounded-full">{OFFERS_DATA[activeConversation.id].offerId}</span>
                     </div>
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#A855F7]/10 text-[#C084FC] border border-[#C084FC]/15 flex items-center gap-1">
-                      <RefreshCw className="h-3 w-3 animate-spin-slow" />
-                      {OFFERS_DATA[activeConversation.id].status}
-                    </span>
-                  </div>
-
-                  {/* Content Row */}
-                  <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#0C1E2B] border border-[#00AEF0]/15 flex items-center justify-center font-bold text-sm text-[#00AEF0] shrink-0">
-                        {OFFERS_DATA[activeConversation.id].avatarChar}
-                      </div>
-                      <div>
-                        <span className="font-bold text-sm text-white block">{OFFERS_DATA[activeConversation.id].artistName}</span>
-                        <span className="text-[11px] text-zinc-400 block mt-0.5">{OFFERS_DATA[activeConversation.id].date} · {OFFERS_DATA[activeConversation.id].venue} · {OFFERS_DATA[activeConversation.id].stage}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="xs:text-right shrink-0">
-                      <span className="font-bold text-base text-white block">{OFFERS_DATA[activeConversation.id].price}</span>
-                      <span className="text-[10px] text-zinc-500 block mt-0.5">{OFFERS_DATA[activeConversation.id].priceType}</span>
+                    <div className="flex items-center gap-2.5">
+                      <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#A855F7]/10 text-[#C084FC] border border-[#C084FC]/15 flex items-center gap-1">
+                        <RefreshCw className="h-3 w-3 animate-spin-slow" />
+                        {OFFERS_DATA[activeConversation.id].status}
+                      </span>
+                      <ChevronDown 
+                        className={`h-4 w-4 text-zinc-400 transition-transform duration-200 ${
+                          offerExpanded ? "rotate-180" : ""
+                        }`} 
+                      />
                     </div>
                   </div>
 
-                  {/* Buttons Row */}
-                  <div className="flex flex-wrap items-center gap-2 w-full mt-1">
-                    <button className="h-9 px-4 rounded-xl bg-[#121214] border border-zinc-800 hover:bg-zinc-800/60 text-xs font-semibold text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center justify-center gap-1.5 flex-1 xs:flex-initial">
-                      <Eye className="h-3.5 w-3.5" />
-                      <span>Preview</span>
-                    </button>
-                    <button className="h-9 px-4 rounded-xl bg-[#0F291E] border border-[#22C55E]/15 hover:bg-[#153e2a] text-xs font-semibold text-[#4ADE80] hover:text-green-300 transition-colors cursor-pointer flex items-center justify-center gap-1.5 flex-1 xs:flex-initial">
-                      <Check className="h-3.5 w-3.5" />
-                      <span>Accept Offer</span>
-                    </button>
-                    <button className="h-9 px-4 rounded-xl bg-[#2A1215] border border-[#EF4444]/15 hover:bg-[#3d1a1e] text-xs font-semibold text-[#F87171] hover:text-red-300 transition-colors cursor-pointer flex items-center justify-center gap-1.5 flex-1 xs:flex-initial">
-                      <XCircle className="h-3.5 w-3.5" />
-                      <span>Reject</span>
-                    </button>
-                  </div>
+                  <AnimatePresence initial={false}>
+                    {offerExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                        animate={{ height: "auto", opacity: 1, marginTop: 16 }}
+                        exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                        className="overflow-hidden flex flex-col gap-3"
+                        transition={{ duration: 0.15, ease: "easeInOut" }}
+                      >
+                        {/* Content Row */}
+                        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-[#0C1E2B] border border-[#00AEF0]/15 flex items-center justify-center font-bold text-sm text-[#00AEF0] shrink-0">
+                              {OFFERS_DATA[activeConversation.id].avatarChar}
+                            </div>
+                            <div>
+                              <span className="font-bold text-sm text-white block">{OFFERS_DATA[activeConversation.id].artistName}</span>
+                              <span className="text-[11px] text-zinc-400 block mt-0.5">{OFFERS_DATA[activeConversation.id].date} · {OFFERS_DATA[activeConversation.id].venue} · {OFFERS_DATA[activeConversation.id].stage}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="xs:text-right shrink-0">
+                            <span className="font-bold text-base text-white block">{OFFERS_DATA[activeConversation.id].price}</span>
+                            <span className="text-[10px] text-zinc-500 block mt-0.5">{OFFERS_DATA[activeConversation.id].priceType}</span>
+                          </div>
+                        </div>
+
+                        {/* Buttons Row */}
+                        <div className="flex flex-wrap items-center gap-2 w-full mt-1">
+                          <button className="h-9 px-4 rounded-xl bg-[#121214] border border-zinc-800 hover:bg-zinc-800/60 text-xs font-semibold text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center justify-center gap-1.5 flex-1 xs:flex-initial">
+                            <Eye className="h-3.5 w-3.5" />
+                            <span>Preview</span>
+                          </button>
+                          <button className="h-9 px-4 rounded-xl bg-[#0F291E] border border-[#22C55E]/15 hover:bg-[#153e2a] text-xs font-semibold text-[#4ADE80] hover:text-green-300 transition-colors cursor-pointer flex items-center justify-center gap-1.5 flex-1 xs:flex-initial">
+                            <Check className="h-3.5 w-3.5" />
+                            <span>Accept Offer</span>
+                          </button>
+                          <button className="h-9 px-4 rounded-xl bg-[#2A1215] border border-[#EF4444]/15 hover:bg-[#3d1a1e] text-xs font-semibold text-[#F87171] hover:text-red-300 transition-colors cursor-pointer flex items-center justify-center gap-1.5 flex-1 xs:flex-initial">
+                            <XCircle className="h-3.5 w-3.5" />
+                            <span>Reject</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
 

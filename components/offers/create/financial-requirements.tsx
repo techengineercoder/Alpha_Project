@@ -16,7 +16,7 @@ interface FinancialRequirementsProps {
   setCatering: (val: string) => void;
   productionSoundLights: string;
   setProductionSoundLights: (val: string) => void;
-  subCardStyle: React.CSSProperties;
+  subCardClassName: string;
 }
 
 export const FinancialRequirements: React.FC<FinancialRequirementsProps> = ({
@@ -32,10 +32,10 @@ export const FinancialRequirements: React.FC<FinancialRequirementsProps> = ({
   setCatering,
   productionSoundLights,
   setProductionSoundLights,
-  subCardStyle
+  subCardClassName
 }) => {
   return (
-    <div style={subCardStyle} className="space-y-6">
+    <div className={`${subCardClassName} space-y-6`}>
       <h3 className="text-sm font-bold text-white tracking-wide border-b border-zinc-900 pb-3 font-sans">
         Financial & Production Requirements
       </h3>

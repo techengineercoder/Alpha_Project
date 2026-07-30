@@ -16,7 +16,7 @@ interface PerformanceInformationProps {
   setEventFor: (val: string) => void;
   otherArtists: string;
   setOtherArtists: (val: string) => void;
-  subCardStyle: React.CSSProperties;
+  subCardClassName: string;
 }
 
 export const PerformanceInformation: React.FC<PerformanceInformationProps> = ({
@@ -32,10 +32,10 @@ export const PerformanceInformation: React.FC<PerformanceInformationProps> = ({
   setEventFor,
   otherArtists,
   setOtherArtists,
-  subCardStyle
+  subCardClassName
 }) => {
   return (
-    <div style={subCardStyle} className="space-y-6">
+    <div className={`${subCardClassName} space-y-6`}>
       <h3 className="text-sm font-bold text-white tracking-wide border-b border-zinc-900 pb-3 font-sans">
         Performance Information
       </h3>

@@ -140,9 +140,9 @@ export function MembersTable({
 
       <div className="h-px bg-white/5 w-full" />
 
-      {/* Table Area */}
+      {/* Table Area (Desktop Viewport) */}
       {/* Table Area with min-height to prevent absolute menus from clipping */}
-      <div className="overflow-x-auto w-full no-scrollbar min-h-[290px]">
+      <div className="hidden md:block overflow-x-auto w-full no-scrollbar min-h-[290px]">
         <table className="w-full border-collapse text-left min-w-[768px]">
           <thead>
             <tr className="border-b border-white/5 text-xs font-semibold text-[#71717A] uppercase tracking-wider select-none bg-transparent">
@@ -250,13 +250,6 @@ export function MembersTable({
                                 <User size={14} className="text-gray-400" />
                                 <span>Profile details</span>
                               </button>
-                              {/* <button
-                                onClick={() => onToggleStatus(member.id)}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all text-left"
-                              >
-                                <UserCheck size={14} className="text-gray-400" />
-                                <span>Cycle Status</span>
-                              </button> */}
                               <div className="h-px bg-white/5 my-1" />
                               <button
                                 onClick={() => {
@@ -285,6 +278,127 @@ export function MembersTable({
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Cards Area (Mobile/Tablet Viewports) */}
+      <div className="block md:hidden divide-y divide-white/5 w-full min-h-[290px]">
+        {paginatedMembers.length > 0 ? (
+          paginatedMembers.map((member) => (
+            <div
+              key={member.id}
+              className="p-5 flex flex-col gap-4 bg-transparent"
+            >
+              {/* Top Row: User Avatar/Name + Menu Button */}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold text-sm border border-white/5 shadow-inner shrink-0 ${member.avatarBg}`}>
+                    {member.avatarChar}
+                  </div>
+                  <div className="flex flex-col min-w-0 text-left">
+                    <span className="text-sm font-semibold text-white tracking-tight truncate leading-tight">
+                      {member.name}
+                    </span>
+                    {member.email && member.name !== member.email && (
+                      <span className="text-xs text-[#71717A] truncate leading-tight mt-0.5 font-medium">
+                        {member.email}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <button
+                    onClick={() =>
+                      setActiveMenuId(activeMenuId === member.id ? null : member.id)
+                    }
+                    className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors bg-transparent border-none cursor-pointer"
+                  >
+                    <MoreHorizontal size={18} />
+                  </button>
+
+                  {activeMenuId === member.id && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setActiveMenuId(null)}
+                      />
+                      <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-xl bg-[#121216] border border-white/10 shadow-2xl p-1.5 z-20 overflow-hidden text-left">
+                        <div className="px-3 py-1.5 border-b border-white/5 mb-1 select-none">
+                          <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+                            Member Actions
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            onViewDetails(member);
+                            setActiveMenuId(null);
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all text-left"
+                        >
+                          <User size={14} className="text-gray-400" />
+                          <span>Profile details</span>
+                        </button>
+                        <div className="h-px bg-white/5 my-1" />
+                        <button
+                          onClick={() => {
+                            setActiveMenuId(null);
+                            setMemberToDelete(member);
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all text-left"
+                        >
+                          <Trash2 size={14} />
+                          <span>Remove member</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Bottom Row: Badges (Role, Status) + View details button */}
+              <div className="flex items-center justify-between gap-3 pt-0.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap ${getRoleBadgeStyle(member.role_label || member.role)}`}>
+                    {member.role_label || member.role}
+                  </span>
+                  
+                  <span
+                    onClick={() => onToggleStatus(member.id)}
+                    title="Click to toggle status (Demo)"
+                    className={`cursor-pointer select-none justify-center inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-semibold transition-all border whitespace-nowrap
+                      ${member.status === "Active" || member.status === "Approved"
+                        ? "text-[#22C55E] bg-[#22C55E]/10 border-transparent"
+                        : member.status === "Pending"
+                          ? "text-[#F59E0B] bg-[#F59E0B]/10 border-transparent"
+                          : "text-[#EF4444] bg-[#EF4444]/10 border-transparent"
+                      }
+                    `}
+                  >
+                    {member.status === "Active" || member.status === "Approved" ? (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
+                    ) : member.status === "Pending" ? (
+                      <Clock size={10} className="text-[#F59E0B] shrink-0" />
+                    ) : (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
+                    )}
+                    <span className="ml-0.5">{member.status}</span>
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => onViewDetails(member)}
+                  className="px-4 py-1.5 rounded-full border border-white/10 text-xs font-semibold text-white hover:bg-white/[0.05] transition-all cursor-pointer"
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-12 text-center text-gray-500 text-sm">
+            No members found matching your search.
+          </div>
+        )}
       </div>
 
       {/* Pagination controls */}

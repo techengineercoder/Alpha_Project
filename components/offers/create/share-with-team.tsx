@@ -16,7 +16,7 @@ interface ShareWithTeamProps {
   handleRemoveTeam: (id: string, name: string) => void;
   teamSearch: string;
   setTeamSearch: (val: string) => void;
-  shareTeamContainerStyle: React.CSSProperties;
+  shareTeamContainerClassName: string;
 }
 
 export const ShareWithTeam: React.FC<ShareWithTeamProps> = ({
@@ -24,10 +24,10 @@ export const ShareWithTeam: React.FC<ShareWithTeamProps> = ({
   handleRemoveTeam,
   teamSearch,
   setTeamSearch,
-  shareTeamContainerStyle
+  shareTeamContainerClassName
 }) => {
   return (
-    <div style={shareTeamContainerStyle} className="space-y-6">
+    <div className={`${shareTeamContainerClassName} space-y-6`}>
       <h3 className="text-sm font-bold text-white tracking-widest uppercase font-sans">
         Share With Team
       </h3>
@@ -56,17 +56,7 @@ export const ShareWithTeam: React.FC<ShareWithTeamProps> = ({
         {teams.map((t) => (
           <div
             key={t.id}
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
-              borderWidth: "1.24px",
-              borderColor: "rgba(255, 255, 255, 0.12)",
-              borderRadius: "24.71px",
-              padding: "19.77px",
-              width: "100%",
-              maxWidth: "312px",
-              height: "130px"
-            }}
-            className="relative flex flex-col justify-between"
+            className="relative flex flex-col justify-between bg-white/[0.04] border border-white/10 rounded-[20px] p-4.5 w-full max-w-none sm:max-w-[312px] min-h-[130px]"
           >
             <button
               type="button"

@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, X, Search, Bell, User, Settings, LogOut, ChevronDown, LayoutDashboard, Heart, History } from 'lucide-react';
+import { Menu, X, Search, Bell, User, Settings, LogOut, ChevronDown, LayoutDashboard, Heart, History, MapPin, Sparkles, Info, Briefcase, BookOpen, Users } from 'lucide-react';
 import { useGetUsersQuery } from '@/redux/feature/userSlice';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/redux/feature/authSlice';
@@ -323,120 +323,122 @@ function MarketingNavbarContent() {
             className="md:hidden mt-2 mx-auto max-w-[1100px]
                        bg-[#111116] border border-white/[0.08]
                        rounded-[28px] shadow-[0_20px_48px_rgba(0,0,0,0.5)]
-                       overflow-hidden z-40"
+                       overflow-hidden z-40 p-4 space-y-4"
           >
-            {/* Links */}
-            <div className="flex flex-col p-3 gap-0.5">
-              {NAV_LINKS.map(({ label, href }) => {
-                let isActive = false;
-                if (href.startsWith('/search?type=')) {
-                  const linkType = href.split('type=')[1];
-                  const activeType = searchParams.get('type') || 'artists';
-                  isActive = pathname === '/search' && linkType === activeType;
-                } else {
-                  isActive = pathname === href || pathname === href.split('#')[0];
-                }
+            {/* Section 1: Navigation Links */}
+            <div className="flex flex-col">
+              <span className="text-[10px] text-zinc-500 font-extrabold uppercase tracking-wider mb-2 px-1 font-sans">
+                Explore Portal
+              </span>
+              <div className="bg-[#121215]/60 border border-white/[0.03] rounded-[20px] p-1.5 flex flex-col gap-0.5 shadow-inner">
+                {[
+                  { label: 'Browse Artists', href: '/search?type=artists', icon: Users },
+                  { label: 'Browse Venue', href: '/search?type=venue', icon: MapPin },
+                  { label: 'Features', href: '/feature', icon: Sparkles },
+                  { label: 'How it works', href: '/how-it-works', icon: Info },
+                  { label: 'Services', href: '/services', icon: Briefcase },
+                  { label: 'Blog', href: '/blog', icon: BookOpen },
+                ].map(({ label, href, icon: Icon }) => {
+                  let isActive = false;
+                  if (href.startsWith('/search?type=')) {
+                    const linkType = href.split('type=')[1];
+                    const activeType = searchParams.get('type') || 'artists';
+                    isActive = pathname === '/search' && linkType === activeType;
+                  } else {
+                    isActive = pathname === href || pathname === href.split('#')[0];
+                  }
 
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={(e) => { setIsMobileMenuOpen(false); scrollToSection(e); }}
-                    className={`text-[15px] font-normal px-4 py-3.5 rounded-[14px] transition-all duration-150
-                      ${isActive
-                        ? 'text-white bg-white/[0.08]'
-                        : 'text-white/55 hover:text-white hover:bg-white/[0.05]'
-                      }`}
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={(e) => { setIsMobileMenuOpen(false); scrollToSection(e); }}
+                      className={`flex items-center gap-3 text-[14px] font-medium px-4 py-3 rounded-[12px] transition-all duration-150
+                        ${isActive
+                          ? 'text-[#00AEF0] bg-[#00AEF0]/5 font-bold'
+                          : 'text-zinc-400 hover:text-white hover:bg-white/[0.03]'
+                        }`}
+                    >
+                      <Icon size={16} className={isActive ? 'text-[#00AEF0]' : 'text-zinc-500'} />
+                      <span>{label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Divider */}
-            <div className="h-px bg-white/[0.06] mx-4" />
+            {/* Section 2: Account Actions */}
+            <div className="flex flex-col pt-3 border-t border-white/[0.05]">
+              <span className="text-[10px] text-zinc-500 font-extrabold uppercase tracking-wider mb-2 px-1 font-sans">
+                Your Account
+              </span>
+              <div className="bg-[#121215]/60 border border-white/[0.03] rounded-[20px] p-1.5 flex flex-col gap-0.5 shadow-inner">
+                {user ? (
+                  <>
+                    {/* User info row */}
+                    <div className="flex items-center gap-3.5 p-3.5 bg-white/[0.02] border-b border-white/[0.04] rounded-t-[14px] mb-1">
+                      <span className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 block border border-white/10 shadow-inner">
+                        {user.image ? (
+                          <img src={getImageUrl(user.image)} alt={user.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="w-full h-full bg-gradient-to-br from-[#00AEF0] to-[#0072FF] flex items-center justify-center text-white font-extrabold text-sm">
+                            {user.name.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </span>
+                      <span className="flex flex-col min-w-0 text-left">
+                        <span className="text-sm font-bold text-white leading-tight truncate">{user.name}</span>
+                        <span className="text-[11px] text-zinc-400 font-semibold truncate mt-0.5">{user.email}</span>
+                      </span>
+                    </div>
 
-            {/* Actions */}
-            <div className="p-4 flex flex-col gap-2.5">
-              {user ? (
-                <>
-                  {/* User info row */}
-                  <div className="flex items-center gap-3 px-4 py-3
-                                  bg-white/[0.03] border border-white/[0.06] rounded-[16px]">
-                    <span className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 block">
-                      {user.image ? (
-                        <img src={getImageUrl(user.image)} alt={user.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="w-full h-full bg-gradient-to-br from-[#7C5CFF] to-[#9D7CFF] flex items-center justify-center text-white font-medium text-sm">
-                          {user.name.charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </span>
-                    <span className="flex flex-col min-w-0">
-                      <span className="text-[14px] font-medium text-white truncate">{user.name}</span>
-                      <span className="text-[12px] text-white/40 truncate">{user.email}</span>
-                    </span>
+                    <Link
+                      href="/search-history"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-[12px] text-[13px] text-zinc-400 hover:text-white hover:bg-white/[0.03] transition-all duration-150"
+                    >
+                      <History size={16} className="text-zinc-500" />
+                      <span>Search History</span>
+                    </Link>
+
+                    <Link
+                      href="/favorites"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-[12px] text-[13px] text-zinc-400 hover:text-white hover:bg-white/[0.03] transition-all duration-150"
+                    >
+                      <Heart size={16} className="text-zinc-500" />
+                      <span>Favorites</span>
+                    </Link>
+
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-[12px] text-[13px] text-zinc-400 hover:text-white hover:bg-white/[0.03] transition-all duration-150"
+                    >
+                      <LayoutDashboard size={16} className="text-zinc-500" />
+                      <span>Dashboard</span>
+                    </Link>
+
+                    <button
+                      onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }}
+                      className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[13px] text-red-400/80 hover:text-red-400 hover:bg-red-500/10 transition-all duration-150 font-semibold mt-2 border border-red-500/10 cursor-pointer"
+                    >
+                      <LogOut size={16} />
+                      <span>Sign out</span>
+                    </button>
+                  </>
+                ) : (
+                  <div className="p-2">
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full h-11 rounded-xl bg-[#00AEF0] hover:bg-[#009bde] text-white text-sm font-bold flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      Sign In
+                    </Link>
                   </div>
-
-                  {/* <Link
-                    href="/artist/dashboard"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full text-center py-3.5 rounded-[16px] text-[14px] font-medium
-                               bg-[#00A5E5] text-white  transition-colors"
-                  >
-                    Dashboard
-                  </Link> */}
-                  <Link
-                    href="/search-history"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-[14px]
-                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
-                                   transition-all duration-150"
-                  >
-                    <History size={16} className="text-white/40" />
-                    Search History
-                  </Link>
-                  <Link
-                    href="/favorites"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] border border-white/[0.06] rounded-[14px]
-                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
-                                   transition-all duration-150"
-                  >
-                    <Heart size={16} className="text-white/40" />
-                    Favorites
-                  </Link>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] border border-white/[0.06] rounded-[14px]
-                                   text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
-                                   transition-all duration-150"
-                  >
-                    <LayoutDashboard size={16} className="text-white/40" />
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }}
-                    className="w-full text-center py-3.5 rounded-[16px] text-[14px] font-medium
-                               bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
-                  >
-                    Sign out
-                  </button>
-                </>
-              ) : (
-                <div className="flex gap-2.5">
-                  <Link
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex-1 text-center py-3.5 rounded-[16px] text-[14px] font-medium
-                               bg-[#00A5E5] text-white hover:bg-[#00A5E5]/80 transition-colors"
-                  >
-                    Sign In
-                  </Link>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </motion.div>
         )}

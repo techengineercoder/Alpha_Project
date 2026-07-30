@@ -16,7 +16,7 @@ interface DocumentsSectionProps {
   handleRemoveDocument: (id: string, name: string) => void;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   documentInputRef: React.RefObject<HTMLInputElement | null>;
-  shareTeamContainerStyle: React.CSSProperties;
+  shareTeamContainerClassName: string;
 }
 
 export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
@@ -24,10 +24,10 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
   handleRemoveDocument,
   handleFileUpload,
   documentInputRef,
-  shareTeamContainerStyle
+  shareTeamContainerClassName
 }) => {
   return (
-    <div style={shareTeamContainerStyle} className="space-y-6">
+    <div className={`${shareTeamContainerClassName} space-y-6`}>
       <h3 className="text-xs font-bold text-zinc-455 uppercase tracking-widest font-sans">
         Documents
       </h3>
@@ -35,15 +35,9 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
       {/* Drag Area */}
       <div 
         onClick={() => documentInputRef.current?.click()}
-        style={{
-          border: "1px dashed rgba(255, 255, 255, 0.15)",
-          backgroundColor: "rgba(255, 255, 255, 0.02)",
-          borderRadius: "16px",
-          padding: "32px"
-        }}
-        className="flex flex-col items-center justify-center text-center cursor-pointer transition-colors font-sans"
+        className="flex flex-col items-center justify-center text-center cursor-pointer transition-colors font-sans border border-dashed border-white/15 bg-[#18181F]/30 hover:bg-[#18181F]/50 rounded-2xl p-6 sm:p-8"
       >
-        <Upload className="h-7 w-7 text-zinc-500 mb-2.5" />
+        <Upload className="h-7 w-7 text-zinc-550 mb-2.5" />
         <span className="text-sm font-semibold text-zinc-300">
           Drag files here or click to upload
         </span>
@@ -63,20 +57,9 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
         {documents.map((d) => (
           <div
             key={d.id}
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
-              borderWidth: "1.24px",
-              borderColor: "rgba(255, 255, 255, 0.08)",
-              borderRadius: "29.65px",
-              paddingTop: "14.83px",
-              paddingBottom: "14.83px",
-              paddingLeft: "19.77px",
-              paddingRight: "19.77px",
-              height: "66.72px"
-            }}
-            className="flex items-center justify-between gap-[14.83px] w-full"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-[14.83px] w-full bg-white/[0.04] border border-white/5 rounded-[20px] p-4 sm:py-3 sm:px-5 min-h-[66px]"
           >
-            <div className="flex items-center gap-3.5 min-w-0">
+            <div className="flex items-center gap-3.5 min-w-0 w-full sm:w-auto">
               <div className="w-10 h-10 rounded-xl bg-rose-950/25 border border-rose-900/20 flex items-center justify-center text-rose-500 shrink-0">
                 <FileText className="h-5 w-5" />
               </div>
@@ -85,8 +68,8 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
               </span>
             </div>
             
-            <div className="flex items-center gap-6 shrink-0">
-              <span className="text-xs text-zinc-550 font-medium font-sans">
+            <div className="flex flex-row items-center justify-between sm:justify-end gap-4 w-full sm:w-auto shrink-0">
+              <span className="text-xs text-zinc-400 font-medium font-sans">
                 {d.size} &bull; Uploaded {d.uploadedAt}
               </span>
               

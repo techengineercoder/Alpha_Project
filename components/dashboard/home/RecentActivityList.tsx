@@ -52,7 +52,7 @@ export function RecentActivityList({ activities }: RecentActivityListProps) {
 
   return (
     <div 
-      className="border-[1.24px] border-white/[0.05] hover:border-white/10 rounded-[24.71px] p-[24.71px] transition-all flex flex-col justify-between h-[450px] lg:h-[500px] shadow-lg"
+      className="border-[1.24px] border-white/[0.05] hover:border-white/10 rounded-[24.71px] p-4 sm:p-[24.71px] transition-all flex flex-col justify-between h-[360px] sm:h-[450px] lg:h-[500px] shadow-lg"
       style={{
         background: "rgba(255, 255, 255, 0.04)"
       }}

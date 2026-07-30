@@ -123,13 +123,50 @@ export default function OffersDashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOffer, setSelectedOffer] = useState<OfferItem | null>(null);
 
-  // Filtering offers based on tab and search query
+  // Time & Sort Filter States
+  const [timeFilter, setTimeFilter] = useState<"Today" | "This Week" | "All Time">("All Time");
+  const [sortFilter, setSortFilter] = useState<"Newest" | "Oldest" | "Highest Fee" | "Lowest Fee">("Newest");
+  const [showTimeDropdown, setShowTimeDropdown] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+
+  const handleToggleTime = () => {
+    setShowTimeDropdown(!showTimeDropdown);
+    setShowSortDropdown(false);
+  };
+
+  const handleToggleSort = () => {
+    setShowSortDropdown(!showSortDropdown);
+    setShowTimeDropdown(false);
+  };
+
+  // Close dropdowns on outside clicks
+  React.useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".dropdown-trigger")) {
+        setShowTimeDropdown(false);
+        setShowSortDropdown(false);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, []);
+
+  // Filtering and sorting offers based on tab, time, search and sort
   const filteredOffers = useMemo(() => {
-    return offersList.filter(offer => {
+    let list = offersList.filter(offer => {
       // Tab matching logic
       if (activeTab === "Sent" && offer.flow !== "Sent") return false;
       if (activeTab === "Rejected" && offer.status !== "Rejected") return false;
       if (activeTab === "Shared" && offer.id === "4") return false; // simple filter simulation
+
+      // Time matching logic
+      if (timeFilter === "Today") {
+        return offer.timeAgo.includes("hours");
+      }
+      if (timeFilter === "This Week") {
+        return offer.timeAgo.includes("hours") || offer.timeAgo.includes("day");
+      }
 
       // Search matching logic
       if (searchQuery) {
@@ -143,7 +180,28 @@ export default function OffersDashboardPage() {
       }
       return true;
     });
-  }, [offersList, activeTab, searchQuery]);
+
+    // Sorting logic
+    return [...list].sort((a, b) => {
+      if (sortFilter === "Newest") {
+        return parseInt(b.id) - parseInt(a.id);
+      }
+      if (sortFilter === "Oldest") {
+        return parseInt(a.id) - parseInt(b.id);
+      }
+      if (sortFilter === "Highest Fee") {
+        const feeA = parseFloat(a.fee.replace(/,/g, ""));
+        const feeB = parseFloat(b.fee.replace(/,/g, ""));
+        return feeB - feeA;
+      }
+      if (sortFilter === "Lowest Fee") {
+        const feeA = parseFloat(a.fee.replace(/,/g, ""));
+        const feeB = parseFloat(b.fee.replace(/,/g, ""));
+        return feeA - feeB;
+      }
+      return 0;
+    });
+  }, [offersList, activeTab, timeFilter, sortFilter, searchQuery]);
 
   const handleNotificationsClick = () => {
     window.dispatchEvent(new CustomEvent("open-notifications"));
@@ -182,15 +240,16 @@ export default function OffersDashboardPage() {
             <button
               key={tab.tabKey}
               onClick={() => setActiveTab(tab.tabKey as any)}
-              className={`flex items-center justify-center h-[54px] sm:h-[62px] px-4 sm:px-7 gap-2.5 border-b-[2.5px] font-bold text-sm shrink-0 transition-all cursor-pointer rounded-[10px] ${
+              className={`flex-1 sm:flex-none flex items-center justify-center h-[46px] sm:h-[62px] px-2 sm:px-7 gap-1.5 sm:gap-2.5 border-b-[2.5px] font-bold text-xs sm:text-sm shrink-0 transition-all cursor-pointer rounded-[10px] ${
                 isSelected 
                   ? "border-[#00AEF0] bg-[#00AEF0]/5 text-white" 
                   : "border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.01]"
               }`}
             >
-              <span>{tab.label}</span>
+              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="inline sm:hidden">{tab.tabKey}</span>
               <span 
-                className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold transition-all ${
+                className={`text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 rounded-full font-bold transition-all ${
                   isSelected 
                     ? "bg-[#00AEF0] text-black" 
                     : "bg-zinc-800 text-zinc-500"
@@ -204,25 +263,92 @@ export default function OffersDashboardPage() {
       </div>
 
       {/* Secondary Filter options row */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <button className="h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center gap-2 hover:text-white transition-colors cursor-pointer">
-              Today
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          {/* Time Filter Dropdown */}
+          <div className="relative dropdown-trigger flex-1 sm:flex-initial">
+            <button 
+              onClick={handleToggleTime}
+              className="w-full h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center justify-center gap-2 hover:text-white transition-colors cursor-pointer"
+            >
+              <span>{timeFilter}</span>
               <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />
             </button>
+
+            <AnimatePresence>
+              {showTimeDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="absolute left-0 mt-2 w-40 rounded-xl bg-[#121214] border border-zinc-800 shadow-2xl py-1.5 z-50 overflow-hidden"
+                >
+                  {(["All Time", "Today", "This Week"] as const).map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => {
+                        setTimeFilter(opt);
+                        setShowTimeDropdown(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between transition-colors ${
+                        timeFilter === opt 
+                          ? "text-[#00AEF0] bg-white/[0.02]" 
+                          : "text-zinc-400 hover:text-white hover:bg-white/[0.01]"
+                      }`}
+                    >
+                      <span>{opt}</span>
+                      {timeFilter === opt && <Check className="h-3 w-3 text-[#00AEF0]" />}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <div className="relative">
-            <button className="h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center gap-2 hover:text-white transition-colors cursor-pointer">
-              Newest
+
+          {/* Sort Filter Dropdown */}
+          <div className="relative dropdown-trigger flex-1 sm:flex-initial">
+            <button 
+              onClick={handleToggleSort}
+              className="w-full h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center justify-center gap-2 hover:text-white transition-colors cursor-pointer"
+            >
+              <span>{sortFilter}</span>
               <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />
             </button>
+
+            <AnimatePresence>
+              {showSortDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="absolute right-0 mt-2 w-44 rounded-xl bg-[#121214] border border-zinc-800 shadow-2xl py-1.5 z-50 overflow-hidden"
+                >
+                  {(["Newest", "Oldest", "Highest Fee", "Lowest Fee"] as const).map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => {
+                        setSortFilter(opt);
+                        setShowSortDropdown(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between transition-colors ${
+                        sortFilter === opt 
+                          ? "text-[#00AEF0] bg-white/[0.02]" 
+                          : "text-zinc-400 hover:text-white hover:bg-white/[0.01]"
+                      }`}
+                    >
+                      <span>{opt}</span>
+                      {sortFilter === opt && <Check className="h-3 w-3 text-[#00AEF0]" />}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
         <button 
           onClick={() => toast.success("Exporting offers data as CSV...")}
-          className="h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 hover:text-white flex items-center gap-2 transition-colors cursor-pointer"
+          className="h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 hover:text-white flex items-center justify-center gap-2 transition-colors cursor-pointer w-full sm:w-auto"
         >
           <Download className="h-3.5 w-3.5 text-zinc-500" />
           Export CSV
@@ -244,24 +370,110 @@ export default function OffersDashboardPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 style={{
-                  borderRadius: "19.81px",
                   borderWidth: "1.24px",
                   borderColor: "rgba(255, 255, 255, 0.08)",
-                  backgroundColor: "rgba(255, 255, 255, 0.04)",
-                  paddingTop: "24.76px",
-                  paddingBottom: "24.76px",
-                  paddingLeft: "29.71px",
-                  paddingRight: "29.71px"
+                  backgroundColor: "rgba(255, 255, 255, 0.04)"
                 }}
-                className="hover:border-zinc-700 transition-all"
+                className="hover:border-zinc-700 transition-all rounded-2xl sm:rounded-[20px] p-4 sm:p-5 md:px-8 md:py-6"
               >
+                {/* Mobile & Tablet Card Layout */}
+                <div className="flex flex-col gap-3.5 md:hidden">
+                  {/* Top Row: Artist details and Status Pill */}
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-white text-base shrink-0 bg-[#3f2038] border border-[#522d4a]">
+                        {offer.avatarChar}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-sm text-white block truncate leading-tight">{offer.artistName}</span>
+                        <span className="text-xs text-zinc-500 block mt-1 leading-none">{offer.genre}</span>
+                      </div>
+                    </div>
+
+                    <div className="shrink-0">
+                      {offer.status === "Pending" && (
+                        <span className="px-2.5 py-1 rounded-full text-amber-500 bg-amber-500/10 border border-amber-500/20 text-[10px] font-bold flex items-center gap-1.5 font-sans">
+                          ⏳ Pending
+                        </span>
+                      )}
+                      {offer.status === "Accepted" && (
+                        <span className="px-2.5 py-1 rounded-full text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold flex items-center gap-1 font-sans">
+                          ✓ Accepted
+                        </span>
+                      )}
+                      {offer.status === "Rejected" && (
+                        <span className="px-2.5 py-1 rounded-full text-rose-500 bg-rose-500/10 border border-rose-500/20 text-[10px] font-bold flex items-center gap-1 font-sans">
+                          ✕ Rejected
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-white/5 my-0.5" />
+
+                  {/* Middle Section: 2x2 grid of details */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
+                    {/* Left Col: Event Info */}
+                    <div className="space-y-2.5 border-r border-white/5 pr-2">
+                      <div className="space-y-0.5">
+                        <span className="text-[9px] text-zinc-500 uppercase tracking-wider font-semibold block">Event Date</span>
+                        <span className="font-bold text-zinc-200 block text-xs">{offer.eventDate}</span>
+                        <span className="text-zinc-400 block text-[10px]">{offer.eventTime} &bull; {offer.setLength}</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[9px] text-zinc-500 uppercase tracking-wider font-semibold block">Stage</span>
+                        <span className="text-zinc-300 font-medium block text-xs truncate">{offer.stage}</span>
+                        <span className="text-zinc-500 block text-[10px]">{offer.capacity} capacity</span>
+                      </div>
+                    </div>
+
+                    {/* Right Col: Price/Id */}
+                    <div className="space-y-2.5 pl-2">
+                      <div className="space-y-0.5">
+                        <span className="text-[9px] text-zinc-500 uppercase tracking-wider font-semibold block">Guarantee Fee</span>
+                        <span className="font-bold text-white text-sm block">${parseFloat(offer.fee.replace(/,/g, "")).toLocaleString()}</span>
+                        <span className="text-zinc-500 block text-[10px]">ID: {offer.offerId}</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[9px] text-zinc-500 uppercase tracking-wider font-semibold block">Agency / Origin</span>
+                        <span className="text-zinc-300 font-medium block text-xs truncate">{offer.agency.replace("via ", "")}</span>
+                        <span className="text-zinc-500 block text-[10px]">{offer.flow} &bull; {offer.timeAgo}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-white/5 my-0.5" />
+
+                  {/* Actions buttons */}
+                  <div className="flex items-center gap-2 pt-1 w-full">
+                    <button 
+                      onClick={() => setSelectedOffer(offer)}
+                      className="flex-1 h-9 rounded-lg bg-[#00A5E5] hover:bg-[#009bde] text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors shadow-md"
+                    >
+                      View
+                    </button>
+                    <button 
+                      onClick={() => toast.info(`Opening messages with ${offer.artistName}...`)}
+                      className="flex-1 h-9 rounded-lg bg-[#1a1a1f] border border-zinc-800 hover:bg-zinc-800/40 text-zinc-300 font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      Message
+                    </button>
+                    <button 
+                      onClick={() => toast.info("More actions menu opened.")}
+                      className="h-9 w-9 rounded-lg bg-[#1a1a1f] border border-zinc-800 hover:bg-zinc-800/40 text-zinc-400 hover:text-white font-bold text-xs flex items-center justify-center cursor-pointer transition-colors shrink-0"
+                    >
+                      &middot;&middot;&middot;
+                    </button>
+                  </div>
+                </div>
+
+                {/* Desktop Grid Layout */}
                 <div 
-                  className="grid grid-cols-1 md:grid-cols-12 items-start"
-                  style={{ gap: "19.81px" }}
+                  className="hidden md:grid grid-cols-12 items-start gap-6"
                 >
                   
                   {/* 1. Artist Details */}
-                  <div className="md:col-span-3 flex items-start gap-4 min-w-0">
+                  <div className="md:col-span-3 flex items-start gap-4 min-w-0 w-full">
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-white text-xl shrink-0 bg-[#3f2038] border border-[#522d4a]">
                       {offer.avatarChar}
                     </div>
@@ -273,7 +485,7 @@ export default function OffersDashboardPage() {
                   </div>
 
                   {/* 2. Logistics Details */}
-                  <div className="md:col-span-3 space-y-1">
+                  <div className="md:col-span-3 space-y-1 w-full">
                     <span className="text-[10px] text-zinc-500 font-sans tracking-wide uppercase font-semibold block leading-none">{offer.offerId}</span>
                     <span className="text-base font-bold text-white block leading-tight mt-1.5">{offer.eventDate}</span>
                     <span className="text-xs text-zinc-400 block mt-1.5">{offer.eventTime} - {offer.setLength} set</span>
@@ -285,7 +497,7 @@ export default function OffersDashboardPage() {
                   </div>
 
                   {/* 3. Pricing */}
-                  <div className="md:col-span-2 space-y-1.5">
+                  <div className="md:col-span-2 space-y-1.5 w-full">
                     <div>
                       <span className="text-[10px] text-zinc-500 font-sans tracking-wide uppercase font-semibold block leading-none">Fee</span>
                       <span className="text-lg font-bold text-white block font-sans mt-1.5 leading-tight">${parseFloat(offer.fee.replace(/,/g, "")).toLocaleString()}</span>
@@ -297,7 +509,7 @@ export default function OffersDashboardPage() {
                   </div>
 
                   {/* 4. Status Badge & Timeline */}
-                  <div className="md:col-span-2 space-y-3">
+                  <div className="md:col-span-2 space-y-3 w-full">
                     {offer.status === "Pending" && (
                       <span 
                         style={{

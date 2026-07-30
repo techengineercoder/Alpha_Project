@@ -26,7 +26,7 @@ interface AlsoIncludedProps {
   handleAddTag: () => void;
   noteText: string;
   setNoteText: (val: string) => void;
-  subCardStyle: React.CSSProperties;
+  subCardClassName: string;
 }
 
 export const AlsoIncluded: React.FC<AlsoIncludedProps> = ({
@@ -49,12 +49,12 @@ export const AlsoIncluded: React.FC<AlsoIncludedProps> = ({
   handleAddTag,
   noteText,
   setNoteText,
-  subCardStyle
+  subCardClassName
 }) => {
   return (
     <>
       {/* Additional Notes or Requests section */}
-      <div style={subCardStyle} className="space-y-6">
+      <div className={`${subCardClassName} space-y-6`}>
         <div className="flex items-center justify-between border-b border-zinc-900 pb-3 font-sans">
           <h3 className="text-sm font-bold text-white tracking-wide">
             Additional Notes or Requests
@@ -77,7 +77,7 @@ export const AlsoIncluded: React.FC<AlsoIncludedProps> = ({
       </div>
 
       {/* ALSO INCLUDED checkboxes & custom tags inputs */}
-      <div style={subCardStyle} className="space-y-6">
+      <div className={`${subCardClassName} space-y-6`}>
         <h3 className="text-xs font-bold text-zinc-450 uppercase tracking-widest font-sans">
           Also Included
         </h3>

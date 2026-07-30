@@ -20,7 +20,7 @@ interface ContactInformationProps {
   setProdName: (val: string) => void;
   prodPhone: string;
   setProdPhone: (val: string) => void;
-  subCardStyle: React.CSSProperties;
+  subCardClassName: string;
 }
 
 export const ContactInformation: React.FC<ContactInformationProps> = ({
@@ -40,10 +40,10 @@ export const ContactInformation: React.FC<ContactInformationProps> = ({
   setProdName,
   prodPhone,
   setProdPhone,
-  subCardStyle
+  subCardClassName
 }) => {
   return (
-    <div style={subCardStyle} className="space-y-6">
+    <div className={`${subCardClassName} space-y-6`}>
       <h3 className="text-sm font-bold text-white tracking-wide border-b border-zinc-900 pb-3 font-sans">
         Contact Information
       </h3>

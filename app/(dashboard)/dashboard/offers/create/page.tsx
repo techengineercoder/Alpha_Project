@@ -38,26 +38,9 @@ interface UploadedFile {
   uploadedAt: string;
 }
 
-const subCardStyle = {
-  backgroundColor: "rgba(18, 18, 24, 0.60)",
-  borderWidth: "1px",
-  borderColor: "rgba(255, 255, 255, 0.08)",
-  borderRadius: "16px",
-  paddingTop: "30px",
-  paddingBottom: "30px",
-  paddingLeft: "32px",
-  paddingRight: "32px",
-  boxShadow: "0px 25px 50px 0px rgba(0, 0, 0, 0.25)"
-};
+const subCardClassName = "bg-[#121218]/60 border border-white/5 rounded-2xl px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-8 shadow-2xl shadow-black/25";
 
-const shareTeamContainerStyle = {
-  backgroundColor: "rgba(255, 255, 255, 0.05)",
-  borderWidth: "1.24px",
-  borderColor: "rgba(255, 255, 255, 0.12)",
-  borderRadius: "24.71px",
-  padding: "29.65px",
-  boxShadow: "0px 25px 50px 0px rgba(0, 0, 0, 0.25)"
-};
+const shareTeamContainerClassName = "bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl shadow-black/25";
 
 
 export default function CreateOfferPage() {
@@ -222,7 +205,7 @@ export default function CreateOfferPage() {
       </header>
 
       {/* Back button (Visible on all devices) */}
-      <div className="max-w-5xl mx-auto w-full mb-4">
+      <div className="max-w-5xl mx-auto w-full mt-4 mb-4 px-4 sm:px-6 lg:px-0">
         <button
           type="button"
           onClick={() => router.push("/dashboard/offers")}
@@ -240,25 +223,14 @@ export default function CreateOfferPage() {
           backgroundColor: "#0F0F0F",
           borderWidth: "1.24px",
           borderColor: "rgba(255, 255, 255, 0.12)",
-          borderRadius: "24.71px",
           boxShadow: "0px 39.54px 98.84px 0px rgba(0, 0, 0, 0.85)"
         }}
-        className="max-w-5xl mx-auto p-6 md:p-10 space-y-8"
+        className="max-w-5xl mx-auto p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 rounded-none sm:rounded-[24.71px]"
       >
 
         {/* Firm Offer Warning notice styled matching Figma */}
         <div
-          style={{
-            color: "#CFCFCF",
-            fontFamily: "var(--font-sans)",
-            fontSize: "12.36px",
-            fontWeight: 600,
-            lineHeight: "18.53px",
-            letterSpacing: "1.85px",
-            textTransform: "uppercase",
-            minHeight: "75px"
-          }}
-          className="space-y-4 pt-4"
+          className="text-zinc-300 font-sans text-[10px] sm:text-xs font-semibold tracking-wider uppercase space-y-3 pt-2"
         >
           <p>
             PLEASE TYPE IN THE FOLLOWING FIELDS, PRINT OFFER, SIGN AND RETURN VIA EMAIL TO TROY@SEATTLETALENTBUYING.COM.
@@ -268,7 +240,7 @@ export default function CreateOfferPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
 
           <VenueInformation
             offerName={offerName}
@@ -285,7 +257,7 @@ export default function CreateOfferPage() {
             setCityStateZip={setCityStateZip}
             venuePhone={venuePhone}
             setVenuePhone={setVenuePhone}
-            subCardStyle={subCardStyle}
+            subCardClassName={subCardClassName}
           />
 
           <FinancialRequirements
@@ -301,7 +273,7 @@ export default function CreateOfferPage() {
             setCatering={setCatering}
             productionSoundLights={productionSoundLights}
             setProductionSoundLights={setProductionSoundLights}
-            subCardStyle={subCardStyle}
+            subCardClassName={subCardClassName}
           />
 
           <PerformanceInformation
@@ -317,7 +289,7 @@ export default function CreateOfferPage() {
             setEventFor={setEventFor}
             otherArtists={otherArtists}
             setOtherArtists={setOtherArtists}
-            subCardStyle={subCardStyle}
+            subCardClassName={subCardClassName}
           />
 
           <ContactInformation
@@ -337,7 +309,7 @@ export default function CreateOfferPage() {
             setProdName={setProdName}
             prodPhone={prodPhone}
             setProdPhone={setProdPhone}
-            subCardStyle={subCardStyle}
+            subCardClassName={subCardClassName}
           />
 
           <AlsoIncluded
@@ -360,7 +332,7 @@ export default function CreateOfferPage() {
             handleAddTag={handleAddTag}
             noteText={noteText}
             setNoteText={setNoteText}
-            subCardStyle={subCardStyle}
+            subCardClassName={subCardClassName}
           />
 
           <ShareWithTeam
@@ -368,7 +340,7 @@ export default function CreateOfferPage() {
             handleRemoveTeam={handleRemoveTeam}
             teamSearch={teamSearch}
             setTeamSearch={setTeamSearch}
-            shareTeamContainerStyle={shareTeamContainerStyle}
+            shareTeamContainerClassName={shareTeamContainerClassName}
           />
 
           <DocumentsSection
@@ -376,7 +348,7 @@ export default function CreateOfferPage() {
             handleRemoveDocument={handleRemoveDocument}
             handleFileUpload={handleFileUpload}
             documentInputRef={documentInputRef}
-            shareTeamContainerStyle={shareTeamContainerStyle}
+            shareTeamContainerClassName={shareTeamContainerClassName}
           />
 
           <LegalNotice
@@ -395,7 +367,7 @@ export default function CreateOfferPage() {
           />
 
           {/* Bottom Cancel & Preview buttons row */}
-          <div className="flex flex-row items-center justify-between gap-4 border-t border-zinc-900 pt-8 font-sans w-full">
+          <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 sm:gap-4 border-t border-zinc-900 pt-8 font-sans w-full">
             <button
               type="button"
               onClick={() => router.push("/dashboard/offers")}
@@ -404,11 +376,10 @@ export default function CreateOfferPage() {
                 backgroundColor: "transparent",
                 borderRadius: "12.36px",
                 height: "52px",
-                fontSize: "16.06px",
-                lineHeight: "24.09px",
+                fontSize: "15px",
                 fontWeight: 600
               }}
-              className="flex-1 px-4 hover:bg-zinc-900 text-zinc-350 cursor-pointer transition-all text-center flex items-center justify-center"
+              className="w-full sm:flex-1 px-4 hover:bg-zinc-900 text-zinc-300 cursor-pointer transition-all text-center flex items-center justify-center"
             >
               Cancel
             </button>
@@ -418,11 +389,10 @@ export default function CreateOfferPage() {
                 background: "linear-gradient(90deg, #00A5E5 0%, #0077A8 100%)",
                 borderRadius: "12.36px",
                 height: "52px",
-                fontSize: "16.06px",
-                lineHeight: "24.09px",
+                fontSize: "15px",
                 fontWeight: 600
               }}
-              className="flex-1 hover:brightness-110 text-white flex items-center justify-center gap-[7.41px] cursor-pointer transition-all shadow-lg shadow-cyan-500/10"
+              className="w-full sm:flex-1 hover:brightness-110 text-white flex items-center justify-center gap-2 cursor-pointer transition-all shadow-lg shadow-cyan-500/10"
             >
               <FileText className="h-4.5 w-4.5" />
               Preview Offer

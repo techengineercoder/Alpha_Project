@@ -19,6 +19,16 @@ export function Banner() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [genre, setGenre] = useState('');
   const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsMobile(window.innerWidth < 640);
+      const handleResize = () => setIsMobile(window.innerWidth < 640);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
 
   const { data: genresData, isLoading: isLoadingGenres } = useGetGenresQuery(undefined);
   const genres = genresData?.results || [];
@@ -57,7 +67,7 @@ export function Banner() {
 
   return (
     <section
-      className="relative w-full min-h-[1013px] flex flex-col items-center justify-center px-4 md:px-8 py-20 bg-cover bg-center bg-no-repeat overflow-hidden"
+      className="relative w-full min-h-[75vh] sm:min-h-[1013px] flex flex-col items-center justify-center px-4 md:px-8 py-16 sm:py-20 bg-cover bg-center bg-no-repeat overflow-hidden"
       style={{ backgroundImage: "url('/image/hero.jpg')" }}
     >
       {/* Overlays */}
@@ -69,14 +79,14 @@ export function Banner() {
         }}
       ></div>
 
-      <div className="relative z-10 flex flex-col items-center w-full max-w-5xl mx-auto mt-[-100px]">
+      <div className="relative z-10 flex flex-col items-center w-full max-w-5xl mx-auto mt-[-30px] sm:mt-[-100px]">
 
         {/* Top Pill Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6 sm:mb-8"
         >
           <span className="w-2 h-2 rounded-full bg-[#00A5E5]"></span>
           <span className="text-sm font-medium text-white/90">Countless verified artists available</span>
@@ -87,7 +97,7 @@ export function Banner() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl md:text-7xl lg:text-[80px] font-bold text-center leading-tight tracking-tight mb-4"
+          className="text-3xl sm:text-5xl md:text-7xl lg:text-[80px] font-bold text-center leading-tight tracking-tight mb-4"
         >
           <span className="text-white block mb-2">Book world-class artists</span>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7C5CFF] to-[#00E5FF] block pb-2">
@@ -100,7 +110,7 @@ export function Banner() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-lg md:text-xl text-white/80 text-center max-w-2xl mb-12 font-light"
+          className="text-sm sm:text-lg md:text-xl text-white/80 text-center max-w-2xl mb-8 sm:mb-12 font-light px-2"
         >
           Connect with top performers and make your event unforgettable
         </motion.p>
@@ -110,7 +120,7 @@ export function Banner() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className="w-full max-w-6xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-2 md:p-3 shadow-2xl"
+          className="w-full max-w-6xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-3.5 sm:p-3 shadow-2xl"
         >
           <div className="flex flex-col md:flex-row items-stretch gap-2 md:gap-2">
 
@@ -156,7 +166,7 @@ export function Banner() {
                     }}
                   >
                     <CalendarIcon className="w-5 h-5 text-white/50 group-hover:text-[#7C5CFF] transition-colors flex-shrink-0" />
-                    <span className={`text-left w-full truncate ${dateRange?.from ? 'text-white' : 'text-white/60'}`}>
+                    <span className={`text-left w-full truncate text-sm ${dateRange?.from ? 'text-white' : 'text-white/60'}`}>
                       {dateRange?.from ? (
                         dateRange.to ? (
                           <>{format(dateRange.from, "MMM dd")} - {format(dateRange.to, "MMM dd")}</>
@@ -176,7 +186,7 @@ export function Banner() {
                     defaultMonth={dateRange?.from}
                     selected={dateRange}
                     onSelect={setDateRange}
-                    numberOfMonths={2}
+                    numberOfMonths={isMobile ? 1 : 2}
                     disabled={(date) => date < new Date("1900-01-01")}
                     className="bg-[#121218] text-[#A1A1AA]"
                     classNames={{

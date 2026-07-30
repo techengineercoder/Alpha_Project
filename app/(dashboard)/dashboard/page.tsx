@@ -32,12 +32,12 @@ export default function CentralDashboard() {
   const pipelineCounts = dashboardData.pipelineCounts as Record<string, number>;
 
   return (
-    <div className="min-h-screen  p-4 md:p-8 lg:p-10 w-full space-y-8 pb-20 font-sans">
+    <div className="min-h-screen p-4 sm:p-6 md:p-8 lg:p-10 w-full space-y-6 sm:space-y-8 pb-20 font-sans">
       {/* 1. Header */}
       <DashboardHeader />
 
       {/* 2. Stats Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat) => (
           <StatCard
             key={stat.label}
@@ -53,7 +53,7 @@ export default function CentralDashboard() {
       </section>
 
       {/* 3. Middle Section: Booking Spend & Upcoming Events */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         <div className="lg:col-span-2">
           <BookingSpendChart />
         </div>
@@ -63,7 +63,7 @@ export default function CentralDashboard() {
       </section>
 
       {/* 4. Third Section: Recent Activity & Recommended Artists */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         <div className="lg:col-span-1">
           <RecentActivityList activities={recentActivities} />
         </div>

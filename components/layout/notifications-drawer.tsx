@@ -264,7 +264,7 @@ export function NotificationsDrawer({
             <div className="h-px bg-white/5 shrink-0" />
 
             {/* Scroll list */}
-            <div 
+            <div
               className="flex-1 overflow-y-auto no-scrollbar"
               onScroll={handleScroll}
             >

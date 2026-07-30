@@ -70,7 +70,7 @@ export function OfferPipeline({ offers, counts }: OfferPipelineProps) {
 
   return (
     <div
-      className="border-[1.24px] border-white/[0.05] hover:border-white/10 rounded-[24.71px] p-[24.71px] transition-all flex flex-col justify-between shadow-lg space-y-6"
+      className="border-[1.24px] border-white/[0.05] hover:border-white/10 rounded-[24.71px] p-4 sm:p-[24.71px] transition-all flex flex-col justify-between shadow-lg space-y-6"
       style={{
         background: "rgba(255, 255, 255, 0.04)"
       }}
@@ -98,7 +98,7 @@ export function OfferPipeline({ offers, counts }: OfferPipelineProps) {
             <button
               key={stage}
               onClick={() => setActiveStage(isSelected ? "All" : stage)}
-              className={`flex flex-col items-center justify-center p-3.5 rounded-[16px] border transition-all cursor-pointer bg-white/[0.02]
+              className={`flex flex-col items-center justify-center p-2 sm:p-3.5 rounded-[16px] border transition-all cursor-pointer bg-white/[0.02]
                 ${isSelected
                   ? "bg-[#00A5E5]/10 border-[#00A5E5] text-white shadow-[0_4px_16px_rgba(0,165,229,0.15)]"
                   : `${theme.border} text-zinc-500 hover:border-white/10 hover:text-zinc-300`
@@ -125,57 +125,96 @@ export function OfferPipeline({ offers, counts }: OfferPipelineProps) {
             return (
               <div
                 key={offer.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between p-4.5 rounded-[16px]  border border-white/[0.04] hover:border-white/10 hover:bg-black/35 transition-all group gap-4 cursor-pointer"
+                className="p-4 sm:p-4.5 rounded-[16px] border border-white/[0.04] hover:border-white/10 hover:bg-black/35 transition-all group flex cursor-pointer"
               >
-                {/* Left Side: Avatar Initials & Artist Info */}
-                <div className="flex items-center gap-4 w-full sm:w-[280px] shrink-0">
-                  <div className={`w-11 h-11 rounded-full border flex items-center justify-center font-bold text-sm shrink-0 ${offer.initialsBg}`}>
-                    {offer.initials}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[15px] font-bold text-white group-hover:text-[#00A5E5] transition-colors">
-                      {offer.artist}
+                {/* Mobile Specific Layout */}
+                <div className="flex sm:hidden flex-col gap-3.5 w-full">
+                  <div className="flex items-center justify-between gap-3 w-full">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-10 h-10 rounded-full border flex items-center justify-center font-bold text-xs shrink-0 ${offer.initialsBg}`}>
+                        {offer.initials}
+                      </div>
+                      <div className="flex flex-col min-w-0 text-left">
+                        <span className="text-sm font-bold text-white group-hover:text-[#00A5E5] transition-colors truncate">
+                          {offer.artist}
+                        </span>
+                        <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold mt-1 font-sans truncate">
+                          <MapPin className="w-3 h-3 opacity-60 shrink-0" />
+                          <span className="truncate">{offer.venue}, {offer.city}</span>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Price on right */}
+                    <span className="text-sm font-extrabold text-white shrink-0">
+                      {offer.amount}
                     </span>
-                    <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold mt-1 font-sans">
-                      <MapPin className="w-3.5 h-3.5 opacity-60" />
-                      <span>{offer.venue}, {offer.city}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 pt-0.5">
+                    {/* Status Badge */}
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border flex items-center gap-1.5 ${theme.badge}`}>
+                      <span className={`w-1 h-1 rounded-full ${theme.dot}`} />
+                      {offer.stage}
+                    </span>
+                    {/* Date & Time */}
+                    <div className="flex items-center gap-2 text-[11px] text-zinc-500 font-medium">
+                      <span>{offer.date.split(",")[0]}</span>
+                      <span>•</span>
+                      <span>{offer.time}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Side: Date, Amount, Badge, Relative Time, Chevron */}
-                <div className="flex-1 grid grid-cols-2 sm:grid-cols-5 gap-4 items-center justify-items-start sm:justify-items-end text-left sm:text-right w-full">
-
-                  {/* Column 1: Date */}
-                  <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold font-sans sm:justify-self-end">
-                    <Calendar className="w-3.5 h-3.5 opacity-60" />
-                    <span>{offer.date}</span>
+                {/* Desktop Specific Layout */}
+                <div className="hidden sm:flex flex-row items-center justify-between w-full gap-4">
+                  {/* Left Side: Avatar Initials & Artist Info */}
+                  <div className="flex items-center gap-4 w-[280px] shrink-0">
+                    <div className={`w-11 h-11 rounded-full border flex items-center justify-center font-bold text-sm shrink-0 ${offer.initialsBg}`}>
+                      {offer.initials}
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <span className="text-[15px] font-bold text-white group-hover:text-[#00A5E5] transition-colors">
+                        {offer.artist}
+                      </span>
+                      <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold mt-1 font-sans">
+                        <MapPin className="w-3.5 h-3.5 opacity-60" />
+                        <span>{offer.venue}, {offer.city}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Column 2: Value */}
-                  <span className="text-sm font-extrabold text-white font-sans sm:justify-self-end">
-                    {offer.amount}
-                  </span>
+                  {/* Right Side: Date, Amount, Badge, Relative Time, Chevron */}
+                  <div className="flex-1 grid grid-cols-5 gap-4 items-center justify-items-end text-right w-full">
+                    {/* Column 1: Date */}
+                    <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold font-sans">
+                      <Calendar className="w-3.5 h-3.5 opacity-60" />
+                      <span>{offer.date}</span>
+                    </div>
 
-                  {/* Column 3: Badge */}
-                  <div className="sm:justify-self-end">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border flex items-center gap-1.5 ${theme.badge}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${theme.dot}`} />
-                      {offer.stage}
+                    {/* Column 2: Value */}
+                    <span className="text-sm font-extrabold text-white font-sans">
+                      {offer.amount}
                     </span>
-                  </div>
 
-                  {/* Column 4: Time */}
-                  <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold font-sans sm:justify-self-end">
-                    <Clock className="w-3.5 h-3.5 opacity-60" />
-                    <span>{offer.time}</span>
-                  </div>
+                    {/* Column 3: Badge */}
+                    <div>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border flex items-center gap-1.5 ${theme.badge}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${theme.dot}`} />
+                        {offer.stage}
+                      </span>
+                    </div>
 
-                  {/* Column 5: Arrow */}
-                  <div className="hidden sm:block sm:justify-self-end">
-                    <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-white transition-colors" />
-                  </div>
+                    {/* Column 4: Time */}
+                    <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold font-sans">
+                      <Clock className="w-3.5 h-3.5 opacity-60" />
+                      <span>{offer.time}</span>
+                    </div>
 
+                    {/* Column 5: Arrow */}
+                    <div>
+                      <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-white transition-colors" />
+                    </div>
+                  </div>
                 </div>
               </div>
             );

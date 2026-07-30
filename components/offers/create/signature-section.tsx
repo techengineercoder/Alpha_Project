@@ -30,14 +30,9 @@ export const SignatureSection: React.FC<SignatureSectionProps> = ({
         {/* Draw Signature Card */}
         <div 
           onClick={() => setSignatureTab("draw")}
-          style={{
-            backgroundColor: "#0C0C0E",
-            borderWidth: "1.24px",
-            borderColor: signatureTab === "draw" ? "#00A5E5" : "rgba(255, 255, 255, 0.08)",
-            borderRadius: "20px",
-            padding: "20px"
-          }}
-          className="cursor-pointer transition-all flex flex-col space-y-4"
+          className={`cursor-pointer transition-all flex flex-col space-y-4 rounded-2xl p-4 sm:p-5 bg-[#0C0C0E] border-2 ${
+            signatureTab === "draw" ? "border-[#00A5E5]" : "border-white/5"
+          }`}
         >
           <div className="flex items-center gap-2">
             <Pencil className="h-4.5 w-4.5 text-[#00A5E5]" />
@@ -48,13 +43,7 @@ export const SignatureSection: React.FC<SignatureSectionProps> = ({
           
           {/* Inner signature draw pad placeholder */}
           <div 
-            style={{
-              border: "1px dashed rgba(255, 255, 255, 0.12)",
-              borderRadius: "12px",
-              backgroundColor: "rgba(255, 255, 255, 0.01)",
-              position: "relative"
-            }}
-            className="flex flex-col items-center justify-center flex-1 min-h-[140px] overflow-hidden"
+            className="flex flex-col items-center justify-center flex-1 min-h-[140px] overflow-hidden border border-dashed border-white/10 bg-white/[0.01] rounded-xl relative"
           >
             <SignatureCanvas
               ref={sigCanvasRef}
@@ -83,14 +72,9 @@ export const SignatureSection: React.FC<SignatureSectionProps> = ({
             setSignatureTab("upload");
             fileInputRef.current?.click();
           }}
-          style={{
-            backgroundColor: "#0C0C0E",
-            borderWidth: "1.24px",
-            borderColor: signatureTab === "upload" ? "#00A5E5" : "rgba(255, 255, 255, 0.08)",
-            borderRadius: "20px",
-            padding: "20px"
-          }}
-          className="cursor-pointer transition-all flex flex-col space-y-4"
+          className={`cursor-pointer transition-all flex flex-col space-y-4 rounded-2xl p-4 sm:p-5 bg-[#0C0C0E] border-2 ${
+            signatureTab === "upload" ? "border-[#00A5E5]" : "border-white/5"
+          }`}
         >
           <div className="flex items-center gap-2">
             <Upload className="h-4.5 w-4.5 text-[#00A5E5]" />
@@ -101,12 +85,7 @@ export const SignatureSection: React.FC<SignatureSectionProps> = ({
           
           {/* Inner upload zone placeholder */}
           <div 
-            style={{
-              border: "1px dashed rgba(255, 255, 255, 0.12)",
-              borderRadius: "12px",
-              backgroundColor: "rgba(255, 255, 255, 0.01)"
-            }}
-            className="flex flex-col items-center justify-center py-6 space-y-1.5 flex-1 min-h-[120px]"
+            className="flex flex-col items-center justify-center py-6 space-y-1.5 flex-1 min-h-[120px] border border-dashed border-white/10 bg-white/[0.01] rounded-xl"
           >
             <Upload className="h-5 w-5 text-zinc-550" />
             <span className="text-xs text-zinc-450 font-semibold text-center">

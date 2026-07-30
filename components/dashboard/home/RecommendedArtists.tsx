@@ -27,7 +27,7 @@ const PRICE_COLOR_MAP: Record<number, string> = {
 export function RecommendedArtists({ artists }: RecommendedArtistsProps) {
   return (
     <div 
-      className="border-[1.24px] border-white/[0.05] hover:border-white/10 rounded-[24.71px] p-[24.71px] transition-all flex flex-col justify-between h-auto lg:h-[500px] shadow-lg"
+      className="border-[1.24px] border-white/[0.05] hover:border-white/10 rounded-[24.71px] p-4 sm:p-[24.71px] transition-all flex flex-col justify-between h-auto lg:h-[500px] shadow-lg"
       style={{
         background: "rgba(255, 255, 255, 0.04)"
       }}
@@ -46,13 +46,13 @@ export function RecommendedArtists({ artists }: RecommendedArtistsProps) {
         {artists.slice(0, 4).map((artist, idx) => (
           <div
             key={artist.id}
-            className="group rounded-[19.77px] border-[1.24px] border-white/[0.04] hover:border-white/10 hover:scale-[1.02] p-[14.83px] transition-all flex flex-col justify-between h-[337.92px] shadow-inner"
+            className="group rounded-[19.77px] border-[1.24px] border-white/[0.04] hover:border-white/10 hover:scale-[1.02] p-3 sm:p-[14.83px] transition-all flex flex-col justify-between h-[240px] sm:h-[337.92px] shadow-inner"
             style={{
               background: "rgba(255, 255, 255, 0.03)"
             }}
           >
             {/* Rounded Cover Image */}
-            <div className="relative w-full h-[150px] shrink-0 bg-zinc-900 rounded-[12px] overflow-hidden">
+            <div className="relative w-full h-[100px] sm:h-[150px] shrink-0 bg-zinc-900 rounded-[12px] overflow-hidden">
               <img
                 src={artist.image}
                 alt={artist.name}
