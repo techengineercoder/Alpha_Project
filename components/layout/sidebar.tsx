@@ -33,7 +33,7 @@ interface MenuItem {
 
 // Sidebar Menu Array
 const menuItems: MenuItem[] = [
-  { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+  // { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
   // { name: "Profile", icon: User, href: "/artist/profile" },
   // { name: "Inquiries", icon: FileText, href: "/artist/inquiries" },
   // { name: "Offers", icon: Tag, href: "/artist/offers", badge: 5 },
