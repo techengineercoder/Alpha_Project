@@ -229,7 +229,7 @@ export default function CreateOfferPage() {
       >
 
         {/* Firm Offer Warning notice styled matching Figma */}
-        <div
+        {/* <div
           className="text-zinc-300 font-sans text-[10px] sm:text-xs font-semibold tracking-wider uppercase space-y-3 pt-2"
         >
           <p>
@@ -238,7 +238,7 @@ export default function CreateOfferPage() {
           <p>
             PLEASE REVIEW YOUR OFFER CAREFULLY BEFORE SENDING BACK. THIS IS A FIRM OFFER THAT IS BINDING IF THE ARTISTS ACCEPTS IT.
           </p>
-        </div>
+        </div> */}
 
         <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
 
