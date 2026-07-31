@@ -71,9 +71,9 @@ export function CreateTeamModal({
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-bold text-xl text-white leading-tight">New Team</h3>
+                <h3 className="font-bold text-xl text-white leading-tight">New Organization</h3>
                 <p className="text-sm text-gray-500 font-normal mt-1">
-                  Teams have their own members, roles, and permissions.
+                  Organizations have their own members, roles, and permissions.
                 </p>
               </div>
               <button
@@ -89,7 +89,7 @@ export function CreateTeamModal({
               {/* Team Name */}
               <div className="space-y-2">
                 <label className="text-[16.06px] leading-[24.09px] font-semibold text-white tracking-[0px] mb-2.5 block select-none">
-                  Team Name
+                  Organization Name
                 </label>
                 <input
                   type="text"
@@ -104,7 +104,7 @@ export function CreateTeamModal({
               {/* Team Domain Switcher Tab */}
               <div className="space-y-2">
                 <label className="text-[16.06px] leading-[24.09px] font-semibold text-white tracking-[0px] mb-2.5 block select-none">
-                  Select Team Domain
+                  Select Organization Domain
                 </label>
                 <div className="flex gap-2 p-1 bg-[#131316] border border-white/10 rounded-2xl">
                   <button
@@ -113,11 +113,10 @@ export function CreateTeamModal({
                       setDomain("artist");
                       setSelectedRole("");
                     }}
-                    className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer select-none ${
-                      domain === "artist"
-                        ? "bg-[#00A5E5] text-white shadow-lg"
-                        : "text-gray-400 hover:text-white"
-                    }`}
+                    className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer select-none ${domain === "artist"
+                      ? "bg-[#00A5E5] text-white shadow-lg"
+                      : "text-gray-400 hover:text-white"
+                      }`}
                   >
                     Artist Side
                   </button>
@@ -127,11 +126,10 @@ export function CreateTeamModal({
                       setDomain("venue");
                       setSelectedRole("");
                     }}
-                    className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer select-none ${
-                      domain === "venue"
-                        ? "bg-[#00A5E5] text-white shadow-lg"
-                        : "text-gray-400 hover:text-white"
-                    }`}
+                    className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer select-none ${domain === "venue"
+                      ? "bg-[#00A5E5] text-white shadow-lg"
+                      : "text-gray-400 hover:text-white"
+                      }`}
                   >
                     Venue Side
                   </button>

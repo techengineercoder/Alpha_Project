@@ -359,7 +359,7 @@ export default function TeamManagementPage() {
     <div className="p-4 md:p-8 lg:p-10 w-full space-y-8 pb-16 relative">
       {/* Common Page Header */}
       <CommonHeader
-        title="Organization Management"
+        title="Organization "
         subtitle={
           <>
             Manage members, roles, and permissions for{" "}

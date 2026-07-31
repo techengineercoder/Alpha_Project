@@ -341,14 +341,6 @@ export default function OffersDashboardPage() {
             </AnimatePresence>
           </div>
         </div>
-
-        <button
-          onClick={() => toast.success("Exporting offers data as CSV...")}
-          className="h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 hover:text-white flex items-center justify-center gap-2 transition-colors cursor-pointer w-full sm:w-auto"
-        >
-          <Download className="h-3.5 w-3.5 text-zinc-500" />
-          Export CSV
-        </button>
       </div>
 
       {/* Offers list stack */}
