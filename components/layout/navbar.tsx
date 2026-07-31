@@ -257,7 +257,7 @@ function MarketingNavbarContent() {
                           Favorites
                         </Link>
                         <Link
-                          href="/dashboard"
+                          href="/dashboard/team-management"
                           onClick={() => setIsProfileOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 rounded-[14px]
                                    text-[13px] text-white/60 hover:text-white hover:bg-white/[0.05]
@@ -411,7 +411,7 @@ function MarketingNavbarContent() {
                     </Link>
 
                     <Link
-                      href="/dashboard"
+                      href="/dashboard/team-management"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center gap-3 px-4 py-3 rounded-[12px] text-[13px] text-zinc-400 hover:text-white hover:bg-white/[0.03] transition-all duration-150"
                     >

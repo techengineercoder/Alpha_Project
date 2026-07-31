@@ -9,11 +9,10 @@ import { InviteSuccessModal } from "@/components/dashboard/team/invite-success-m
 import { MemberDetailsDrawer } from "@/components/dashboard/team/member-details-drawer";
 import { StatsCards } from "@/components/dashboard/team/stats-cards";
 import { MembersTable } from "@/components/dashboard/team/members-table";
-import { DeleteTeamModal } from "@/components/dashboard/team/delete-team-modal";
 
 import mockData from "@/data/mock-data.json";
 import { CommonHeader } from "@/components/dashboard/page-header";
-import { useMyTeamQuery, useCreateTeamMutation, useGetTeamRolesQuery, useTeamMembersQuery, useDeleteTeamMutation } from "@/redux/feature/team-managementSlice";
+import { useMyTeamQuery, useCreateTeamMutation, useGetTeamRolesQuery, useTeamMembersQuery } from "@/redux/feature/team-managementSlice";
 import { toast } from "sonner";
 
 // Types
@@ -112,14 +111,12 @@ export default function TeamManagementPage() {
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
   const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const [isDeleteTeamOpen, setIsDeleteTeamOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   // Queries & Mutations
   const { data, isFetching } = useMyTeamQuery(undefined);
   const [createTeam] = useCreateTeamMutation();
-  const [deleteTeam, { isLoading: isDeletingTeam }] = useDeleteTeamMutation();
   const { data: rolesData } = useGetTeamRolesQuery(undefined);
   const { data: teamMembersApiData } = useTeamMembersQuery(
     { id: selectedTeamId, search: searchQuery },
@@ -160,12 +157,12 @@ export default function TeamManagementPage() {
       }
 
       // Break infinite loop by comparing content before setting state
-      const hasChanged = teams.length !== apiTeams.length || 
-                         apiTeams.some((at, idx) => teams[idx]?.id !== at.id || teams[idx]?.name !== at.name);
+      const hasChanged = teams.length !== apiTeams.length ||
+        apiTeams.some((at, idx) => teams[idx]?.id !== at.id || teams[idx]?.name !== at.name);
       if (hasChanged) {
         setTeams(apiTeams);
       }
-      
+
       // Auto-select first team if current selection is invalid
       if (apiTeams.length > 0 && !isFetching) {
         const selectionExists = apiTeams.some(t => t.id === selectedTeamId);
@@ -295,30 +292,6 @@ export default function TeamManagementPage() {
       toast.error(msg);
     }
   };
-
-  // Delete Team Action
-  const handleDeleteTeamConfirm = async () => {
-    try {
-      await deleteTeam({ id: selectedTeamId }).unwrap();
-      toast.success("Team deleted successfully!");
-      setIsDeleteTeamOpen(false);
-      
-      // Select another team if the currently active one was deleted
-      const remainingTeams = teams.filter((t) => t.id !== selectedTeamId);
-      if (remainingTeams.length > 0) {
-        setSelectedTeamId(remainingTeams[0].id);
-        localStorage.setItem("active_team_id", remainingTeams[0].id);
-      } else {
-        setSelectedTeamId("");
-        localStorage.removeItem("active_team_id");
-      }
-    } catch (err: any) {
-      console.error("Error deleting team:", err);
-      const msg = err?.data?.error?.message || err?.data?.message || err?.message || "Failed to delete team. Please try again.";
-      toast.error(msg);
-    }
-  };
-
   // Remove Member
   const handleDeleteMember = (id: string) => {
     setTeamMembers((prev) => ({
@@ -386,7 +359,7 @@ export default function TeamManagementPage() {
     <div className="p-4 md:p-8 lg:p-10 w-full space-y-8 pb-16 relative">
       {/* Common Page Header */}
       <CommonHeader
-        title="Team Management"
+        title="Organization Management"
         subtitle={
           <>
             Manage members, roles, and permissions for{" "}
@@ -398,34 +371,17 @@ export default function TeamManagementPage() {
         showSearch={false}
         actionButton={
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto z-20">
-            {/* Group Switcher and Delete together on mobile */}
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <div className="flex-1 sm:flex-initial">
-                <TeamSwitcher
-                  activeTeam={activeTeam}
-                  teams={teams}
-                  isTeamDropdownOpen={isTeamDropdownOpen}
-                  setIsTeamDropdownOpen={setIsTeamDropdownOpen}
-                  teamSearchQuery={teamSearchQuery}
-                  setTeamSearchQuery={setTeamSearchQuery}
-                  selectedTeamId={selectedTeamId}
-                  setSelectedTeamId={setSelectedTeamId}
-                  onCreateTeamClick={() => setIsCreateTeamOpen(true)}
-                />
-              </div>
-
-              {/* Delete Team Button */}
-              {activeTeam && activeTeam.id && (
-                <button
-                  onClick={() => setIsDeleteTeamOpen(true)}
-                  disabled={isDeletingTeam}
-                  title="Delete Active Team"
-                  className="w-11 h-11 rounded-[12px] flex items-center justify-center bg-[#121214] border border-zinc-800 text-red-500 hover:text-red-400 hover:border-red-500/20 transition-all cursor-pointer shrink-0 disabled:opacity-50"
-                >
-                  {isDeletingTeam ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
-                </button>
-              )}
-            </div>
+            <TeamSwitcher
+              activeTeam={activeTeam}
+              teams={teams}
+              isTeamDropdownOpen={isTeamDropdownOpen}
+              setIsTeamDropdownOpen={setIsTeamDropdownOpen}
+              teamSearchQuery={teamSearchQuery}
+              setTeamSearchQuery={setTeamSearchQuery}
+              selectedTeamId={selectedTeamId}
+              setSelectedTeamId={setSelectedTeamId}
+              onCreateTeamClick={() => setIsCreateTeamOpen(true)}
+            />
 
             {/* Invite Button */}
             <button
@@ -499,15 +455,6 @@ export default function TeamManagementPage() {
         email={successInviteEmail}
         role={successInviteRole}
         inviteLink={successInviteLink}
-      />
-
-      {/* ─── DELETE TEAM MODAL ─── */}
-      <DeleteTeamModal
-        isOpen={isDeleteTeamOpen}
-        onClose={() => setIsDeleteTeamOpen(false)}
-        onConfirm={handleDeleteTeamConfirm}
-        teamName={activeTeam.name}
-        isLoading={isDeletingTeam}
       />
     </div>
   );

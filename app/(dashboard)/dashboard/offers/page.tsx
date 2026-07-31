@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { 
+import {
   Bell,
   Check,
   ChevronDown,
@@ -116,7 +116,7 @@ const INITIAL_OFFERS: OfferItem[] = [
 
 export default function OffersDashboardPage() {
   const router = useRouter();
-  
+
   // Offers List State
   const [offersList] = useState<OfferItem[]>(INITIAL_OFFERS);
   const [activeTab, setActiveTab] = useState<"Recent" | "Sent" | "Rejected" | "Shared">("Recent");
@@ -209,7 +209,7 @@ export default function OffersDashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-10 w-full space-y-8 pb-32 font-sans relative">
-      
+
       {/* Common Page Header */}
       <CommonHeader
         title="Offers"
@@ -217,7 +217,7 @@ export default function OffersDashboardPage() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         actionButton={
-          <button 
+          <button
             onClick={() => router.push("/dashboard/offers/create")}
             className="h-11 px-5 rounded-[12px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99] shrink-0 w-full sm:w-auto"
           >
@@ -240,20 +240,18 @@ export default function OffersDashboardPage() {
             <button
               key={tab.tabKey}
               onClick={() => setActiveTab(tab.tabKey as any)}
-              className={`flex-1 sm:flex-none flex items-center justify-center h-[46px] sm:h-[62px] px-2 sm:px-7 gap-1.5 sm:gap-2.5 border-b-[2.5px] font-bold text-xs sm:text-sm shrink-0 transition-all cursor-pointer rounded-[10px] ${
-                isSelected 
-                  ? "border-[#00AEF0] bg-[#00AEF0]/5 text-white" 
-                  : "border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.01]"
-              }`}
+              className={`flex-1 sm:flex-none flex items-center justify-center h-[46px] sm:h-[62px] px-2 sm:px-7 gap-1.5 sm:gap-2.5 border-b-[2.5px] font-bold text-xs sm:text-sm shrink-0 transition-all cursor-pointer rounded-[10px] ${isSelected
+                ? "border-[#00AEF0] bg-[#00AEF0]/5 text-white"
+                : "border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.01]"
+                }`}
             >
               <span className="hidden sm:inline">{tab.label}</span>
               <span className="inline sm:hidden">{tab.tabKey}</span>
-              <span 
-                className={`text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 rounded-full font-bold transition-all ${
-                  isSelected 
-                    ? "bg-[#00AEF0] text-black" 
-                    : "bg-zinc-800 text-zinc-500"
-                }`}
+              <span
+                className={`text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 rounded-full font-bold transition-all ${isSelected
+                  ? "bg-[#00AEF0] text-black"
+                  : "bg-zinc-800 text-zinc-500"
+                  }`}
               >
                 {tab.count}
               </span>
@@ -267,7 +265,7 @@ export default function OffersDashboardPage() {
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {/* Time Filter Dropdown */}
           <div className="relative dropdown-trigger flex-1 sm:flex-initial">
-            <button 
+            <button
               onClick={handleToggleTime}
               className="w-full h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center justify-center gap-2 hover:text-white transition-colors cursor-pointer"
             >
@@ -290,11 +288,10 @@ export default function OffersDashboardPage() {
                         setTimeFilter(opt);
                         setShowTimeDropdown(false);
                       }}
-                      className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between transition-colors ${
-                        timeFilter === opt 
-                          ? "text-[#00AEF0] bg-white/[0.02]" 
-                          : "text-zinc-400 hover:text-white hover:bg-white/[0.01]"
-                      }`}
+                      className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between transition-colors ${timeFilter === opt
+                        ? "text-[#00AEF0] bg-white/[0.02]"
+                        : "text-zinc-400 hover:text-white hover:bg-white/[0.01]"
+                        }`}
                     >
                       <span>{opt}</span>
                       {timeFilter === opt && <Check className="h-3 w-3 text-[#00AEF0]" />}
@@ -307,7 +304,7 @@ export default function OffersDashboardPage() {
 
           {/* Sort Filter Dropdown */}
           <div className="relative dropdown-trigger flex-1 sm:flex-initial">
-            <button 
+            <button
               onClick={handleToggleSort}
               className="w-full h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center justify-center gap-2 hover:text-white transition-colors cursor-pointer"
             >
@@ -330,11 +327,10 @@ export default function OffersDashboardPage() {
                         setSortFilter(opt);
                         setShowSortDropdown(false);
                       }}
-                      className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between transition-colors ${
-                        sortFilter === opt 
-                          ? "text-[#00AEF0] bg-white/[0.02]" 
-                          : "text-zinc-400 hover:text-white hover:bg-white/[0.01]"
-                      }`}
+                      className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between transition-colors ${sortFilter === opt
+                        ? "text-[#00AEF0] bg-white/[0.02]"
+                        : "text-zinc-400 hover:text-white hover:bg-white/[0.01]"
+                        }`}
                     >
                       <span>{opt}</span>
                       {sortFilter === opt && <Check className="h-3 w-3 text-[#00AEF0]" />}
@@ -346,7 +342,7 @@ export default function OffersDashboardPage() {
           </div>
         </div>
 
-        <button 
+        <button
           onClick={() => toast.success("Exporting offers data as CSV...")}
           className="h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 hover:text-white flex items-center justify-center gap-2 transition-colors cursor-pointer w-full sm:w-auto"
         >
@@ -446,32 +442,27 @@ export default function OffersDashboardPage() {
 
                   {/* Actions buttons */}
                   <div className="flex items-center gap-2 pt-1 w-full">
-                    <button 
+                    <button
                       onClick={() => setSelectedOffer(offer)}
                       className="flex-1 h-9 rounded-lg bg-[#00A5E5] hover:bg-[#009bde] text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors shadow-md"
                     >
                       View
                     </button>
-                    <button 
+                    <button
                       onClick={() => toast.info(`Opening messages with ${offer.artistName}...`)}
                       className="flex-1 h-9 rounded-lg bg-[#1a1a1f] border border-zinc-800 hover:bg-zinc-800/40 text-zinc-300 font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors"
                     >
                       Message
                     </button>
-                    <button 
-                      onClick={() => toast.info("More actions menu opened.")}
-                      className="h-9 w-9 rounded-lg bg-[#1a1a1f] border border-zinc-800 hover:bg-zinc-800/40 text-zinc-400 hover:text-white font-bold text-xs flex items-center justify-center cursor-pointer transition-colors shrink-0"
-                    >
-                      &middot;&middot;&middot;
-                    </button>
+
                   </div>
                 </div>
 
                 {/* Desktop Grid Layout */}
-                <div 
+                <div
                   className="hidden md:grid grid-cols-12 items-start gap-6"
                 >
-                  
+
                   {/* 1. Artist Details */}
                   <div className="md:col-span-3 flex items-start gap-4 min-w-0 w-full">
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-white text-xl shrink-0 bg-[#3f2038] border border-[#522d4a]">
@@ -511,7 +502,7 @@ export default function OffersDashboardPage() {
                   {/* 4. Status Badge & Timeline */}
                   <div className="md:col-span-2 space-y-3 w-full">
                     {offer.status === "Pending" && (
-                      <span 
+                      <span
                         style={{
                           height: "32.38px",
                           borderRadius: "9999px",
@@ -530,7 +521,7 @@ export default function OffersDashboardPage() {
                       </span>
                     )}
                     {offer.status === "Accepted" && (
-                      <span 
+                      <span
                         style={{
                           height: "32.38px",
                           borderRadius: "9999px",
@@ -549,7 +540,7 @@ export default function OffersDashboardPage() {
                       </span>
                     )}
                     {offer.status === "Rejected" && (
-                      <span 
+                      <span
                         style={{
                           height: "32.38px",
                           borderRadius: "9999px",
@@ -581,24 +572,19 @@ export default function OffersDashboardPage() {
 
                   {/* 5. Action Triggers */}
                   <div className="md:col-span-2 flex flex-col gap-1.5">
-                    <button 
+                    <button
                       onClick={() => setSelectedOffer(offer)}
                       className="w-full h-[38px] rounded-[10px] bg-[#00A5E5] hover:bg-[#009bde] text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors shadow-md"
                     >
                       View
                     </button>
-                    <button 
+                    <button
                       onClick={() => toast.info(`Opening messages with ${offer.artistName}...`)}
                       className="w-full h-[38px] rounded-[10px] bg-[#1a1a1f] border border-zinc-800 hover:bg-zinc-800/40 text-zinc-300 font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors"
                     >
                       Message
                     </button>
-                    <button 
-                      onClick={() => toast.info("More actions menu opened.")}
-                      className="w-full h-[38px] rounded-[10px] bg-[#1a1a1f] border border-zinc-800 hover:bg-zinc-800/40 text-zinc-400 hover:text-white font-bold text-xs flex items-center justify-center cursor-pointer transition-colors"
-                    >
-                      &middot;&middot;&middot;
-                    </button>
+
                   </div>
 
                 </div>
@@ -609,9 +595,9 @@ export default function OffersDashboardPage() {
       </div>
 
       {/* SLIDE-OVER DETAIL SIDEBAR */}
-      <OfferDetailsSidebar 
-        selectedOffer={selectedOffer} 
-        onClose={() => setSelectedOffer(null)} 
+      <OfferDetailsSidebar
+        selectedOffer={selectedOffer}
+        onClose={() => setSelectedOffer(null)}
       />
 
     </div>

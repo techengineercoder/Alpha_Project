@@ -15,9 +15,10 @@ export const teamManagementApi = baseApi.injectEndpoints({
 
         // /teams/
         myTeam: builder.query({
-            query: () => ({
+            query: (search?: string) => ({
                 url: "/teams/",
                 method: "GET",
+                params: search ? { search } : undefined,
             }),
             providesTags: ["Team"],
         }),

@@ -397,14 +397,14 @@ export default function MessagesDashboardPage() {
           subtitle="Chat and coordinate booking details with artists and managers"
           searchQuery={globalSearchQuery}
           onSearchChange={setGlobalSearchQuery}
-          actionButton={
-            <button
-              onClick={() => router.push("/dashboard/offers/create")}
-              className="h-11 px-5 rounded-[12px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99] shrink-0 w-full sm:w-auto"
-            >
-              Update Availability
-            </button>
-          }
+        // actionButton={
+        //   <button
+        //     onClick={() => router.push("/dashboard/offers/create")}
+        //     className="h-11 px-5 rounded-[12px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99] shrink-0 w-full sm:w-auto"
+        //   >
+        //     Update Availability
+        //   </button>
+        // }
         />
       </header>
 
@@ -580,11 +580,10 @@ export default function MessagesDashboardPage() {
               {OFFERS_DATA[activeConversation.id] && (
                 <div className="bg-[#00A5E5]/[0.05] border-[1.24px] border-[#00A5E5]/[0.18] mx-6 mb-4 p-4 rounded-[20px] flex flex-col gap-3 relative shrink-0">
                   {/* Banner Row */}
-                  <div 
+                  <div
                     onClick={() => setOfferExpanded(!offerExpanded)}
-                    className={`flex justify-between items-center cursor-pointer select-none transition-all hover:bg-white/[0.01] -m-4 p-4 rounded-[20px] ${
-                      offerExpanded ? "border-b border-white/[0.06] rounded-b-none pb-3" : ""
-                    }`}
+                    className={`flex justify-between items-center cursor-pointer select-none transition-all hover:bg-white/[0.01] -m-4 p-4 rounded-[20px] ${offerExpanded ? "border-b border-white/[0.06] rounded-b-none pb-3" : ""
+                      }`}
                   >
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-[#00AEF0]" />
@@ -596,10 +595,9 @@ export default function MessagesDashboardPage() {
                         <RefreshCw className="h-3 w-3 animate-spin-slow" />
                         {OFFERS_DATA[activeConversation.id].status}
                       </span>
-                      <ChevronDown 
-                        className={`h-4 w-4 text-zinc-400 transition-transform duration-200 ${
-                          offerExpanded ? "rotate-180" : ""
-                        }`} 
+                      <ChevronDown
+                        className={`h-4 w-4 text-zinc-400 transition-transform duration-200 ${offerExpanded ? "rotate-180" : ""
+                          }`}
                       />
                     </div>
                   </div>
@@ -624,7 +622,7 @@ export default function MessagesDashboardPage() {
                               <span className="text-[11px] text-zinc-400 block mt-0.5">{OFFERS_DATA[activeConversation.id].date} · {OFFERS_DATA[activeConversation.id].venue} · {OFFERS_DATA[activeConversation.id].stage}</span>
                             </div>
                           </div>
-                          
+
                           <div className="xs:text-right shrink-0">
                             <span className="font-bold text-base text-white block">{OFFERS_DATA[activeConversation.id].price}</span>
                             <span className="text-[10px] text-zinc-500 block mt-0.5">{OFFERS_DATA[activeConversation.id].priceType}</span>
