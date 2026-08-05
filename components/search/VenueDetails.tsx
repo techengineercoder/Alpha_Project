@@ -500,6 +500,7 @@ export function VenueDetails() {
         venueName={name}
         venueId={venue?.id || ''}
         initialDate={selectedDate}
+        receiverEmail={venue?.email || venue?.user?.email || ''}
       />
     </div>
   );

@@ -11,6 +11,7 @@ interface SignatureSectionProps {
   sigCanvasRef: React.RefObject<SignatureCanvas | null>;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   clearSignature: () => void;
+  onSignatureFileChange?: (file: File | null) => void;
 }
 
 export const SignatureSection: React.FC<SignatureSectionProps> = ({
@@ -18,7 +19,8 @@ export const SignatureSection: React.FC<SignatureSectionProps> = ({
   setSignatureTab,
   sigCanvasRef,
   fileInputRef,
-  clearSignature
+  clearSignature,
+  onSignatureFileChange
 }) => {
   return (
     <div className="space-y-4 font-sans">
@@ -101,8 +103,12 @@ export const SignatureSection: React.FC<SignatureSectionProps> = ({
             ref={fileInputRef} 
             accept="image/*"
             onChange={(e) => {
-              if (e.target.files?.[0]) {
-                toast.success(`Uploaded signature: ${e.target.files[0].name}`);
+              const file = e.target.files?.[0];
+              if (file) {
+                toast.success(`Uploaded signature: ${file.name}`);
+                if (onSignatureFileChange) {
+                  onSignatureFileChange(file);
+                }
               }
             }}
             className="hidden" 

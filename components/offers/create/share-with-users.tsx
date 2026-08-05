@@ -1,32 +1,24 @@
 "use client";
 
 import React from "react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 
-interface TeamCard {
-  id: string;
-  name: string;
-  avatarChar: string;
-  avatarBg: string;
-  description: string;
-}
-
-interface ShareWithTeamProps {
-  allTeams: any[];
-  selectedTeamIds: number[];
-  toggleTeamSelection: (id: number) => void;
-  teamSearch: string;
-  setTeamSearch: (val: string) => void;
+interface ShareWithUsersProps {
+  allUsers: any[];
+  selectedUserIds: number[];
+  toggleUserSelection: (id: number) => void;
+  userSearch: string;
+  setUserSearch: (val: string) => void;
   shareTeamContainerClassName: string;
   isLoading?: boolean;
 }
 
-export const ShareWithTeam: React.FC<ShareWithTeamProps> = ({
-  allTeams,
-  selectedTeamIds,
-  toggleTeamSelection,
-  teamSearch,
-  setTeamSearch,
+export const ShareWithUsers: React.FC<ShareWithUsersProps> = ({
+  allUsers,
+  selectedUserIds,
+  toggleUserSelection,
+  userSearch,
+  setUserSearch,
   shareTeamContainerClassName,
   isLoading
 }) => {
@@ -34,11 +26,11 @@ export const ShareWithTeam: React.FC<ShareWithTeamProps> = ({
     <div className={`${shareTeamContainerClassName} space-y-6`}>
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold text-white tracking-widest uppercase font-sans">
-          Share With Team
+          Share With Users
         </h3>
-        {selectedTeamIds.length > 0 && (
+        {selectedUserIds.length > 0 && (
           <span className="text-xs text-[#00A5E5] font-bold">
-            {selectedTeamIds.length} Selected
+            {selectedUserIds.length} Selected
           </span>
         )}
       </div>
@@ -48,9 +40,9 @@ export const ShareWithTeam: React.FC<ShareWithTeamProps> = ({
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-550" />
         <input
           type="text"
-          placeholder="Search team..."
-          value={teamSearch}
-          onChange={(e) => setTeamSearch(e.target.value)}
+          placeholder="Search users by email..."
+          value={userSearch}
+          onChange={(e) => setUserSearch(e.target.value)}
           style={{
             backgroundColor: "#18181F",
             borderWidth: "1px",
@@ -62,17 +54,17 @@ export const ShareWithTeam: React.FC<ShareWithTeamProps> = ({
         />
       </div>
 
-      {/* Team Cards wrapper */}
+      {/* User Cards wrapper */}
       {isLoading ? (
-        <div className="text-zinc-500 text-xs py-4">Loading teams...</div>
-      ) : allTeams.length === 0 ? (
-        <div className="text-zinc-500 text-xs py-4 italic">No teams found.</div>
+        <div className="text-zinc-500 text-xs py-4">Loading users...</div>
+      ) : allUsers.length === 0 ? (
+        <div className="text-zinc-500 text-xs py-4 italic">No users found.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-sans">
-          {allTeams.map((t) => {
-            const isSelected = selectedTeamIds.includes(t.id);
-            const firstLetter = t.name?.charAt(0).toUpperCase() || "T";
-            
+          {allUsers.map((u) => {
+            const isSelected = selectedUserIds.includes(u.id);
+            const firstLetter = u.name?.charAt(0).toUpperCase() || u.email?.charAt(0).toUpperCase() || "U";
+
             // Consistent dynamic bg colors
             const bgColors = [
               "bg-indigo-600",
@@ -81,38 +73,37 @@ export const ShareWithTeam: React.FC<ShareWithTeamProps> = ({
               "bg-purple-600",
               "bg-pink-600"
             ];
-            const colorIndex = (t.name?.length || 0) % bgColors.length;
+            const colorIndex = (u.name?.length || 0) % bgColors.length;
             const avatarBg = bgColors[colorIndex];
 
             return (
               <div
-                key={t.id}
-                onClick={() => toggleTeamSelection(t.id)}
-                className={`relative flex flex-col justify-between bg-white/[0.04] border rounded-[20px] p-4.5 w-full max-w-none sm:max-w-[312px] min-h-[130px] cursor-pointer transition-all ${
-                  isSelected ? "border-[#00A5E5] bg-[#00A5E5]/5 shadow-lg shadow-[#00A5E5]/5" : "border-white/10 hover:border-white/20"
-                }`}
+                key={u.id}
+                onClick={() => toggleUserSelection(u.id)}
+                className={`relative flex flex-col justify-between bg-white/[0.04] border rounded-[20px] p-4.5 w-full max-w-none sm:max-w-[312px] min-h-[130px] cursor-pointer transition-all ${isSelected ? "border-[#00A5E5] bg-[#00A5E5]/5 shadow-lg shadow-[#00A5E5]/5" : "border-white/10 hover:border-white/20"
+                  }`}
               >
                 {isSelected && (
                   <div className="absolute top-4 right-4 h-5 w-5 rounded-full bg-[#00A5E5] flex items-center justify-center text-black font-black text-xs">
                     ✓
                   </div>
                 )}
-                
+
                 <div className="flex items-center gap-3.5">
                   <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center font-bold text-white text-base shrink-0 ${avatarBg}`}>
                     {firstLetter}
                   </div>
                   <div className="space-y-1">
-                    <span className="font-bold text-white text-base block">{t.name}</span>
-                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase bg-transparent border border-[#00A5E5]/40 text-[#00A5E5]">
-                      {t.domain || "Team"}
+                    <span className="font-bold text-white text-base block truncate max-w-[150px]">{u.name || "User"}</span>
+                    <span className="text-[10px] text-zinc-450 block truncate max-w-[170px]">
+                      {u.email}
                     </span>
                   </div>
                 </div>
 
-                <div className="pt-4 text-zinc-450 text-xs font-semibold">
-                  Status: {t.status} &bull; Created by {t.created_by?.name || "User"}
-                </div>
+                {/* <div className="pt-4 text-[#00A5E5] text-xs font-bold uppercase tracking-wider">
+                  ID: {u.id}
+                </div> */}
               </div>
             );
           })}

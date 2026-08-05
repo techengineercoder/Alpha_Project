@@ -18,22 +18,12 @@ export const LegalNotice: React.FC<LegalNoticeProps> = ({
 }) => {
   return (
     <div className="space-y-6 font-sans">
-      <CustomCheckbox
-        checked={legalChecked}
-        onChange={setLegalChecked}
-        label={
-          <span className="text-base font-semibold text-zinc-300 group-hover:text-white transition-colors">
-            I agree with the <span className="text-[#00A5E5] underline">LEGAL NOTICE</span>
-          </span>
-        }
-      />
-
       <div className="text-base font-normal leading-[150%] text-[#A1A1AA] space-y-6">
         <p>
           LEGAL NOTICE: Upon approval and acceptance by artist's management, your offer represents a binding agreement. If your offer has been approved by management, you are legally responsible to pay the full negotiated price whether or not you have returned contracts or paid a deposit. If the artist accepts the offer and you cancel for any reason, you will be liable for payment of the full agreed upon compensation.{" "}
           {!showFullLegal && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setShowFullLegal(true)}
               className="text-[#A1A1AA] underline font-normal cursor-pointer focus:outline-none"
             >
@@ -92,8 +82,8 @@ export const LegalNotice: React.FC<LegalNoticeProps> = ({
               If this offer is accepted by or on behalf of the Artist, SEG will prepare more formal material for this terms offer together with the balance of the Artist's requirements; however, until such time, such formal Documentation is prepared; this offer, if accepted by or on behalf of Artist, shall be a binding contract. It is expressly agreed that IF the undersigned entity is not the buyer itself, the undersigned shall be jointly and severally liable to the Artist to fulfill the terms outlined in this offer, namely the payment obligations. Please sign below, indicating acknowledgment and return to SEG.
             </p>
 
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setShowFullLegal(false)}
               className="text-[#A1A1AA] underline font-normal cursor-pointer focus:outline-none block mt-4"
             >
@@ -102,6 +92,15 @@ export const LegalNotice: React.FC<LegalNoticeProps> = ({
           </div>
         )}
       </div>
+      <CustomCheckbox
+        checked={legalChecked}
+        onChange={setLegalChecked}
+        label={
+          <span className="text-base font-semibold text-zinc-300 group-hover:text-white transition-colors">
+            I agree with the <span className="text-[#00A5E5] underline">LEGAL NOTICE</span>
+          </span>
+        }
+      />
     </div>
   );
 };

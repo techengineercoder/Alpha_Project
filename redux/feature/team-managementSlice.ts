@@ -164,6 +164,47 @@ export const teamManagementApi = baseApi.injectEndpoints({
             invalidatesTags: ["Team"],
         }),
 
+        // /api/v1/teams/users/?email=test@test.com
+        allUsers: builder.query({
+            query: (email?: string) => ({
+                url: `/teams/users/related/`,
+                method: "GET",
+                params: email ? { email } : undefined,
+            }),
+            providesTags: ["Team"],
+        }),
+
+        // POST
+        // /api/v1/offers/{offer_id}/accept/
+        acceptOffer: builder.mutation({
+            query: ({ id }: { id: string }) => ({
+                url: `/offers/${id}/accept/`,
+                method: "POST",
+            }),
+            invalidatesTags: ["Team", "Offer"],
+        }),
+
+        // POST
+        // /api/v1/offers/{offer_id}/reject/
+        rejectOffer: builder.mutation({
+            query: ({ id }: { id: string }) => ({
+                url: `/offers/${id}/reject/`,
+                method: "POST",
+            }),
+            invalidatesTags: ["Team", "Offer"],
+        }),
+
+        //         POST
+        // /api/v1/offers/{offer_id}/sign/
+        signOffer: builder.mutation({
+            query: ({ id, data }: { id: string, data: FormData }) => ({
+                url: `/offers/${id}/sign/`,
+                method: "POST",
+                body: data,
+            }),
+            invalidatesTags: ["Team", "Offer"],
+        }),
+
 
 
 
@@ -171,7 +212,6 @@ export const teamManagementApi = baseApi.injectEndpoints({
 });
 
 export const {
-
     useGetTeamRolesQuery,
     useMyTeamQuery,
     useTeamDetailsQuery,
@@ -188,5 +228,8 @@ export const {
     usePendingTeamReviewsQuery,
     useSubmitTeamMembershipReviewMutation,
     useDeleteTeamMutation,
-
+    useAllUsersQuery,
+    useAcceptOfferMutation,
+    useRejectOfferMutation,
+    useSignOfferMutation,
 } = teamManagementApi;

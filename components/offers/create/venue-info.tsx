@@ -8,8 +8,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface VenueInformationProps {
-  offerName: string;
-  setOfferName: (val: string) => void;
   artistName: string;
   setArtistName: (val: string) => void;
   eventDate: Date | undefined;
@@ -26,8 +24,6 @@ interface VenueInformationProps {
 }
 
 export const VenueInformation: React.FC<VenueInformationProps> = ({
-  offerName,
-  setOfferName,
   artistName,
   setArtistName,
   eventDate,
@@ -44,37 +40,6 @@ export const VenueInformation: React.FC<VenueInformationProps> = ({
 }) => {
   return (
     <>
-      {/* Offer Name Input field */}
-      <div className="space-y-2">
-        <label 
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontWeight: 500,
-            fontSize: "14px",
-            lineHeight: "20px",
-            letterSpacing: "0px",
-            color: "rgba(255, 255, 255, 0.80)"
-          }}
-          className="block"
-        >
-          Offer Name
-        </label>
-        <input
-          type="text"
-          value={offerName}
-          onChange={(e) => setOfferName(e.target.value)}
-          placeholder="e.g. Nova Reyes @ Bluewave Festival"
-          style={{
-            backgroundColor: "#18181F",
-            borderWidth: "1px",
-            borderColor: "rgba(255, 255, 255, 0.08)",
-            borderRadius: "12px",
-            height: "50px"
-          }}
-          className="w-full text-sm text-white placeholder-zinc-650 px-4 focus:outline-none focus:border-[#00A5E5]/50 transition-colors font-sans"
-        />
-      </div>
-
       {/* Event Details section */}
       <div className={`${subCardClassName} space-y-6`}>
         <h3 className="text-sm font-bold text-white tracking-wide border-b border-zinc-900 pb-3 font-sans">

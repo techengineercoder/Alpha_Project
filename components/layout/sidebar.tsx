@@ -56,7 +56,7 @@ const menuItems: MenuItem[] = [
   { name: "Inquiries", icon: BookOpenText, href: "/dashboard/inquiries" },
   { name: "Offers", icon: Tag, href: "/dashboard/offers" },
   { name: "Messages", icon: MessageSquare, href: "/dashboard/messages" },
-  // { name: "Settings", icon: Settings, href: "/artist/settings" },
+  { name: "Avails", icon: Tag, href: "/dashboard/avails" },
 ];
 
 const getImageUrl = (imagePath?: string | null) => {
@@ -73,6 +73,12 @@ interface Team {
   avatarBg: string;
   avatarChar: string;
   domain?: string;
+  myMembership?: {
+    role?: string;
+    role_label?: string;
+    rank?: number;
+    status?: string;
+  } | null;
 }
 
 interface SidebarProps {
@@ -118,7 +124,8 @@ export function Sidebar({
       type: "Team" as const,
       avatarBg: t.domain === "artist" ? "bg-sky-500" : "bg-[#F59E0B]",
       avatarChar: t.name.charAt(0).toUpperCase(),
-      domain: t.domain
+      domain: t.domain,
+      myMembership: t.my_membership
     }));
   }, [myTeamData]);
 
@@ -403,7 +410,9 @@ export function Sidebar({
           {!collapsed && (
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-bold text-white truncate leading-snug">{user ? user.name : "Nova Collins"}</span>
-              <span className="text-[11px] text-gray-500 font-medium">{user ? user.role : "Artist"}</span>
+              <span className="text-[11px] text-gray-500 font-medium truncate">
+                {activeTeam.name ? `${activeTeam.name} (${activeTeam.myMembership?.role_label || "Member"})` : (user ? user.role : "Artist")}
+              </span>
             </div>
           )}
 
@@ -411,7 +420,9 @@ export function Sidebar({
           {collapsed && (
             <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#18181b] border border-white/10 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-2 group-hover:translate-x-0 shadow-lg z-50">
               <div className="font-bold">{user ? user.name : "Nova Collins"}</div>
-              <div className="text-[10px] text-gray-400">{user ? user.role : "Artist"}</div>
+              <div className="text-[10px] text-gray-400">
+                {activeTeam.name ? `${activeTeam.name} (${activeTeam.myMembership?.role_label || "Member"})` : (user ? user.role : "Artist")}
+              </div>
             </div>
           )}
         </div>
@@ -449,15 +460,17 @@ export function Sidebar({
                 {/* Team Switcher Button */}
                 <button
                   onClick={() => setIsTeamDropdownOpen(!isTeamDropdownOpen)}
-                  className="flex items-center gap-2 min-w-0 hover:bg-white/[0.03] px-2.5 py-1.5 rounded-lg transition-all text-left group cursor-pointer select-none border border-transparent hover:border-white/5 flex-1"
+                  className="flex items-center justify-between gap-3 min-w-0 hover:bg-white/[0.03] active:bg-white/[0.05] px-3 py-1.5 rounded-xl transition-all text-left group cursor-pointer select-none border border-white/5 bg-[#121215]/20 flex-1"
                 >
-                  <span className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors truncate max-w-[90px]">
-                    {activeTeam.name}
-                  </span>
-                  <span className="text-[10px] text-zinc-400 border border-zinc-800 px-2 py-0.5 rounded-full font-medium tracking-wide bg-zinc-950/60 select-none uppercase scale-[0.85] shrink-0">
-                    {activeTeam.domain || "Free"}
-                  </span>
-                  <ChevronsUpDown size={13} className="text-zinc-500 group-hover:text-zinc-300 transition-colors shrink-0 ml-auto" />
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="text-[13px] font-bold text-zinc-200 group-hover:text-white transition-colors truncate tracking-tight leading-tight">
+                      {activeTeam.name}
+                    </span>
+                    <span className="text-[10px] text-zinc-500 group-hover:text-zinc-400 transition-colors font-medium truncate mt-0.5 leading-none">
+                      {activeTeam.domain ? activeTeam.domain.charAt(0).toUpperCase() + activeTeam.domain.slice(1) : "Free"} &middot; {activeTeam.myMembership?.role_label || "Member"}
+                    </span>
+                  </div>
+                  <ChevronsUpDown size={14} className="text-zinc-500 group-hover:text-zinc-300 transition-colors shrink-0" />
                 </button>
               </>
             )}
@@ -502,7 +515,14 @@ export function Sidebar({
                             }
                           `}
                         >
-                          <span className="text-[13.5px] font-medium truncate">{t.name}</span>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[13.5px] font-medium truncate">{t.name}</span>
+                            {t.myMembership?.role_label && (
+                              <span className="text-[10px] text-zinc-500 font-medium tracking-wide truncate capitalize">
+                                {t.myMembership.role_label}
+                              </span>
+                            )}
+                          </div>
                           {isSelected && (
                             <Check size={14} className="text-zinc-200 shrink-0" strokeWidth={2.5} />
                           )}
@@ -562,15 +582,17 @@ export function Sidebar({
                   {/* Mobile Team Switcher Button */}
                   <button
                     onClick={() => setIsTeamDropdownOpen(!isTeamDropdownOpen)}
-                    className="flex items-center gap-2 min-w-0 hover:bg-white/[0.03] px-2.5 py-1.5 rounded-lg transition-all text-left group cursor-pointer select-none border border-transparent hover:border-white/5 flex-1"
+                    className="flex items-center justify-between gap-3 min-w-0 hover:bg-white/[0.03] active:bg-white/[0.05] px-3 py-1.5 rounded-xl transition-all text-left group cursor-pointer select-none border border-white/5 bg-[#121215]/20 flex-1"
                   >
-                    <span className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors truncate max-w-[90px]">
-                      {activeTeam.name}
-                    </span>
-                    <span className="text-[10px] text-zinc-400 border border-zinc-800 px-2 py-0.5 rounded-full font-medium tracking-wide bg-zinc-950/60 select-none uppercase scale-[0.85] shrink-0">
-                      {activeTeam.domain || "Free"}
-                    </span>
-                    <ChevronsUpDown size={13} className="text-zinc-500 group-hover:text-zinc-300 transition-colors shrink-0 ml-auto" />
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="text-[13px] font-bold text-zinc-200 group-hover:text-white transition-colors truncate tracking-tight leading-tight">
+                        {activeTeam.name}
+                      </span>
+                      <span className="text-[10px] text-zinc-500 group-hover:text-zinc-400 transition-colors font-medium truncate mt-0.5 leading-none">
+                        {activeTeam.domain ? activeTeam.domain.charAt(0).toUpperCase() + activeTeam.domain.slice(1) : "Free"} &middot; {activeTeam.myMembership?.role_label || "Member"}
+                      </span>
+                    </div>
+                    <ChevronsUpDown size={14} className="text-zinc-500 group-hover:text-zinc-300 transition-colors shrink-0" />
                   </button>
                 </div>
 
@@ -612,7 +634,14 @@ export function Sidebar({
                                   }
                                 `}
                               >
-                                <span className="text-[13.5px] font-medium truncate">{t.name}</span>
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-[13.5px] font-medium truncate">{t.name}</span>
+                                  {t.myMembership?.role_label && (
+                                    <span className="text-[10px] text-zinc-500 font-medium tracking-wide truncate capitalize">
+                                      {t.myMembership.role_label}
+                                    </span>
+                                  )}
+                                </div>
                                 {isSelected && (
                                   <Check size={14} className="text-zinc-200 shrink-0" strokeWidth={2.5} />
                                 )}

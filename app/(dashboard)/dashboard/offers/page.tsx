@@ -10,13 +10,19 @@ import {
   Plus,
   Search,
   Users,
-  X
+  X,
+  Calendar as CalendarIcon
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { OfferDetailsSidebar } from "@/components/dashboard/offer/OfferDetailsSidebar";
 import { CommonHeader } from "@/components/dashboard/page-header";
+import { useGetAllOfferQuery, useGetOfferByIdQuery, useShareOfferMutation, useUnshareOfferMutation } from "@/redux/feature/dashboardApi/offerSlice";
+import { format, parseISO } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useAcceptOfferMutation, useRejectOfferMutation, useSignOfferMutation } from "@/redux/feature/team-managementSlice";
 
 interface OfferItem {
   id: string;
@@ -38,136 +44,240 @@ interface OfferItem {
   type?: string;
 }
 
-// Initial Mock Offers Data matching the user's screenshot
-const INITIAL_OFFERS: OfferItem[] = [
-  {
-    id: "1",
-    offerId: "OFF-0042",
-    artistName: "Nova Reyes",
-    genre: "Latin Pop",
-    agency: "via Apex Agency",
-    eventDate: "Aug 14, 2026",
-    eventTime: "9:00 PM",
-    setLength: "75 min",
-    stage: "Main Stage",
-    capacity: "8,000",
-    fee: "18,000",
-    status: "Pending",
-    flow: "Received",
-    timeAgo: "2 hours ago",
-    avatarChar: "N",
-    avatarBg: "bg-indigo-950/50 text-indigo-400 border border-indigo-900/30"
-  },
-  {
-    id: "2",
-    offerId: "OFF-0041",
-    artistName: "Flock of Seagulls",
-    genre: "New Wave",
-    agency: "via WME Agency",
-    eventDate: "Aug 21, 2026",
-    eventTime: "8:00 PM",
-    setLength: "60 min",
-    stage: "Main Stage",
-    capacity: "5,000",
-    fee: "12,500",
-    status: "Accepted",
-    flow: "Received",
-    timeAgo: "5 hours ago",
-    avatarChar: "F",
-    avatarBg: "bg-pink-950/50 text-pink-400 border border-pink-900/30"
-  },
-  {
-    id: "3",
-    offerId: "OFF-0040",
-    artistName: "The Midnight",
-    genre: "Synthwave",
-    agency: "via WME Agency",
-    eventDate: "Sep 05, 2026",
-    eventTime: "10:00 PM",
-    setLength: "90 min",
-    stage: "Sunset Stage",
-    capacity: "6,000",
-    fee: "15,000",
-    status: "Pending",
-    flow: "Sent",
-    timeAgo: "1 day ago",
-    avatarChar: "T",
-    avatarBg: "bg-purple-950/50 text-purple-400 border border-purple-900/30"
-  },
-  {
-    id: "4",
-    offerId: "OFF-0039",
-    artistName: "Gunship",
-    genre: "Retro Electro",
-    agency: "via Apex Agency",
-    eventDate: "Sep 12, 2026",
-    eventTime: "9:30 PM",
-    setLength: "75 min",
-    stage: "Main Stage",
-    capacity: "8,000",
-    fee: "20,000",
-    status: "Rejected",
-    flow: "Received",
-    timeAgo: "3 days ago",
-    avatarChar: "G",
-    avatarBg: "bg-teal-950/50 text-teal-400 border border-teal-900/30"
-  }
-];
-
 export default function OffersDashboardPage() {
   const router = useRouter();
 
   // Offers List State
-  const [offersList] = useState<OfferItem[]>(INITIAL_OFFERS);
   const [activeTab, setActiveTab] = useState<"Recent" | "Sent" | "Rejected" | "Shared">("Recent");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOffer, setSelectedOffer] = useState<OfferItem | null>(null);
 
-  // Time & Sort Filter States
-  const [timeFilter, setTimeFilter] = useState<"Today" | "This Week" | "All Time">("All Time");
-  const [sortFilter, setSortFilter] = useState<"Newest" | "Oldest" | "Highest Fee" | "Lowest Fee">("Newest");
-  const [showTimeDropdown, setShowTimeDropdown] = useState(false);
-  const [showSortDropdown, setShowSortDropdown] = useState(false);
+  // Date Picker States
+  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+  const [toDate, setToDate] = useState<Date | undefined>(undefined);
 
-  const handleToggleTime = () => {
-    setShowTimeDropdown(!showTimeDropdown);
-    setShowSortDropdown(false);
+  // Dynamic offer details by ID
+  const { data: offerListDetails, isLoading: offerListDetailsLoading } = useGetOfferByIdQuery(
+    selectedOffer?.id ? parseInt(selectedOffer.id) : 1,
+    { skip: !selectedOffer }
+  );
+  console.log(offerListDetails, "offer list details ===========");
+
+  const [rejectOffer, { isLoading: rejectOfferLoading }] = useRejectOfferMutation();
+  const [acceptOffer, { isLoading: acceptOfferLoading }] = useAcceptOfferMutation();
+  const [signOffer, { isLoading: signOfferLoading }] = useSignOfferMutation();
+  const [shareOffer] = useShareOfferMutation();
+  const [unshareOffer] = useUnshareOfferMutation();
+
+  const getErrorMessage = (err: any, fallback: string) => {
+    if (err?.data?.error?.message) {
+      return err.data.error.message;
+    }
+    if (err?.data?.message) {
+      return err.data.message;
+    }
+    if (err?.data?.detail) {
+      return err.data.detail;
+    }
+    return fallback;
   };
 
-  const handleToggleSort = () => {
-    setShowSortDropdown(!showSortDropdown);
-    setShowTimeDropdown(false);
+  const handleAcceptOffer = async (id: string) => {
+    try {
+      await acceptOffer({ id }).unwrap();
+      toast.success("Offer accepted successfully!");
+      setSelectedOffer(null);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(getErrorMessage(err, "Failed to accept offer."));
+    }
   };
 
-  // Close dropdowns on outside clicks
-  React.useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest(".dropdown-trigger")) {
-        setShowTimeDropdown(false);
-        setShowSortDropdown(false);
+  const handleRejectOffer = async (id: string) => {
+    try {
+      await rejectOffer({ id }).unwrap();
+      toast.success("Offer rejected successfully!");
+      setSelectedOffer(null);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(getErrorMessage(err, "Failed to reject offer."));
+    }
+  };
+
+  const handleSignOffer = async (id: string, body: FormData) => {
+    try {
+      toast.loading("Uploading signature...", { id: "sign-offer" });
+      await signOffer({ id, data: body }).unwrap();
+      toast.success("Offer signed successfully!", { id: "sign-offer" });
+    } catch (err: any) {
+      console.error(err);
+      toast.error(getErrorMessage(err, "Failed to upload signature."), { id: "sign-offer" });
+    }
+  };
+
+  const handleShareOffer = async (id: string, data: any) => {
+    try {
+      toast.loading("Sharing offer...", { id: "share-action" });
+      await shareOffer({ id, data }).unwrap();
+      toast.success("Offer shared successfully!", { id: "share-action" });
+    } catch (err: any) {
+      console.error(err);
+      toast.error(getErrorMessage(err, "Failed to share offer."), { id: "share-action" });
+    }
+  };
+
+  const handleUnshareOffer = async (id: string, data: any) => {
+    try {
+      toast.loading("Unsharing offer...", { id: "share-action" });
+      await unshareOffer({ id, data }).unwrap();
+      toast.success("Offer unshared successfully!", { id: "share-action" });
+    } catch (err: any) {
+      console.error(err);
+      toast.error(getErrorMessage(err, "Failed to unshare offer."), { id: "share-action" });
+    }
+  };
+
+  // Construct query parameters for the API query based on active tab, date filters and search query
+  const queryParams = useMemo(() => {
+    const params: any = {};
+
+    // 1. Status and sharing parameters
+    if (activeTab === "Recent") {
+      params.status = "pending";
+    } else if (activeTab === "Sent") {
+      params.status = "accepted";
+    } else if (activeTab === "Rejected") {
+      params.status = "rejected";
+    } else if (activeTab === "Shared") {
+      params.shared_with_me = true;
+    }
+
+    // 2. Date Picker params
+    if (fromDate) {
+      params.date_from = format(fromDate, "yyyy-MM-dd");
+    }
+    if (toDate) {
+      params.date_to = format(toDate, "yyyy-MM-dd");
+    }
+
+    // 3. Search query as email param
+    if (searchQuery) {
+      params.email = searchQuery;
+    }
+
+    return params;
+  }, [activeTab, fromDate, toDate, searchQuery]);
+
+  // Main offer list query using dynamic parameters
+  const { data: allOfferlist, isLoading: allOfferlistLoading } = useGetAllOfferQuery(queryParams);
+  console.log(allOfferlist, "offer list    ");
+
+  // Background query to get counts for all tabs
+  const { data: countsData } = useGetAllOfferQuery(undefined);
+
+  // Parse API data into UI OfferItem structure
+  const parsedOffers = useMemo(() => {
+    if (!allOfferlist?.results) return [];
+
+    return allOfferlist.results.map((item: any) => {
+      let formattedDate = item.date;
+      try {
+        if (item.date) {
+          formattedDate = format(parseISO(item.date), "MMM dd, yyyy");
+        }
+      } catch (e) {
+        console.error(e);
       }
+
+      let timeAgo = "Just now";
+      try {
+        if (item.created_at) {
+          const created = new Date(item.created_at).getTime();
+          const now = new Date().getTime();
+          const diffMs = now - created;
+          const diffMins = Math.floor(diffMs / 60000);
+          const diffHours = Math.floor(diffMins / 60);
+          const diffDays = Math.floor(diffHours / 24);
+
+          if (diffDays > 0) {
+            timeAgo = `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+          } else if (diffHours > 0) {
+            timeAgo = `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+          } else if (diffMins > 0) {
+            timeAgo = `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      const statusMap: Record<string, "Pending" | "Accepted" | "Rejected"> = {
+        pending: "Pending",
+        accepted: "Accepted",
+        rejected: "Rejected"
+      };
+
+      const artistName = item.artist_name || "Unknown Artist";
+      const firstLetter = artistName.charAt(0).toUpperCase() || "A";
+
+      const bgColors = [
+        "bg-indigo-950/50 text-indigo-400 border border-indigo-900/30",
+        "bg-pink-950/50 text-pink-400 border border-pink-900/30",
+        "bg-purple-950/50 text-purple-400 border border-purple-900/30",
+        "bg-teal-950/50 text-teal-400 border border-teal-900/30",
+        "bg-amber-950/50 text-amber-400 border border-amber-900/30"
+      ];
+      const colorIndex = artistName.length % bgColors.length;
+
+      return {
+        id: String(item.id),
+        offerId: `OFF-${String(item.id).padStart(4, "0")}`,
+        artistName: artistName,
+        genre: "Performance Artist",
+        agency: item.sender?.name ? `via ${item.sender.name}` : "via Buyer",
+        eventDate: formattedDate,
+        eventTime: item.door_time || "N/A",
+        setLength: "N/A",
+        stage: item.venue || "Main Stage",
+        capacity: item.expected_attendance ? Number(item.expected_attendance).toLocaleString() : "N/A",
+        fee: item.offer_amount || "0",
+        status: statusMap[item.status?.toLowerCase()] || "Pending",
+        flow: item.sender?.role === "admin" ? "Sent" : "Received",
+        timeAgo: timeAgo,
+        avatarChar: firstLetter,
+        avatarBg: bgColors[colorIndex],
+        type: "Flat Guarantee"
+      };
+    });
+  }, [allOfferlist]);
+
+  // Compute dynamic tab counts based on unfiltered background API data and status mapping
+  const counts = useMemo(() => {
+    const list = countsData?.results || [];
+    const statusMap: Record<string, "Pending" | "Accepted" | "Rejected"> = {
+      pending: "Pending",
+      accepted: "Accepted",
+      rejected: "Rejected"
     };
-    document.addEventListener("click", handleOutsideClick);
-    return () => document.removeEventListener("click", handleOutsideClick);
-  }, []);
 
-  // Filtering and sorting offers based on tab, time, search and sort
+    const parsed = list.map((item: any) => {
+      return {
+        status: statusMap[item.status?.toLowerCase()] || "Pending",
+        flow: item.sender?.role === "admin" ? "Sent" : "Received",
+      };
+    });
+
+    return {
+      Recent: parsed.filter((o: any) => o.status === "Pending").length,
+      Sent: parsed.filter((o: any) => o.status === "Accepted").length,
+      Rejected: parsed.filter((o: any) => o.status === "Rejected").length,
+      Shared: parsed.filter((o: any) => o.flow === "Received").length
+    };
+  }, [countsData]);
+
+  // Filtering and sorting offers based on search and sort
   const filteredOffers = useMemo(() => {
-    let list = offersList.filter(offer => {
-      // Tab matching logic
-      if (activeTab === "Sent" && offer.flow !== "Sent") return false;
-      if (activeTab === "Rejected" && offer.status !== "Rejected") return false;
-      if (activeTab === "Shared" && offer.id === "4") return false; // simple filter simulation
-
-      // Time matching logic
-      if (timeFilter === "Today") {
-        return offer.timeAgo.includes("hours");
-      }
-      if (timeFilter === "This Week") {
-        return offer.timeAgo.includes("hours") || offer.timeAgo.includes("day");
-      }
-
+    let list = parsedOffers.filter((offer: OfferItem) => {
       // Search matching logic
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -181,27 +291,11 @@ export default function OffersDashboardPage() {
       return true;
     });
 
-    // Sorting logic
+    // Default sorting logic (Newest first)
     return [...list].sort((a, b) => {
-      if (sortFilter === "Newest") {
-        return parseInt(b.id) - parseInt(a.id);
-      }
-      if (sortFilter === "Oldest") {
-        return parseInt(a.id) - parseInt(b.id);
-      }
-      if (sortFilter === "Highest Fee") {
-        const feeA = parseFloat(a.fee.replace(/,/g, ""));
-        const feeB = parseFloat(b.fee.replace(/,/g, ""));
-        return feeB - feeA;
-      }
-      if (sortFilter === "Lowest Fee") {
-        const feeA = parseFloat(a.fee.replace(/,/g, ""));
-        const feeB = parseFloat(b.fee.replace(/,/g, ""));
-        return feeA - feeB;
-      }
-      return 0;
+      return parseInt(b.id) - parseInt(a.id);
     });
-  }, [offersList, activeTab, timeFilter, sortFilter, searchQuery]);
+  }, [parsedOffers, searchQuery]);
 
   const handleNotificationsClick = () => {
     window.dispatchEvent(new CustomEvent("open-notifications"));
@@ -216,6 +310,7 @@ export default function OffersDashboardPage() {
         subtitle="Manage all incoming and outgoing offers for your venue"
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by email"
         actionButton={
           <button
             onClick={() => router.push("/dashboard/offers/create")}
@@ -227,125 +322,105 @@ export default function OffersDashboardPage() {
         }
       />
 
-      {/* Tabs Filter Container */}
-      <div className="flex items-center border-[1.24px] border-[#FFFFFF]/8 bg-[#FFFFFF]/[0.02] rounded-[14px] p-[4px] overflow-x-auto no-scrollbar w-full">
-        {[
-          { label: "Recent Offers", count: 24, tabKey: "Recent" },
-          { label: "Sent Offers", count: 9, tabKey: "Sent" },
-          { label: "Rejected Offers", count: 6, tabKey: "Rejected" },
-          { label: "Shared With Me", count: 12, tabKey: "Shared" }
-        ].map((tab) => {
-          const isSelected = activeTab === tab.tabKey;
-          return (
-            <button
-              key={tab.tabKey}
-              onClick={() => setActiveTab(tab.tabKey as any)}
-              className={`flex-1 sm:flex-none flex items-center justify-center h-[46px] sm:h-[62px] px-2 sm:px-7 gap-1.5 sm:gap-2.5 border-b-[2.5px] font-bold text-xs sm:text-sm shrink-0 transition-all cursor-pointer rounded-[10px] ${isSelected
-                ? "border-[#00AEF0] bg-[#00AEF0]/5 text-white"
-                : "border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.01]"
-                }`}
-            >
-              <span className="hidden sm:inline">{tab.label}</span>
-              <span className="inline sm:hidden">{tab.tabKey}</span>
-              <span
-                className={`text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 rounded-full font-bold transition-all ${isSelected
-                  ? "bg-[#00AEF0] text-black"
-                  : "bg-zinc-800 text-zinc-500"
+      {/* Filters Row: Tabs on the Left, Date Pickers on the Right */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 w-full">
+        {/* Tabs Filter Container (Left Side) */}
+        <div className="flex items-center border-[1.24px] border-[#FFFFFF]/8 bg-[#FFFFFF]/[0.02] rounded-[14px] p-[4px] overflow-x-auto no-scrollbar w-full sm:w-auto">
+          {[
+            { label: "Recent Offers", count: counts.Recent, tabKey: "Recent" },
+            { label: "Sent Offers", count: counts.Sent, tabKey: "Sent" },
+            { label: "Rejected Offers", count: counts.Rejected, tabKey: "Rejected" },
+            { label: "Shared With Me", count: counts.Shared, tabKey: "Shared" }
+          ].map((tab) => {
+            const isSelected = activeTab === tab.tabKey;
+            return (
+              <button
+                key={tab.tabKey}
+                onClick={() => setActiveTab(tab.tabKey as any)}
+                className={`flex-1 sm:flex-none flex items-center justify-center h-[46px] sm:h-[62px] px-2 sm:px-7 gap-1.5 sm:gap-2.5 border-b-[2.5px] font-bold text-xs sm:text-sm shrink-0 transition-all cursor-pointer rounded-[10px] ${isSelected
+                  ? "border-[#00AEF0] bg-[#00AEF0]/5 text-white"
+                  : "border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.01]"
                   }`}
               >
-                {tab.count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="inline sm:hidden">{tab.tabKey}</span>
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Secondary Filter options row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* Time Filter Dropdown */}
-          <div className="relative dropdown-trigger flex-1 sm:flex-initial">
-            <button
-              onClick={handleToggleTime}
-              className="w-full h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center justify-center gap-2 hover:text-white transition-colors cursor-pointer"
-            >
-              <span>{timeFilter}</span>
-              <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />
-            </button>
-
-            <AnimatePresence>
-              {showTimeDropdown && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  className="absolute left-0 mt-2 w-40 rounded-xl bg-[#121214] border border-zinc-800 shadow-2xl py-1.5 z-50 overflow-hidden"
+        {/* Date Pickers (Right Side) */}
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
+          {/* From Date Picker */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-zinc-500 font-medium">From:</span>
+            <Popover>
+              <PopoverTrigger>
+                <div
+                  className="h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center justify-between gap-2 hover:text-white transition-colors cursor-pointer min-w-[130px]"
                 >
-                  {(["All Time", "Today", "This Week"] as const).map((opt) => (
-                    <button
-                      key={opt}
-                      onClick={() => {
-                        setTimeFilter(opt);
-                        setShowTimeDropdown(false);
-                      }}
-                      className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between transition-colors ${timeFilter === opt
-                        ? "text-[#00AEF0] bg-white/[0.02]"
-                        : "text-zinc-400 hover:text-white hover:bg-white/[0.01]"
-                        }`}
-                    >
-                      <span>{opt}</span>
-                      {timeFilter === opt && <Check className="h-3 w-3 text-[#00AEF0]" />}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <span>{fromDate ? format(fromDate, "MMM dd, yyyy") : "Select date"}</span>
+                  <CalendarIcon className="h-3.5 w-3.5 text-zinc-500" />
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-[#0F0F12] border border-white/10 rounded-2xl shadow-2xl" align="start">
+                <Calendar
+                  mode="single"
+                  selected={fromDate}
+                  onSelect={setFromDate}
+                  initialFocus
+                  className="bg-[#0F0F12] text-white p-3 rounded-2xl"
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
-          {/* Sort Filter Dropdown */}
-          <div className="relative dropdown-trigger flex-1 sm:flex-initial">
-            <button
-              onClick={handleToggleSort}
-              className="w-full h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center justify-center gap-2 hover:text-white transition-colors cursor-pointer"
-            >
-              <span>{sortFilter}</span>
-              <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />
-            </button>
-
-            <AnimatePresence>
-              {showSortDropdown && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  className="absolute right-0 mt-2 w-44 rounded-xl bg-[#121214] border border-zinc-800 shadow-2xl py-1.5 z-50 overflow-hidden"
+          {/* To Date Picker */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-zinc-500 font-medium">To:</span>
+            <Popover>
+              <PopoverTrigger>
+                <div
+                  className="h-10 px-4 rounded-xl border border-zinc-800 bg-[#121214] text-xs text-zinc-300 flex items-center justify-between gap-2 hover:text-white transition-colors cursor-pointer min-w-[130px]"
                 >
-                  {(["Newest", "Oldest", "Highest Fee", "Lowest Fee"] as const).map((opt) => (
-                    <button
-                      key={opt}
-                      onClick={() => {
-                        setSortFilter(opt);
-                        setShowSortDropdown(false);
-                      }}
-                      className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between transition-colors ${sortFilter === opt
-                        ? "text-[#00AEF0] bg-white/[0.02]"
-                        : "text-zinc-400 hover:text-white hover:bg-white/[0.01]"
-                        }`}
-                    >
-                      <span>{opt}</span>
-                      {sortFilter === opt && <Check className="h-3 w-3 text-[#00AEF0]" />}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <span>{toDate ? format(toDate, "MMM dd, yyyy") : "Select date"}</span>
+                  <CalendarIcon className="h-3.5 w-3.5 text-zinc-500" />
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-[#0F0F12] border border-white/10 rounded-2xl shadow-2xl" align="start">
+                <Calendar
+                  mode="single"
+                  selected={toDate}
+                  onSelect={setToDate}
+                  initialFocus
+                  className="bg-[#0F0F12] text-white p-3 rounded-2xl"
+                />
+              </PopoverContent>
+            </Popover>
           </div>
+
+          {/* Reset button (Visible when any date is selected) */}
+          {(fromDate || toDate) && (
+            <button
+              onClick={() => {
+                setFromDate(undefined);
+                setToDate(undefined);
+              }}
+              className="h-10 px-4 rounded-xl border border-zinc-800 bg-red-950/20 text-red-500 text-xs font-bold hover:bg-red-950/40 transition-colors cursor-pointer"
+            >
+              Reset
+            </button>
+          )}
         </div>
       </div>
 
       {/* Offers list stack */}
       <div className="space-y-4">
-        {filteredOffers.length === 0 ? (
+        {allOfferlistLoading ? (
+          <div className="text-center py-16 text-zinc-500 border border-dashed border-zinc-800 rounded-2xl bg-zinc-950/10">
+            Loading offers...
+          </div>
+        ) : filteredOffers.length === 0 ? (
           <div className="text-center py-16 text-zinc-500 border border-dashed border-zinc-800 rounded-2xl bg-zinc-950/10">
             No offers found matching the current selections.
           </div>
@@ -589,7 +664,17 @@ export default function OffersDashboardPage() {
       {/* SLIDE-OVER DETAIL SIDEBAR */}
       <OfferDetailsSidebar
         selectedOffer={selectedOffer}
+        offerDetails={offerListDetails}
+        isLoading={offerListDetailsLoading}
         onClose={() => setSelectedOffer(null)}
+        onAccept={handleAcceptOffer}
+        onReject={handleRejectOffer}
+        onSign={handleSignOffer}
+        onShare={handleShareOffer}
+        onUnshare={handleUnshareOffer}
+        acceptLoading={acceptOfferLoading}
+        rejectLoading={rejectOfferLoading}
+        signLoading={signOfferLoading}
       />
 
     </div>

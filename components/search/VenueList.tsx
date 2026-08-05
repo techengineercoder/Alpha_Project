@@ -33,7 +33,7 @@ export function VenueList({
 
   const [localFavorites, setLocalFavorites] = useState<Record<string, boolean>>({});
   const [loadingFavorites, setLoadingFavorites] = useState<Record<string, boolean>>({});
-  const [selectedVenue, setSelectedVenue] = useState<{ id: string | number, name: string } | null>(null);
+  const [selectedVenue, setSelectedVenue] = useState<{ id: string | number, name: string, email?: string } | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const handleSave = async (e: React.MouseEvent, venueId: string) => {
@@ -222,7 +222,11 @@ export function VenueList({
                       <span
                         key={i}
                         onClick={() => {
-                          setSelectedVenue({ id: venue.id, name });
+                          setSelectedVenue({
+                            id: venue.id,
+                            name,
+                            email: venue.user?.email || venue.email || ''
+                          });
                           if (date !== 'Available') {
                             if (date.includes(' to ')) {
                               setSelectedDate(new Date(date.split(' to ')[0]));
@@ -251,7 +255,11 @@ export function VenueList({
                   </Link>
                   <button
                     onClick={() => {
-                      setSelectedVenue({ id: venue.id, name: name });
+                      setSelectedVenue({
+                        id: venue.id,
+                        name: name,
+                        email: venue.user?.email || venue.email || ''
+                      });
                       setSelectedDate(null);
                     }}
                     className="px-6 py-2.5 cursor-pointer rounded-full bg-[#00A5E5] text-white text-sm font-medium  transition-colors shadow-lg shadow-[#7C5CFF]/20"
@@ -308,6 +316,7 @@ export function VenueList({
         venueName={selectedVenue?.name || ''}
         venueId={selectedVenue?.id || ''}
         initialDate={selectedDate}
+        receiverEmail={selectedVenue?.email || ''}
       />
     </div>
   );

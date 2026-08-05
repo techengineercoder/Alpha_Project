@@ -45,7 +45,7 @@ export const PerformanceInformation: React.FC<PerformanceInformationProps> = ({
           label="Door Time / Event Start / Set Time & Length"
           value={doorTimeLength}
           onChange={(e) => setDoorTimeLength(e.target.value)}
-          placeholder="N/A"
+          placeholder="e.g. 12:00 PM"
           required
         />
         <CustomInput

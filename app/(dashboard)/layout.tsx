@@ -362,7 +362,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-2">
             <Logo />
 
-            <span className="font-bold text-sm tracking-tight text-white">Artist Portal</span>
+            {/* <span className="font-bold text-sm tracking-tight text-white">Artist Portal</span> */}
           </div>
           <button
             onClick={() => setIsNotificationsOpen(true)}
