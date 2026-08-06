@@ -14,6 +14,17 @@ interface Team {
   avatarBg: string;
   avatarChar: string;
   domain: "artist" | "venue";
+  myMembership?: {
+    role?: string;
+    role_label?: string;
+    rank?: number;
+    status?: string;
+  } | null;
+  createdBy?: {
+    id: number;
+    name: string;
+    email: string;
+  } | null;
 }
 
 export default function SettingsPage() {
@@ -53,7 +64,9 @@ export default function SettingsPage() {
         type: "Team" as const,
         avatarBg: t.domain === "artist" ? "bg-sky-500" : "bg-[#F59E0B]",
         avatarChar: t.name.charAt(0).toUpperCase(),
-        domain: t.domain
+        domain: t.domain,
+        myMembership: t.my_membership,
+        createdBy: t.created_by
       }));
     }
     return [];
@@ -197,17 +210,13 @@ export default function SettingsPage() {
                             )}
                           </div>
                           
-                          {/* ID Box */}
-                          <div className="flex items-center gap-2 text-zinc-500 text-xs">
-                            <span className="font-mono text-[11px]">ID: {t.id}</span>
-                            <button
-                              onClick={() => handleCopyId(t.id)}
-                              className="p-1 hover:bg-white/5 text-zinc-500 hover:text-white rounded transition-colors cursor-pointer"
-                              title="Copy ID"
-                            >
-                              {isCopied ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
-                            </button>
-                          </div>
+                          {/* Created By Box */}
+                           {t.createdBy && (
+                             <div className="text-zinc-500 text-xs flex items-center gap-1">
+                               <span>Created by:</span>
+                               <span className="text-zinc-400 font-semibold">{t.createdBy.name || t.createdBy.email}</span>
+                             </div>
+                           )}
                         </div>
                       </div>
 
@@ -217,6 +226,14 @@ export default function SettingsPage() {
                           <Globe size={12} className="text-zinc-500" />
                           <span>{t.domain}</span>
                         </span>
+
+                        {/* Role Badge */}
+                        {t.myMembership?.role_label && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-white/[0.04] text-zinc-400 capitalize border border-white/5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 shrink-0 animate-pulse" />
+                            <span>{t.myMembership.role_label}</span>
+                          </span>
+                        )}
 
                         {/* Delete Button */}
                         <button
