@@ -117,7 +117,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                     <span className="text-xs text-zinc-500 block italic mt-1 leading-none">{selectedOffer.agency}</span>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={onClose}
                   className="p-1.5 text-zinc-555 hover:text-white transition-colors cursor-pointer rounded-full hover:bg-zinc-900"
                 >
@@ -127,7 +127,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
 
               <div className="flex items-center gap-2 pt-1">
                 {selectedOffer.status === "Pending" && (
-                  <span 
+                  <span
                     style={{
                       height: "26px",
                       borderRadius: "9999px",
@@ -145,7 +145,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                   </span>
                 )}
                 {selectedOffer.status === "Accepted" && (
-                  <span 
+                  <span
                     style={{
                       height: "26px",
                       borderRadius: "9999px",
@@ -163,7 +163,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                   </span>
                 )}
                 {selectedOffer.status === "Rejected" && (
-                  <span 
+                  <span
                     style={{
                       height: "26px",
                       borderRadius: "9999px",
@@ -195,7 +195,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
               ) : (
                 <>
                   {/* OFFER TERMS CARD */}
-                  <div 
+                  <div
                     style={{
                       borderRadius: "19.81px",
                       borderWidth: "1.24px",
@@ -209,8 +209,8 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                       OFFER TERMS
                     </span>
                     <div className="text-3xl font-bold text-[#00A5E5] font-sans pb-2">
-                      ${offerDetails?.offer?.offer_amount 
-                        ? parseFloat(offerDetails.offer.offer_amount).toLocaleString() 
+                      ${offerDetails?.offer?.offer_amount
+                        ? parseFloat(offerDetails.offer.offer_amount).toLocaleString()
                         : parseFloat(selectedOffer.fee.replace(/,/g, "")).toLocaleString()}
                     </div>
 
@@ -243,7 +243,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                   </div>
 
                   {/* VENUE INFO CARD */}
-                  <div 
+                  <div
                     style={{
                       borderRadius: "19.81px",
                       borderWidth: "1.24px",
@@ -256,7 +256,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                     <span className="text-[10px] text-zinc-550 font-bold uppercase tracking-wider font-sans block">
                       VENUE INFO
                     </span>
-                    
+
                     <div className="space-y-3 pt-1">
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-zinc-500 font-medium font-sans">Venue Name</span>
@@ -265,7 +265,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                       <div className="flex justify-between items-start text-xs">
                         <span className="text-zinc-500 font-medium font-sans shrink-0">Address</span>
                         <span className="text-white font-semibold font-sans text-right max-w-[200px]">
-                          {offerDetails?.offer?.venue_address 
+                          {offerDetails?.offer?.venue_address
                             ? `${offerDetails.offer.venue_address}, ${offerDetails.offer.city_state_country_zip || ""}`
                             : "N/A"}
                         </span>
@@ -281,7 +281,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
 
                   {/* SHARE SETTINGS CARD (Only visible for Pending offers) */}
                   {selectedOffer.status === "Pending" && (
-                    <div 
+                    <div
                       style={{
                         borderRadius: "19.81px",
                         borderWidth: "1.24px",
@@ -299,18 +299,16 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => setSidebarShareTab("team")}
-                            className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all cursor-pointer ${
-                              sidebarShareTab === "team" ? "bg-amber-500 text-black" : "text-zinc-400 hover:text-white"
-                            }`}
+                            className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all cursor-pointer ${sidebarShareTab === "team" ? "bg-amber-500 text-black" : "text-zinc-400 hover:text-white"
+                              }`}
                           >
                             Teams
                           </button>
                           <button
                             type="button"
                             onClick={() => setSidebarShareTab("user")}
-                            className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all cursor-pointer ${
-                              sidebarShareTab === "user" ? "bg-amber-500 text-black" : "text-zinc-400 hover:text-white"
-                            }`}
+                            className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all cursor-pointer ${sidebarShareTab === "user" ? "bg-amber-500 text-black" : "text-zinc-400 hover:text-white"
+                              }`}
                           >
                             Users
                           </button>
@@ -341,11 +339,10 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                                         if (onShare) await onShare(selectedOffer.id, { team_id: teamItem.id, team_ids: [teamItem.id] });
                                       }
                                     }}
-                                    className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
-                                      isShared 
-                                        ? "bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20" 
+                                    className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${isShared
+                                        ? "bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20"
                                         : "bg-cyan-500/10 border border-cyan-500/20 text-[#00A5E5] hover:bg-cyan-500/20"
-                                    }`}
+                                      }`}
                                   >
                                     {isShared ? "Unshare" : "Share"}
                                   </button>
@@ -378,11 +375,10 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                                         if (onShare) await onShare(selectedOffer.id, { user_id: userItem.id, user_ids: [userItem.id] });
                                       }
                                     }}
-                                    className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
-                                      isShared 
-                                        ? "bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20" 
+                                    className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${isShared
+                                        ? "bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20"
                                         : "bg-cyan-500/10 border border-cyan-500/20 text-[#00A5E5] hover:bg-cyan-500/20"
-                                    }`}
+                                      }`}
                                   >
                                     {isShared ? "Unshare" : "Share"}
                                   </button>
@@ -398,7 +394,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                   )}
 
                   {/* ADDITIONAL INCLUDES CARD */}
-                  <div 
+                  <div
                     style={{
                       borderRadius: "19.81px",
                       borderWidth: "1.24px",
@@ -411,13 +407,13 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                     <span className="text-[10px] text-zinc-550 font-bold uppercase tracking-wider font-sans block">
                       ADDITIONAL INCLUDES
                     </span>
-                    
+
                     <div className="flex flex-wrap gap-2 pt-1.5">
                       {((offerDetails?.offer?.included_facilities && offerDetails.offer.included_facilities.length > 0)
                         ? offerDetails.offer.included_facilities
                         : ["Standard Requirements Only"]
                       ).map((inc: string) => (
-                        <span 
+                        <span
                           key={inc}
                           className="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-cyan-500/20 bg-cyan-500/5 text-[#00A5E5] font-sans"
                         >
@@ -428,7 +424,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                   </div>
 
                   {/* DOCUMENTS CARD */}
-                  <div 
+                  <div
                     style={{
                       borderRadius: "19.81px",
                       borderWidth: "1.24px",
@@ -441,13 +437,13 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                     <span className="text-[10px] text-zinc-550 font-bold uppercase tracking-wider font-sans block">
                       DOCUMENTS
                     </span>
-                    
+
                     <div className="space-y-3.5 pt-1">
                       {offerDetails?.offer?.documents && offerDetails.offer.documents.length > 0 ? (
                         offerDetails.offer.documents.map((doc: any) => {
                           const docName = doc.document.split("/").pop() || `document_${doc.id}.pdf`;
-                          const docUrl = doc.document.startsWith("http") 
-                            ? doc.document 
+                          const docUrl = doc.document.startsWith("http")
+                            ? doc.document
                             : `https://backend.getavails.com${doc.document}`;
 
                           return (
@@ -457,7 +453,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                                 <span className="text-[10px] text-zinc-550 block truncate mt-0.5">Uploaded Offer Attachment</span>
                               </div>
                               <div className="flex items-center gap-1.5 shrink-0">
-                                <a 
+                                <a
                                   href={docUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -465,7 +461,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                                 >
                                   Preview
                                 </a>
-                                <a 
+                                <a
                                   href={docUrl}
                                   download
                                   className="h-8 px-3 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-850 text-[10px] font-semibold text-zinc-300 transition-colors cursor-pointer flex items-center justify-center"
@@ -483,7 +479,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                   </div>
 
                   {/* SIGNATURES CARD */}
-                  <div 
+                  <div
                     style={{
                       borderRadius: "19.81px",
                       borderWidth: "1.24px",
@@ -496,12 +492,12 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                     <span className="text-[10px] text-zinc-550 font-bold uppercase tracking-wider font-sans block">
                       AUTHORIZED SIGNATURES
                     </span>
-                    
+
                     <div className="space-y-4 pt-1">
                       {offerDetails?.offer?.signatures && offerDetails.offer.signatures.length > 0 ? (
                         offerDetails.offer.signatures.map((sig: any) => {
-                          const sigUrl = sig.signature.startsWith("http") 
-                            ? sig.signature 
+                          const sigUrl = sig.signature.startsWith("http")
+                            ? sig.signature
                             : `https://backend.getavails.com${sig.signature}`;
 
                           return (
@@ -521,11 +517,11 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                                 </span>
                               </div>
                               <div className="mt-2 bg-[#121214] border border-white/5 rounded-xl p-2.5 flex items-center justify-center min-h-[70px]">
-                                <img 
-                                  src={sigUrl} 
-                                  alt="Signature" 
+                                <img
+                                  src={sigUrl}
+                                  alt="Signature"
                                   style={{ filter: "brightness(0) invert(1)" }}
-                                  className="max-h-[60px] object-contain" 
+                                  className="max-h-[60px] object-contain"
                                 />
                               </div>
                             </div>
@@ -553,7 +549,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                       Reject
                     </button>
                   )}
-                  
+
                   <button
                     type="button"
                     onClick={() => setShowSignPad(true)}
@@ -561,7 +557,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                   >
                     ✍ Sign
                   </button>
-                  
+
                   {activeTeam?.domain === "artist" && (
                     <button
                       type="button"
@@ -572,7 +568,7 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                     </button>
                   )}
                 </div>
-                
+
                 {activeTeam?.domain === "venue" && (
                   <a
                     href={`/dashboard/offers/create?editId=${selectedOffer.id}`}
@@ -706,9 +702,8 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                     <button
                       type="button"
                       onClick={() => setSignatureTab("draw")}
-                      className={`pb-2.5 px-4 text-xs font-bold transition-colors relative cursor-pointer ${
-                        signatureTab === "draw" ? "text-amber-500" : "text-zinc-500 hover:text-white"
-                      }`}
+                      className={`pb-2.5 px-4 text-xs font-bold transition-colors relative cursor-pointer ${signatureTab === "draw" ? "text-amber-500" : "text-zinc-500 hover:text-white"
+                        }`}
                     >
                       Draw
                       {signatureTab === "draw" && (
@@ -718,9 +713,8 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                     <button
                       type="button"
                       onClick={() => setSignatureTab("upload")}
-                      className={`pb-2.5 px-4 text-xs font-bold transition-colors relative cursor-pointer ${
-                        signatureTab === "upload" ? "text-amber-500" : "text-zinc-500 hover:text-white"
-                      }`}
+                      className={`pb-2.5 px-4 text-xs font-bold transition-colors relative cursor-pointer ${signatureTab === "upload" ? "text-amber-500" : "text-zinc-500 hover:text-white"
+                        }`}
                     >
                       Upload
                       {signatureTab === "upload" && (

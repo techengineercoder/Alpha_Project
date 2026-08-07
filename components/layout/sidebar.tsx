@@ -53,6 +53,7 @@ const menuItems: MenuItem[] = [
   // { name: "Tour Schedule", icon: MapPin, href: "/artist/tour-schedule" },
   { name: "Explore", icon: Search, href: "/dashboard/explore" },
   { name: "Organization", icon: Users, href: "/dashboard/team-management" },
+  { name: "My Artists", icon: Users, href: "/dashboard/my-artists" },
   { name: "Inquiries", icon: BookOpenText, href: "/dashboard/inquiries" },
   { name: "Offers", icon: Tag, href: "/dashboard/offers" },
   { name: "Messages", icon: MessageSquare, href: "/dashboard/messages" },

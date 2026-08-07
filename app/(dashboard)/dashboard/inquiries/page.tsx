@@ -420,16 +420,20 @@ export default function InquiriesPage() {
 
                     {/* Right Section: Action Buttons */}
                     <div className="flex items-center gap-3 w-full sm:w-auto shrink-0 justify-stretch sm:justify-start pt-2 sm:pt-0 border-t border-zinc-800/40 sm:border-0">
-                      <button
+                      <Link
+                        href={`/dashboard/inquiries/${inq.id}`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handlePreview(inq.id);
                         }}
-                        className="flex-1 sm:flex-initial h-10 px-4 rounded-xl border border-zinc-800 bg-transparent hover:bg-zinc-900 text-zinc-300 font-medium text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                        className="flex-1 sm:flex-initial"
                       >
-                        <Eye className="h-4 w-4" />
-                        Preview
-                      </button>
+                        <button
+                          className="w-full h-10 px-4 rounded-xl border border-zinc-800 bg-transparent hover:bg-zinc-900 text-zinc-300 font-medium text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                        >
+                          <Eye className="h-4 w-4" />
+                          Preview
+                        </button>
+                      </Link>
  
                       {activeTeam?.domain === "venue" && (activeTab === "All" || (currentStatus.toLowerCase() !== "accepted" && currentStatus.toLowerCase() !== "rejected")) && (
                         <button
