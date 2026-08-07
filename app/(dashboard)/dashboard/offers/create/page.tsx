@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import SignatureCanvas from "react-signature-canvas";
 import { motion, AnimatePresence } from "framer-motion";
+import { LogoLoader } from "@/components/ui/logo-loader";
 
 import { VenueInformation } from "@/components/offers/create/venue-info";
 import { FinancialRequirements } from "@/components/offers/create/financial-requirements";
@@ -52,6 +53,25 @@ const shareTeamContainerClassName = "bg-white/5 border border-white/10 rounded-2
 export default function CreateOfferPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: myTeamData, isLoading: myTeamLoading } = useMyTeamQuery(undefined);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+
+  useEffect(() => {
+    if (myTeamData?.results) {
+      const activeTeamId = typeof window !== "undefined" ? localStorage.getItem("active_team_id") : null;
+      const activeTeam = myTeamData.results.find((t: any) => String(t.id) === String(activeTeamId));
+      
+      if (activeTeam && activeTeam.domain !== "venue") {
+        toast.error("Access denied. Only venues can create or edit offers.");
+        router.push("/dashboard/offers");
+      } else {
+        setCheckingAccess(false);
+      }
+    } else if (!myTeamLoading && myTeamData) {
+      setCheckingAccess(false);
+    }
+  }, [myTeamData, myTeamLoading, router]);
 
   // http://localhost:3000/dashboard/offers/create?inquiryId=1
 
@@ -659,6 +679,10 @@ export default function CreateOfferPage() {
       toast.error(error?.data?.message || "Failed to send the offer. Please try again.", { id: "create-offer" });
     }
   };
+
+  if (checkingAccess) {
+    return <LogoLoader fullScreen={true} text="Verifying permissions..." />;
+  }
 
   return (
     <div className="">

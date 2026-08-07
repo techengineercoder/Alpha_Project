@@ -22,7 +22,7 @@ import { useGetAllOfferQuery, useGetOfferByIdQuery, useShareOfferMutation, useUn
 import { format, parseISO } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useAcceptOfferMutation, useRejectOfferMutation, useSignOfferMutation } from "@/redux/feature/team-managementSlice";
+import { useAcceptOfferMutation, useRejectOfferMutation, useSignOfferMutation, useMyTeamQuery } from "@/redux/feature/team-managementSlice";
 
 interface OfferItem {
   id: string;
@@ -48,7 +48,7 @@ export default function OffersDashboardPage() {
   const router = useRouter();
 
   // Offers List State
-  const [activeTab, setActiveTab] = useState<"Recent" | "Sent" | "Rejected" | "Shared">("Recent");
+  const [activeTab, setActiveTab] = useState<"All" | "Pending" | "Accept" | "Reject" | "Shared">("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOffer, setSelectedOffer] = useState<OfferItem | null>(null);
 
@@ -68,6 +68,25 @@ export default function OffersDashboardPage() {
   const [signOffer, { isLoading: signOfferLoading }] = useSignOfferMutation();
   const [shareOffer] = useShareOfferMutation();
   const [unshareOffer] = useUnshareOfferMutation();
+
+  const { data: myTeamData } = useMyTeamQuery(undefined);
+  const [mounted, setMounted] = useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const activeTeamId = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("active_team_id");
+    }
+    return null;
+  }, [mounted]);
+
+  const activeTeam = useMemo(() => {
+    if (!myTeamData?.results || !activeTeamId) return null;
+    return myTeamData.results.find((t: any) => String(t.id) === String(activeTeamId));
+  }, [myTeamData, activeTeamId]);
 
   const getErrorMessage = (err: any, fallback: string) => {
     if (err?.data?.error?.message) {
@@ -142,11 +161,11 @@ export default function OffersDashboardPage() {
     const params: any = {};
 
     // 1. Status and sharing parameters
-    if (activeTab === "Recent") {
+    if (activeTab === "Pending") {
       params.status = "pending";
-    } else if (activeTab === "Sent") {
+    } else if (activeTab === "Accept") {
       params.status = "accepted";
-    } else if (activeTab === "Rejected") {
+    } else if (activeTab === "Reject") {
       params.status = "rejected";
     } else if (activeTab === "Shared") {
       params.shared_with_me = true;
@@ -268,9 +287,10 @@ export default function OffersDashboardPage() {
     });
 
     return {
-      Recent: parsed.filter((o: any) => o.status === "Pending").length,
-      Sent: parsed.filter((o: any) => o.status === "Accepted").length,
-      Rejected: parsed.filter((o: any) => o.status === "Rejected").length,
+      All: parsed.length,
+      Pending: parsed.filter((o: any) => o.status === "Pending").length,
+      Accept: parsed.filter((o: any) => o.status === "Accepted").length,
+      Reject: parsed.filter((o: any) => o.status === "Rejected").length,
       Shared: parsed.filter((o: any) => o.flow === "Received").length
     };
   }, [countsData]);
@@ -306,19 +326,27 @@ export default function OffersDashboardPage() {
 
       {/* Common Page Header */}
       <CommonHeader
-        title="Offers"
+        title={
+          activeTab === "All" ? "All Offers" :
+          activeTab === "Pending" ? "Pending Offers" :
+          activeTab === "Accept" ? "Accepted Offers" :
+          activeTab === "Reject" ? "Rejected Offers" :
+          "Shared Offers"
+        }
         subtitle="Manage all incoming and outgoing offers for your venue"
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder="Search by email"
         actionButton={
-          <button
-            onClick={() => router.push("/dashboard/offers/create")}
-            className="h-11 px-5 rounded-[12px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99] shrink-0 w-full sm:w-auto"
-          >
-            <Plus className="h-4.5 w-4.5" />
-            New Offer
-          </button>
+          activeTeam?.domain === "venue" ? (
+            <button
+              onClick={() => router.push("/dashboard/offers/create")}
+              className="h-11 px-5 rounded-[12px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99] shrink-0 w-full sm:w-auto"
+            >
+              <Plus className="h-4.5 w-4.5" />
+              New Offer
+            </button>
+          ) : undefined
         }
       />
 
@@ -327,10 +355,11 @@ export default function OffersDashboardPage() {
         {/* Tabs Filter Container (Left Side) */}
         <div className="flex items-center border-[1.24px] border-[#FFFFFF]/8 bg-[#FFFFFF]/[0.02] rounded-[14px] p-[4px] overflow-x-auto no-scrollbar w-full sm:w-auto">
           {[
-            { label: "Recent Offers", count: counts.Recent, tabKey: "Recent" },
-            { label: "Sent Offers", count: counts.Sent, tabKey: "Sent" },
-            { label: "Rejected Offers", count: counts.Rejected, tabKey: "Rejected" },
-            { label: "Shared With Me", count: counts.Shared, tabKey: "Shared" }
+            { label: "All Offers", count: counts.All, tabKey: "All" },
+            { label: "Pending", count: counts.Pending, tabKey: "Pending" },
+            { label: "Accept", count: counts.Accept, tabKey: "Accept" },
+            { label: "Reject", count: counts.Reject, tabKey: "Reject" },
+            { label: "Share with me", count: counts.Shared, tabKey: "Shared" }
           ].map((tab) => {
             const isSelected = activeTab === tab.tabKey;
             return (

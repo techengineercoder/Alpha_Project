@@ -178,28 +178,6 @@ export function NotificationsDrawer({
               <p className="text-sm text-gray-400 font-medium leading-relaxed">
                 {n.description}
               </p>
-              <AnimatePresence initial={false}>
-                {isActive && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                    animate={{ height: "auto", opacity: 1, marginTop: 12 }}
-                    exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="overflow-hidden"
-                  >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onReviewInvitationClick(n.id);
-                      }}
-                      className="bg-[#00A5E5] hover:bg-[#00A5E5]/90 text-white font-semibold w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-1.5 transition-all shadow-[0_4px_16px_rgba(0,165,229,0.15)] cursor-pointer"
-                    >
-                      <span>Review Invitation</span>
-                      <ArrowRight size={14} strokeWidth={2.5} />
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           )}
         </div>

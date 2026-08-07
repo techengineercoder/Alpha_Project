@@ -9,13 +9,17 @@ import {
   DollarSign,
   Eye,
   Check,
-  X
+  X,
+  Mail,
+  Phone,
+  Clock
 } from "lucide-react";
 import { LogoLoader } from "@/components/ui/logo-loader";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { CommonHeader } from "@/components/dashboard/page-header";
 import { useAcceptInquiryMutation, useGetInquiriesQuery, useGetInquiryDetailsQuery, useRejectInquiryMutation } from "@/redux/feature/dashboardApi/inquirieSlice";
+import { useMyTeamQuery } from "@/redux/feature/team-managementSlice";
 import Link from "next/link";
 
 
@@ -75,12 +79,38 @@ export default function InquiriesPage() {
   }, [offset, activeTab, debouncedSearch]);
 
   const { data: inquiriesData, isLoading } = useGetInquiriesQuery(queryParams);
+  const { data: myTeamData } = useMyTeamQuery(undefined);
   const { data: inquiryDetailsData, isLoading: inquirieDetailsLoading } = useGetInquiryDetailsQuery(selectedId, {
     skip: !selectedId,
   });
 
   const [acceptInquiry, { isLoading: acceptInquiryLoading }] = useAcceptInquiryMutation();
   const [rejectInquiry, { isLoading: rejectInquiryLoading }] = useRejectInquiryMutation();
+
+  // Get active team ID from localStorage
+  const activeTeamId = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("active_team_id");
+    }
+    return null;
+  }, [mounted]);
+
+  // Find the active team to determine its domain
+  const activeTeam = useMemo(() => {
+    if (!myTeamData?.results || !activeTeamId) return null;
+    return myTeamData.results.find((t: any) => String(t.id) === String(activeTeamId));
+  }, [myTeamData, activeTeamId]);
+
+  // Determine the title based on the active team's domain
+  const pageTitle = useMemo(() => {
+    if (activeTeam?.domain === "artist") {
+      return "Outgoing Inquiries";
+    }
+    if (activeTeam?.domain === "venue") {
+      return "Incoming Inquiries";
+    }
+    return "Incoming Inquiries"; // default fallback
+  }, [activeTeam]);
 
   const inquiries = inquiriesData?.results || [];
   const totalCount = inquiriesData?.count || 0;
@@ -95,18 +125,45 @@ export default function InquiriesPage() {
     if (!raw) return null;
 
     const inqId = raw.uid || `#${raw.id}`;
-    const clientName = raw.full_name || raw.sender?.name || "Unknown Client";
-    const companyName = raw.sender?.email || "Event Host";
+    const isArtist = activeTeam?.domain === "artist";
+    const clientName = isArtist 
+      ? (raw.receiver?.name || raw.receiver_email || "Unknown Recipient") 
+      : (raw.full_name || raw.sender?.name || "Unknown Client");
+    const companyName = isArtist 
+      ? (raw.receiver?.email || raw.receiver_email || "") 
+      : (raw.sender?.email || "Event Host");
     const artistName = raw.event_title || "Event";
     const eventDate = raw.start_date_time ? new Date(raw.start_date_time).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
     }) : "TBD";
+    const formattedDateTime = raw.start_date_time ? new Date(raw.start_date_time).toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }) : "TBD";
     const location = raw.receiver_email || "N/A";
     const budgetDisplay = raw.budget ? `$${parseFloat(raw.budget).toLocaleString()}` : "TBD";
     const note = raw.additional_notes || raw.note || '';
     const status = localStatuses[raw.id] || raw.status || 'pending';
+    const expectedAttendance = raw.expected_attendance || null;
+    const phoneNumber = raw.phone_number || (isArtist ? raw.receiver?.phone : raw.sender?.phone) || null;
+    const rawEmail = isArtist ? (raw.receiver?.email || raw.receiver_email) : (raw.sender?.email || raw.email);
+
+    // Profile photo logic
+    const getImageUrl = (imagePath?: string | null) => {
+      if (!imagePath) return null;
+      if (imagePath.startsWith("http")) return imagePath;
+      const baseUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "https://backend.getavails.com";
+      return `${baseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+    };
+    const avatarUrl = isArtist 
+      ? getImageUrl(raw.receiver?.image) 
+      : getImageUrl(raw.sender?.image);
 
     // initials
     const avatarChar = clientName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() || "UN";
@@ -121,14 +178,20 @@ export default function InquiriesPage() {
       companyName,
       artistName,
       eventDate,
+      formattedDateTime,
       location,
       budget: budgetDisplay,
       note,
       status,
       avatarChar,
-      avatarBg
+      avatarBg,
+      avatarUrl,
+      expectedAttendance,
+      phoneNumber,
+      rawEmail,
+      isArtist
     };
-  }, [inquiryDetailsData, inquiries, selectedId, localStatuses]);
+  }, [inquiryDetailsData, inquiries, selectedId, localStatuses, activeTeam]);
 
   if (!mounted) {
     return <LogoLoader fullScreen={true} text="Loading Inquiries..." />;
@@ -205,7 +268,7 @@ export default function InquiriesPage() {
 
       {/* Common Page Header */}
       <CommonHeader
-        title="Incoming Inquiries"
+        title={pageTitle}
         subtitle="Manage and respond to booking requests"
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -271,8 +334,13 @@ export default function InquiriesPage() {
             {inquiries.length > 0 ? (
               inquiries.map((inq: any) => {
                 const inqId = inq.uid || `#${inq.id}`;
-                const clientName = inq.full_name || inq.sender?.name || "Unknown Client";
-                const companyName = inq.sender?.email || "Event Host";
+                const isArtist = activeTeam?.domain === "artist";
+                const clientName = isArtist 
+                  ? (inq.receiver?.name || inq.receiver_email || "Unknown Recipient") 
+                  : (inq.full_name || inq.sender?.name || "Unknown Client");
+                const companyName = isArtist 
+                  ? (inq.receiver?.email || inq.receiver_email || "") 
+                  : (inq.sender?.email || "Event Host");
                 const artistName = inq.event_title || "Event";
                 const eventDate = inq.start_date_time ? new Date(inq.start_date_time).toLocaleDateString('en-US', {
                   month: 'short',
@@ -300,7 +368,8 @@ export default function InquiriesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.2 }}
-                    className="bg-[#0f0f11] border border-zinc-800/80 rounded-2xl p-4 md:p-6 transition-all hover:border-zinc-700/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                    onClick={() => handlePreview(inq.id)}
+                    className="bg-[#0f0f11] border border-zinc-800/80 rounded-2xl p-4 md:p-6 transition-all hover:border-zinc-700/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer"
                   >
                     {/* Left Section: Avatar and Info */}
                     <div className="flex items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto min-w-0">
@@ -352,16 +421,22 @@ export default function InquiriesPage() {
                     {/* Right Section: Action Buttons */}
                     <div className="flex items-center gap-3 w-full sm:w-auto shrink-0 justify-stretch sm:justify-start pt-2 sm:pt-0 border-t border-zinc-800/40 sm:border-0">
                       <button
-                        onClick={() => handlePreview(inq.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePreview(inq.id);
+                        }}
                         className="flex-1 sm:flex-initial h-10 px-4 rounded-xl border border-zinc-800 bg-transparent hover:bg-zinc-900 text-zinc-300 font-medium text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
                       >
                         <Eye className="h-4 w-4" />
                         Preview
                       </button>
-
-                      {(activeTab === "All" || (currentStatus.toLowerCase() !== "accepted" && currentStatus.toLowerCase() !== "rejected")) && (
+ 
+                      {activeTeam?.domain === "venue" && (activeTab === "All" || (currentStatus.toLowerCase() !== "accepted" && currentStatus.toLowerCase() !== "rejected")) && (
                         <button
-                          onClick={() => handleAccept(inq.id, clientName)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAccept(inq.id, clientName);
+                          }}
                           className="flex-1 sm:flex-initial h-10 px-5 rounded-xl bg-[#00aef0] hover:bg-[#009bde] text-white font-medium text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-lg shadow-cyan-500/10"
                         >
                           <Check className="h-4 w-4" />
@@ -423,10 +498,10 @@ export default function InquiriesPage() {
             {/* Backdrop Blur Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               onClick={handleCloseDrawer}
-              className="fixed inset-0 bg-black/75 backdrop-blur-[2px] z-[99]"
+              className="fixed inset-0 bg-black/60 z-40 cursor-pointer backdrop-blur-sm"
             />
 
             {/* Slide-out Drawer Panel */}
@@ -434,23 +509,36 @@ export default function InquiriesPage() {
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
-              className="fixed right-0 top-0 bottom-0 w-full sm:w-[460px] bg-[#0A0A0A]/95 backdrop-blur-[12px] border-l-[1.24px] border-[#FFFFFF]/12 z-[100] flex flex-col justify-between shadow-2xl h-screen"
+              transition={{ type: "tween", duration: 0.3 }}
+              className="fixed top-0 right-0 bottom-0 w-full max-w-[460px] bg-[#050505] border-l border-zinc-900 z-50 overflow-y-auto flex flex-col justify-between font-sans shadow-2xl"
             >
               {/* Drawer Header */}
-              <div className="p-6 md:p-8 pb-5 border-b border-[#FFFFFF]/12 relative shrink-0">
+              <div className="p-6 md:p-8 pb-5 border-b border-zinc-800/60 relative shrink-0">
                 <button
                   onClick={handleCloseDrawer}
-                  className="absolute top-8 right-6 p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900/50 transition-colors cursor-pointer"
+                  className="absolute top-6 right-6 p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-all cursor-pointer"
                   aria-label="Close details"
                 >
                   <X className="h-5 w-5" />
                 </button>
 
-                <span className="text-zinc-500 text-xs font-mono font-medium tracking-wide uppercase mb-1 block">
-                  {displayInquiry.inqId}
-                </span>
-                <h2 className="font-bold text-[24.71px] leading-[37.07px] tracking-normal text-white mt-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-zinc-500 text-xs font-mono font-semibold tracking-wider uppercase bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">
+                    {displayInquiry.inqId}
+                  </span>
+                  {/* Glowing Status Badge */}
+                  <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border ${
+                    displayInquiry.status.toLowerCase() === "pending"
+                      ? "bg-amber-500/10 border-amber-500/25 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.08)]"
+                      : displayInquiry.status.toLowerCase() === "accepted"
+                        ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.08)]"
+                        : "bg-rose-500/10 border-rose-500/25 text-rose-400 shadow-[0_0_15px_rgba(239,68,68,0.08)]"
+                  }`}>
+                    {displayInquiry.status}
+                  </span>
+                </div>
+                
+                <h2 className="font-bold text-2xl leading-none text-white tracking-tight mt-1">
                   Inquiry Details
                 </h2>
               </div>
@@ -459,162 +547,194 @@ export default function InquiriesPage() {
               <div className="p-6 md:p-8 flex-1 overflow-y-auto space-y-6 no-scrollbar">
                 {inquirieDetailsLoading ? (
                   <div className="space-y-6 animate-pulse">
-                    {/* FROM BOX SKELETON */}
-                    <div className="bg-[#161618] border border-[#FFFFFF]/8 rounded-[24px] p-6 flex flex-col space-y-4">
-                      <div className="h-3 w-12 bg-white/5 rounded" />
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-white/5 shrink-0" />
-                        <div className="space-y-2 w-32">
-                          <div className="h-4 bg-white/10 rounded w-full" />
-                          <div className="h-3 bg-white/5 rounded w-3/4" />
-                        </div>
-                      </div>
+                    {/* SKELETON CARDS */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-20 bg-zinc-900/60 border border-zinc-800/40 rounded-2xl animate-pulse" />
+                      <div className="h-20 bg-zinc-900/60 border border-zinc-800/40 rounded-2xl animate-pulse" />
                     </div>
-
-                    {/* DETAILS LIST SKELETON */}
-                    <div className="space-y-5 px-1">
-                      {[...Array(4)].map((_, i) => (
-                        <div key={i} className="flex items-center gap-3.5">
-                          <div className="w-[38px] h-[38px] rounded-full bg-white/5 shrink-0" />
-                          <div className="space-y-2">
-                            <div className="h-3 bg-white/5 rounded w-16" />
-                            <div className="h-4 bg-white/10 rounded w-36" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* NOTE BOX SKELETON */}
-                    <div className="bg-[#161618] border border-[#FFFFFF]/8 rounded-[24px] p-6 flex flex-col space-y-4">
-                      <div className="h-3 w-12 bg-white/5 rounded" />
-                      <div className="space-y-2">
-                        <div className="h-3 bg-white/5 rounded w-full" />
-                        <div className="h-3 bg-white/5 rounded w-5/6" />
-                        <div className="h-3 bg-white/5 rounded w-2/3" />
-                      </div>
-                    </div>
+                    <div className="bg-zinc-900/60 border border-zinc-800/40 rounded-2xl p-6 h-28 animate-pulse" />
+                    <div className="bg-zinc-900/60 border border-zinc-800/40 rounded-2xl p-6 h-36 animate-pulse" />
                   </div>
                 ) : (
                   <>
-                    {/* FROM BOX */}
-                    <div className="bg-[#161618] border border-[#FFFFFF]/8 rounded-[24px] p-6 flex flex-col space-y-4">
-                      <span className="text-[11px] font-bold text-[#8E8E93] tracking-wider uppercase block">
-                        FROM
-                      </span>
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base shadow-inner shrink-0 ${displayInquiry.avatarBg}`}>
-                          {displayInquiry.avatarChar}
+                    {/* TOP METRICS (Budget & Attendance) */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Budget Card */}
+                      <div className="relative overflow-hidden bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between hover:border-zinc-700/60 transition-all duration-300 group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#00AEF0]/10 to-transparent rounded-bl-full pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">
+                          OFFER BUDGET
+                        </span>
+                        <div className="flex items-baseline gap-1 mt-1">
+                          <span className="text-xl sm:text-2xl font-extrabold text-white tracking-tight bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+                            {displayInquiry.budget}
+                          </span>
                         </div>
-                        <div className="min-w-0">
-                          <h4 className="font-bold text-white text-base leading-snug">
+                      </div>
+
+                      {/* Attendance Card */}
+                      <div className="relative overflow-hidden bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between hover:border-zinc-700/60 transition-all duration-300 group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-purple-500/10 to-transparent rounded-bl-full pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">
+                          ATTENDANCE
+                        </span>
+                        <div className="flex items-baseline gap-1 mt-1">
+                          <span className="text-xl sm:text-2xl font-extrabold text-white tracking-tight bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+                            {displayInquiry.expectedAttendance || "TBD"}
+                          </span>
+                          {displayInquiry.expectedAttendance && (
+                            <span className="text-zinc-500 text-xs font-semibold">guests</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* PROFILE (FROM / TO) CARD */}
+                    <div className="bg-zinc-900/30 border border-zinc-800/60 rounded-2xl p-5 hover:border-zinc-800 transition-all duration-300">
+                      <span className="text-[10px] font-bold text-zinc-500 tracking-wider uppercase block mb-3.5">
+                        {displayInquiry.isArtist ? "RECIPIENT DETAILS" : "SENDER DETAILS"}
+                      </span>
+                      
+                      <div className="flex items-center gap-4">
+                        {/* Avatar Picture or Initials */}
+                        {displayInquiry.avatarUrl ? (
+                          <div className="w-14 h-14 rounded-full overflow-hidden border border-zinc-700/50 shrink-0 bg-zinc-950 flex items-center justify-center">
+                            <img 
+                              src={displayInquiry.avatarUrl} 
+                              alt={displayInquiry.clientName} 
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className={`w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-base shadow-inner shrink-0 ${displayInquiry.avatarBg}`}>
+                            {displayInquiry.avatarChar}
+                          </div>
+                        )}
+
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-bold text-white text-base leading-snug truncate">
                             {displayInquiry.clientName}
                           </h4>
-                          <p className="text-zinc-400 text-sm mt-0.5 leading-snug">
+                          <p className="text-zinc-400 text-xs mt-0.5 leading-snug truncate font-mono">
                             {displayInquiry.companyName}
                           </p>
                         </div>
                       </div>
+
+                      {/* Contact Details List */}
+                      <div className="mt-4 pt-4 border-t border-zinc-800/60 space-y-2.5">
+                        {displayInquiry.rawEmail && (
+                          <div className="flex items-center gap-2.5 text-xs text-zinc-400 hover:text-white transition-colors">
+                            <Mail className="h-3.5 w-3.5 text-zinc-500" />
+                            <a href={`mailto:${displayInquiry.rawEmail}`} className="truncate hover:underline">
+                              {displayInquiry.rawEmail}
+                            </a>
+                          </div>
+                        )}
+                        {displayInquiry.phoneNumber && (
+                          <div className="flex items-center gap-2.5 text-xs text-zinc-400 hover:text-white transition-colors">
+                            <Phone className="h-3.5 w-3.5 text-zinc-500" />
+                            <a href={`tel:${displayInquiry.phoneNumber}`} className="hover:underline">
+                              {displayInquiry.phoneNumber}
+                            </a>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    {/* DETAILS LIST CONTAINER */}
-                    <div className="space-y-5 px-1">
-                      {/* Artist */}
-                      <div className="flex items-center gap-3.5">
-                        <div className="w-[38px] h-[38px] rounded-full bg-[#0A1C2A] border border-[#00AEF0]/15 flex items-center justify-center text-[#00AEF0] shrink-0">
-                          <Mic className="h-[18px] w-[18px]" />
+                    {/* EVENT INFORMATION CARD */}
+                    <div className="bg-zinc-900/30 border border-zinc-800/60 rounded-2xl p-5 space-y-4 hover:border-zinc-800 transition-all duration-300">
+                      <span className="text-[10px] font-bold text-zinc-500 tracking-wider uppercase block border-b border-zinc-800/60 pb-2">
+                        EVENT INFORMATION
+                      </span>
+
+                      {/* Event Title */}
+                      <div className="flex items-start gap-3.5">
+                        <div className="w-[34px] h-[34px] rounded-lg bg-zinc-950/80 border border-zinc-800/80 flex items-center justify-center text-[#00AEF0] shrink-0">
+                          <Mic className="h-[16px] w-[16px]" />
                         </div>
                         <div className="leading-tight">
-                          <span className="text-[12px] text-[#8E8E93] font-medium block">
+                          <span className="text-[10px] text-zinc-500 font-bold block uppercase tracking-wider">
                             Event Title
                           </span>
-                          <span className="text-white text-[16px] font-bold block mt-[2px]">
+                          <span className="text-white text-base font-bold block mt-[3px]">
                             {displayInquiry.artistName}
                           </span>
                         </div>
                       </div>
 
-                      {/* Event Date */}
-                      <div className="flex items-center gap-3.5">
-                        <div className="w-[38px] h-[38px] rounded-full bg-[#0A1C2A] border border-[#00AEF0]/15 flex items-center justify-center text-[#00AEF0] shrink-0">
-                          <Calendar className="h-[18px] w-[18px]" />
+                      {/* Event Date & Time */}
+                      <div className="flex items-start gap-3.5">
+                        <div className="w-[34px] h-[34px] rounded-lg bg-zinc-950/80 border border-zinc-800/80 flex items-center justify-center text-[#00AEF0] shrink-0">
+                          <Clock className="h-[16px] w-[16px]" />
                         </div>
                         <div className="leading-tight">
-                          <span className="text-[12px] text-[#8E8E93] font-medium block">
-                            Event Date
+                          <span className="text-[10px] text-zinc-500 font-bold block uppercase tracking-wider">
+                            Date & Time
                           </span>
-                          <span className="text-white text-[16px] font-bold block mt-[2px]">
-                            {displayInquiry.eventDate}
+                          <span className="text-white text-sm font-semibold block mt-[3px]">
+                            {displayInquiry.formattedDateTime}
                           </span>
                         </div>
                       </div>
 
-                      {/* Location */}
-                      <div className="flex items-center gap-3.5">
-                        <div className="w-[38px] h-[38px] rounded-full bg-[#0A1C2A] border border-[#00AEF0]/15 flex items-center justify-center text-[#00AEF0] shrink-0">
-                          <MapPin className="h-[18px] w-[18px]" />
+                      {/* Recipient email or location */}
+                      <div className="flex items-start gap-3.5">
+                        <div className="w-[34px] h-[34px] rounded-lg bg-zinc-950/80 border border-zinc-800/80 flex items-center justify-center text-[#00AEF0] shrink-0">
+                          <MapPin className="h-[16px] w-[16px]" />
                         </div>
                         <div className="leading-tight">
-                          <span className="text-[12px] text-[#8E8E93] font-medium block">
-                            Receiver Email
+                          <span className="text-[10px] text-zinc-500 font-bold block uppercase tracking-wider">
+                            Recipient Email
                           </span>
-                          <span className="text-white text-[16px] font-bold block mt-[2px] break-all">
+                          <span className="text-white text-sm font-semibold block mt-[3px] break-all">
                             {displayInquiry.location}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Budget */}
-                      <div className="flex items-center gap-3.5">
-                        <div className="w-[38px] h-[38px] rounded-full bg-[#0A1C2A] border border-[#00AEF0]/15 flex items-center justify-center text-[#00AEF0] shrink-0">
-                          <DollarSign className="h-[18px] w-[18px]" />
-                        </div>
-                        <div className="leading-tight">
-                          <span className="text-[12px] text-[#8E8E93] font-medium block">
-                            Budget
-                          </span>
-                          <span className="text-white text-[16px] font-bold block mt-[2px]">
-                            {displayInquiry.budget}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* NOTE BOX */}
-                    <div className="bg-[#161618] border border-[#FFFFFF]/8 rounded-[24px] p-6 flex flex-col space-y-4">
-                      <span className="text-[11px] font-bold text-[#8E8E93] tracking-wider uppercase block">
-                        NOTE
+                    {/* ADDITIONAL NOTES NOTEBOX */}
+                    <div className="bg-zinc-900/30 border border-zinc-800/60 rounded-2xl p-5 hover:border-zinc-800 transition-all duration-300">
+                      <span className="text-[10px] font-bold text-zinc-500 tracking-wider uppercase block mb-2.5">
+                        ADDITIONAL NOTES
                       </span>
-                      <div className="text-[#D1D1D6] text-[15px] leading-relaxed font-normal">
-                        {displayInquiry.note}
-                      </div>
+                      {displayInquiry.note ? (
+                        <div className="text-zinc-300 text-sm leading-relaxed border-l-2 border-[#00AEF0] pl-3 py-0.5 italic">
+                          "{displayInquiry.note}"
+                        </div>
+                      ) : (
+                        <span className="text-zinc-600 text-xs italic block">No additional notes provided.</span>
+                      )}
                     </div>
                   </>
                 )}
               </div>
 
               {/* Drawer Footer Actions */}
-              <div className="p-6 md:p-8 border-t border-[#FFFFFF]/12 bg-transparent flex flex-col gap-4 shrink-0">
-                <Link href={`/dashboard/offers/create?inquiryId=${displayInquiry.id}`} >
-                  <button
+              {activeTeam?.domain === "venue" && (
+                <div className="p-6 border-t border-zinc-800/60 bg-[#09090b]/40 backdrop-blur-md flex flex-col gap-3 shrink-0">
+                  <Link href={`/dashboard/offers/create?inquiryId=${displayInquiry.id}`} className="w-full">
+                    <button
+                      className="w-full h-11 rounded-xl bg-[#00AEF0] hover:bg-[#009bde] text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      Generate Offer
+                    </button>
+                  </Link>
 
-                    className="w-full h-10 rounded-[14px] bg-[#00AEF0] hover:bg-[#009bde] text-white font-medium text-base flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-cyan-500/10 hover:scale-[1.01] active:scale-[0.99]"
-                  >
-                    Generate Offer
-                  </button>
-                </Link>
-
-                {displayInquiry.status.toLowerCase() !== "rejected" && (
-                  <button
-                    onClick={() => {
-                      handleReject(displayInquiry.id, displayInquiry.clientName);
-                      handleCloseDrawer();
-                    }}
-                    className="w-full h-10 rounded-[14px] bg-[#FF3B30] hover:bg-[#E03126] text-white font-medium text-base flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
-                  >
-                    Reject Inquiry
-                  </button>
-                )}
-              </div>
+                  {displayInquiry.status.toLowerCase() !== "rejected" && (
+                    <button
+                      onClick={() => {
+                        handleReject(displayInquiry.id, displayInquiry.clientName);
+                        handleCloseDrawer();
+                      }}
+                      className="w-full h-11 rounded-xl bg-transparent hover:bg-rose-500/10 text-rose-500 border border-rose-500/20 font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      Reject Inquiry
+                    </button>
+                  )}
+                </div>
+              )}
             </motion.div>
           </>
         )}

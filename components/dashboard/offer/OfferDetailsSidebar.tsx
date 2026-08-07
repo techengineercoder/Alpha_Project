@@ -70,6 +70,19 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
   const allTeamsList = teamData?.results || [];
   const allUsersList = userData?.results || [];
 
+  // Get active team ID from localStorage
+  const [activeTeamId, setActiveTeamId] = useState<string | null>(null);
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setActiveTeamId(localStorage.getItem("active_team_id"));
+    }
+  }, [selectedOffer]);
+
+  const activeTeam = React.useMemo(() => {
+    if (!teamData?.results || !activeTeamId) return null;
+    return teamData.results.find((t: any) => String(t.id) === String(activeTeamId));
+  }, [teamData, activeTeamId]);
+
   return (
     <AnimatePresence>
       {selectedOffer && (
@@ -530,14 +543,17 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
             {/* Bottom Sticky Action Bar */}
             {selectedOffer.status === "Pending" ? (
               <div className="p-4 border-t border-zinc-900 bg-[#050505] flex flex-col gap-2.5 sticky bottom-0 z-50">
-                <div className="grid grid-cols-3 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => setConfirmAction("reject")}
-                    className="h-11 rounded-xl border border-red-950 bg-[#160c0e] hover:bg-[#201013] text-red-500 font-bold text-xs flex items-center justify-center transition-colors cursor-pointer"
-                  >
-                    Reject
-                  </button>
+                <div className={`grid gap-2.5 ${activeTeam?.domain === "artist" ? "grid-cols-3" : "grid-cols-1"}`}>
+                  {activeTeam?.domain === "artist" && (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmAction("reject")}
+                      className="h-11 rounded-xl border border-red-950 bg-[#160c0e] hover:bg-[#201013] text-red-500 font-bold text-xs flex items-center justify-center transition-colors cursor-pointer"
+                    >
+                      Reject
+                    </button>
+                  )}
+                  
                   <button
                     type="button"
                     onClick={() => setShowSignPad(true)}
@@ -545,21 +561,26 @@ export const OfferDetailsSidebar: React.FC<OfferDetailsSidebarProps> = ({
                   >
                     ✍ Sign
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setConfirmAction("accept")}
-                    className="h-11 rounded-xl bg-[#00A5E5] hover:bg-[#009bde] text-white font-bold text-xs flex items-center justify-center transition-colors cursor-pointer shadow-md shadow-cyan-500/10"
-                  >
-                    Accept
-                  </button>
+                  
+                  {activeTeam?.domain === "artist" && (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmAction("accept")}
+                      className="h-11 rounded-xl bg-[#00A5E5] hover:bg-[#009bde] text-white font-bold text-xs flex items-center justify-center transition-colors cursor-pointer shadow-md shadow-cyan-500/10"
+                    >
+                      Accept
+                    </button>
+                  )}
                 </div>
                 
-                <a
-                  href={`/dashboard/offers/create?editId=${selectedOffer.id}`}
-                  className="h-11 rounded-xl border border-zinc-800 bg-[#121214] hover:bg-zinc-900 text-zinc-300 font-bold text-xs flex items-center justify-center transition-colors cursor-pointer text-center w-full"
-                >
-                  Edit Offer Details
-                </a>
+                {activeTeam?.domain === "venue" && (
+                  <a
+                    href={`/dashboard/offers/create?editId=${selectedOffer.id}`}
+                    className="h-11 rounded-xl border border-zinc-800 bg-[#121214] hover:bg-zinc-900 text-zinc-300 font-bold text-xs flex items-center justify-center transition-colors cursor-pointer text-center w-full"
+                  >
+                    Edit Offer Details
+                  </a>
+                )}
               </div>
             ) : (
               <div className="p-4 border-t border-zinc-900 bg-[#050505] text-center text-xs text-zinc-500 italic sticky bottom-0 z-50">
