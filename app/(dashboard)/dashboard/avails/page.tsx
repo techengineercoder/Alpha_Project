@@ -18,7 +18,10 @@ import {
   User,
   CheckCircle,
   ExternalLink,
-  ChevronDown
+  ChevronDown,
+  LayoutGrid,
+  Sparkles,
+  Palette
 } from "lucide-react";
 import { toast } from "sonner";
 import { CommonHeader } from "@/components/dashboard/page-header";
@@ -694,44 +697,86 @@ export default function AvailsPage() {
                   />
                 </div>
 
-                {/* Quadrants Config */}
-                <div className="space-y-3 pt-2">
-                  <label className="text-xs font-bold text-[#00A5E5] uppercase tracking-widest">
-                    Quadrant Grid Preview Setup (Select up to 4 preview initials/colors)
-                  </label>
+                {/* Quadrants Config Redesigned */}
+                <div className="space-y-4 pt-3 border-t border-white/5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0d0d12]/60 p-3.5 rounded-2xl border border-white/5">
+                    <div>
+                      <label className="text-xs font-black text-[#00A5E5] uppercase tracking-wider flex items-center gap-2">
+                        <LayoutGrid size={15} />
+                        Quadrant Grid Preview Setup
+                      </label>
+                      <p className="text-[11px] text-zinc-400 mt-0.5">
+                        Customize up to 4 preview initials & background colors
+                      </p>
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-3.5">
-                    {newQuadrants.map((quad, idx) => (
-                      <div key={idx} className="p-3 bg-[#1A1A1E] border border-zinc-800 rounded-xl space-y-2">
-                        <div className="flex justify-between items-center text-[10px] font-bold text-zinc-500">
-                          <span>QUADRANT {idx + 1}</span>
+                    {/* Live 2x2 Mini Preview Box */}
+                    <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+                      <span className="text-[10px] font-bold uppercase text-zinc-500 tracking-wider">Live Preview:</span>
+                      <div className="w-14 h-14 rounded-xl border border-white/10 overflow-hidden grid grid-cols-2 grid-rows-2 shadow-lg shrink-0">
+                        {newQuadrants.map((quad, i) => (
                           <div
-                            className="w-3 h-3 rounded-full border border-white/10"
-                            style={{ backgroundColor: quad.color }}
-                          />
+                            key={i}
+                            className="flex items-center justify-center font-bold text-[10px] text-white select-none transition-all duration-200"
+                            style={{ backgroundColor: quad.color || "#1A1A1E" }}
+                          >
+                            <span className="drop-shadow-sm">{quad.initials || "--"}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 4-Quadrant Inputs Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {newQuadrants.map((quad, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3.5 bg-[#141418]/80 border border-white/10 rounded-2xl space-y-2.5 hover:border-[#00A5E5]/40 transition-all duration-200 group"
+                      >
+                        <div className="flex justify-between items-center text-[10px] font-extrabold tracking-wider">
+                          <span className="text-zinc-400 group-hover:text-[#00A5E5] transition-colors flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#00A5E5]" />
+                            QUADRANT {idx + 1}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <div
+                              className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-sm"
+                              style={{ backgroundColor: quad.color }}
+                            />
+                            <span className="text-zinc-500 font-medium">
+                              {PREMIUM_COLORS.find((c) => c.hex === quad.color)?.name || "Color"}
+                            </span>
+                          </div>
                         </div>
 
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            maxLength={2}
-                            placeholder="Initials"
-                            value={quad.initials}
-                            onChange={(e) => updateNewQuadrant(idx, "initials", e.target.value)}
-                            className="w-16 bg-zinc-900 border border-zinc-800 rounded-lg px-2 py-1 text-xs text-center font-bold text-white uppercase focus:outline-none focus:border-[#00A5E5]"
-                          />
+                        <div className="grid grid-cols-5 gap-2">
+                          <div className="col-span-2 space-y-1">
+                            <label className="text-[9px] font-bold text-zinc-500 uppercase block">Initials</label>
+                            <input
+                              type="text"
+                              maxLength={2}
+                              placeholder="AF"
+                              value={quad.initials}
+                              onChange={(e) => updateNewQuadrant(idx, "initials", e.target.value.toUpperCase())}
+                              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 py-2 text-xs text-center font-black text-white uppercase focus:outline-none focus:border-[#00A5E5] focus:ring-1 focus:ring-[#00A5E5]/30 transition-all"
+                            />
+                          </div>
 
-                          <select
-                            value={quad.color}
-                            onChange={(e) => updateNewQuadrant(idx, "color", e.target.value)}
-                            className="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-2 py-1 text-[11px] text-zinc-300 focus:outline-none focus:border-[#00A5E5]"
-                          >
-                            {PREMIUM_COLORS.map((col) => (
-                              <option key={col.hex} value={col.hex}>
-                                {col.name}
-                              </option>
-                            ))}
-                          </select>
+                          <div className="col-span-3 space-y-1">
+                            <label className="text-[9px] font-bold text-zinc-500 uppercase block">Theme Color</label>
+                            <select
+                              value={quad.color}
+                              onChange={(e) => updateNewQuadrant(idx, "color", e.target.value)}
+                              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-semibold text-zinc-200 focus:outline-none focus:border-[#00A5E5] focus:ring-1 focus:ring-[#00A5E5]/30 transition-all cursor-pointer"
+                            >
+                              {PREMIUM_COLORS.map((col) => (
+                                <option key={col.hex} value={col.hex} className="bg-zinc-900 text-white">
+                                  {col.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
                     ))}
